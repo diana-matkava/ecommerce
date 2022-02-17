@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{%block title%}{%endblock%}</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/mdb.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/style.min.css')}}" rel="stylesheet">
+    {%block extrastyle%}{%endblock%}
+</head>
+
+<body>
+{%block navbar%}{% include 'inclusion/navbar.html' %}{%endblock%}
+
+{%block content%}{%endblock%}
+
+{%block pagination%}{% include 'inclusion/pagination.html' %}{%endblock%}
+
+{%block footer%}{% include 'inclusion/footer.html' %}{%endblock%}
+
+
+<script type="text/javascript" src="{{url_for('static', filename='js/jquery-3.4.1.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='js/popper.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='js/mdb.min.js')}}"></script>
+<script type="text/javascript">
+    // Animations initialization
+    new WOW().init();
+</script>
+{%block scripts%}{%endblock%}
+</body>
+</html>
