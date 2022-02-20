@@ -16,9 +16,20 @@
 <body>
 {%block navbar%}{% include 'inclusion/navbar.html' %}{%endblock%}
 
-{%block content%}{%endblock%}
 
-{%block pagination%}{% include 'inclusion/pagination.html' %}{%endblock%}
+<main class="mt-5 pt-4">
+    {% with messages = get_flashed_messages() %}
+    {% for message in messages %}
+    <div class="alert alert-light alert-dismissible fade show" role="alert">
+        {{ message }}
+    </div>
+    {%endfor%}
+    {%endwith%}
+{%block content%}{%endblock%}
+</main>
+
+
+{%block pagination%}{%endblock%}
 
 {%block footer%}{% include 'inclusion/footer.html' %}{%endblock%}
 

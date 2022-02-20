@@ -44,22 +44,22 @@
                         <span class="clearfix d-none d-sm-inline-block"> Cart </span>
                     </a>
                 </li>
+
+                {% if current_user.is_authenticated %}
                 <li class="nav-item">
-                    <a href="https://www.facebook.com/mdbootstrap" class="nav-link waves-effect" target="_blank">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
+                    <a href="{{url_for('auth.registrate_customer')}}" class="nav-link border border-light rounded waves-effect mr-2">{{current_user}}</a>
                 </li>
                 <li class="nav-item">
-                    <a href="https://twitter.com/MDBootstrap" class="nav-link waves-effect" target="_blank">
-                        <i class="fab fa-twitter"></i>
-                    </a>
+                    <a href="{{url_for('auth.logout')}}" class="nav-link border btn-dark rounded waves-effect mr-2"><span style="color: #fff">Log Out</span></a>
+                </li>
+                {%else%}
+                <li class="nav-item">
+                    <a href="{{url_for('auth.registrate_customer')}}" class="nav-link border border-light rounded waves-effect mr-2">Sing Up</a>
                 </li>
                 <li class="nav-item">
-                    <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="nav-link border border-light rounded waves-effect"
-                       target="_blank">
-                        <i class="fab fa-github mr-2"></i>MDB GitHub
-                    </a>
+                    <a href="{{url_for('auth.login')}}" class="nav-link border border-dark btn-dark rounded waves-effect"><span style="color: #fff">Sing In</span></a>
                 </li>
+                {%endif%}
             </ul>
 
         </div>

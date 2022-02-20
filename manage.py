@@ -1,4 +1,4 @@
-def deploy():Are you sure you want to cancel the automatic renewal of your subscription?
+def deploy():
     """ Run deployment task """
     from __init__ import create_app, db
     from flask_migrate import upgrade, migrate, init, stamp

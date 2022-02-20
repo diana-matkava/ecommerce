@@ -3,7 +3,7 @@ from flask_login import UserMixin
 import sqlalchemy.types as types
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from __init__ import db
+from ecommerce.extentions import db
 
 
 class ChoiceType(types.TypeDecorator):
@@ -32,11 +32,11 @@ class User(db.Model):
 
 class Customer(User, UserMixin):
     id = Column(Integer, primary_key=True)
-    nickname = Column(String(50), nullable=False)
-    avatar = relationship('CustomerAvatar', backref='customer', lazy=True)
+    username = Column(String(50), nullable=False)
+    avatar = Column(Integer, ForeignKey('customer_avatar.id'))
 
     def __repr__(self):
-        return self.nickname
+        return self.username
 
 
 class Seller(User, UserMixin):
@@ -47,13 +47,13 @@ class Seller(User, UserMixin):
             'corporation': 'corporations'
         }
     id = Column(Integer, primary_key=True)
-    first_name = Column(String(50), nullable=False)
-    last_name = Column(String(50), nullable=False)
+    first_name = Column(String(50))
+    last_name = Column(String(50))
     company_name = Column(String(125), nullable=False)
     country = Column(String(125), nullable=False)
     type = Column(String(125), nullable=False)
     phone = Column(String(12), nullable=False)
-    logo = relationship('CompanyLogo', backref='seller', lazy=True)
+    logo = Column(Integer, ForeignKey('company_logo.id'))
 
     def __repr__(self):
         return self.company_name
@@ -61,13 +61,11 @@ class Seller(User, UserMixin):
 
 class CustomerAvatar(db.Model):
     id = Column(Integer, primary_key=True)
-    avatar = Column(String(125), nullable=False)
-    customer = Column(Integer, ForeignKey('customer.id'))
+    path = Column(String(125), nullable=False)
 
 
 class CompanyLogo(db.Model):
     id = Column(Integer, primary_key=True)
-    logo = Column(String(125), nullable=False)
-    seller = Column(Integer, ForeignKey('seller.id'))
+    path = Column(String(125), nullable=False)
 
 
