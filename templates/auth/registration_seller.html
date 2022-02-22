@@ -6,10 +6,18 @@
         display: flex;
     }
     .content-block {
-        margin: 40px;
+        margin: 0 40px;
     }
     .form-control {
         min-width: 300px;
+    }
+    .alert {
+        margin-top: -15px;
+        color: rgb(214, 12, 12);
+        font-size: 14px;
+    }
+    .alert::before{
+        content: '*';
     }
 @media screen and (max-width: 1200px){
     .form_container {
@@ -28,75 +36,91 @@
 <div class="container">
     <div class="row mt-4">
         <div class="col-lg-9 col-md-6 m-auto card p-4">
-            <form action="{{ request.path }}" method="POST" class="card-body" novalidate>
+            <div class="text-center">
+                <h1>{{title}}</h1>
+            </div>  
+
+            <form action="{{ request.path }}" method="POST" enctype="multipart/form-data" class="card-body" novalidate>
                 {{ form.csrf_token }}
 
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
-                    <div class="alert alert-light alert-dismissible fade show" role="alert">
+                    <div class="alert" role="alert">
                         {{ message }}
                     </div>
                     {% endfor %}
                 {% endif %}
                 {% endwith %}
-
-                <div class="text-center">
-                    <h1>{{title}}</h1>
-                </div>  
-
+                
                 <div class="form_container">
                     <div class="content-block">
                         <div class="form-group">
+                            {{ form.first_name.label(class="sr-only") }}
                             {{ form.first_name(class_="form-control",placeholder="First Name")}}
                         </div>
                         {% for error in form.first_name.errors %}
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <div class="alert" role="alert">
                             {{ error }}
                         </div>
                         {% endfor%}
 
                         <div class="form-group">
+                            {{ form.last_name.label(class="sr-only") }}
                             {{ form.last_name(class_="form-control",placeholder="last Name")}}
                         </div>
                         {% for error in form.last_name.errors %}
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <div class="alert" role="alert">
                             {{ error }}
                         </div>
                         {% endfor%}
 
                         <div class="form-group">
+                            {{ form.company_name.label(class="sr-only") }}
                             {{ form.company_name(class_="form-control",placeholder="Company Name")}}
                         </div>
                         {% for error in form.company_name.errors %}
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <div class="alert" role="alert">
                             {{ error }}
                         </div>
                         {% endfor%}
 
                         <div class="form-group">
+                            {{ form.country.label(class="sr-only") }}
                             {{ form.country(class_="form-control",placeholder="Country")}}
                         </div>
                         {% for error in form.country.errors %}
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <div class="alert" role="alert">
                             {{ error }}
                         </div>
                         {% endfor%}
 
                         <div class="form-group">
-                            {{ form.type(class_="form-control",placeholder="Business type")}}
+                            {{ form.busines_type.label(class="text", style='color: grey; margin-left: 20px;') }}
+                            {{ form.busines_type(class_="form-control",placeholder="Business type")}}
                         </div>
-                        {% for error in form.type.errors %}
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {% for error in form.busines_type.errors %}
+                        <div class="alert" role="alert">
                             {{ error }}
                         </div>
                         {% endfor%}
 
                         <div class="form-group">
-                            {{ form.logo(class_="form-control",placeholder="Company Logo")}}
+                            {{ form.category.label(class="text", style='color: grey; margin-left: 20px;') }}
+                            {{ form.category(class_="form-control",placeholder="Products category")}}
+                        </div>
+                        {% for error in form.category.errors %}
+                        <div class="alert" role="alert">
+                            {{ error }}
+                        </div>
+                        {% endfor%}
+                        
+                        <div class="form-group mb-3">
+                            {{ form.logo.label(class="ftext", style='color: grey; margin-left: 20px;') }}
+                            {{ form.logo(class_="form-control",placeholder="Company Logo", type='file', id="formFile")}}
                         </div>
                         {% for error in form.logo.errors %}
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <div class="alert" role="alert">
                             {{ error }}
                         </div>
                         {% endfor%}
@@ -104,27 +128,30 @@
 
                     <div class="content-block">
                         <div class="form-group">
+                            {{ form.email.label(class="sr-only") }}
                             {{ form.email(class_="form-control",placeholder="Email")}}
                         </div>
                         {% for error in form.email.errors %}
-                        <div class="alert alert-light alert-dismissible fade show" role="alert">
+                        <div class="alert" role="alert">
                             {{ error }}
                         </div>
                         {% endfor%}
                         <div class="form-group">
-                            {{ form.phone(class_="form-control",placeholder="Phone")}}
+                            {{ form.phone.label(class="sr-only") }}
+                            {{ form.phone(class_="form-control",placeholder="+123")}}
                         </div>
                         {% for error in form.phone.errors %}
-                        <div class="alert alert-light alert-dismissible fade show" role="alert">
+                        <div class="alert" role="alert">
                             {{ error }}
                         </div>
                         {% endfor%}
         
                         <div class="form-group">
+                            {{ form.pwd.label(class="sr-only") }}
                             {{ form.pwd(class_="form-control",placeholder="Password")}}
                         </div>
                         {% for error in form.pwd.errors %}
-                        <div class="alert alert-light alert-dismissible fade show" role="alert">
+                        <div class="alert" role="alert">
                             {{ error }}
                         </div> {% endfor%}
         
@@ -133,7 +160,7 @@
                             {{ form.cpwd(class_="form-control",placeholder="Confirm Password")}}
                         </div>
                         {% for error in form.cpwd.errors %}
-                        <div class="alert alert-light alert-dismissible fade show" role="alert">
+                        <div class="alert" role="alert">
                             {{ error }}
                         </div> {% endfor%}
                     </div>

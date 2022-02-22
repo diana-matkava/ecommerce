@@ -1,1 +1,1 @@
-'''init py'''
+from ecommerce.auth import models

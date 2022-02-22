@@ -1,16 +1,17 @@
 def deploy():
     """ Run deployment task """
-    from __init__ import create_app, db
+    from ecommerce.app import create_app, db
     from flask_migrate import upgrade, migrate, init, stamp
-    from models import User, Customer, Seller
+    from ecommerce.auth.models import Seller, Customer, Type, Category
+    import sqlalchemy_utils
 
     app = create_app()
     app.app_context().push()
-    # db.create_all()
-    # db.drop_all()
+    db.create_all()
+    db.drop_all()
 
     """ migrate database to latest version """
-    # init()
+    init()
     stamp()
     migrate()
     upgrade()

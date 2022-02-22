@@ -1,8 +1,9 @@
 import os
-from flask import Flask, render_template, session
-from .auth.views import bp, login_manager
+import sys
+from flask import Flask, render_template
+from ecommerce.auth.views import bp, login_manager
 from ecommerce.extentions import db, migrate, bcrypt
-from .auth.models import Customer
+from ecommerce.auth.models import *
 
 
 def create_app(test_config=None, config_objects='ecommerce.settings'):
@@ -31,10 +32,8 @@ def create_app(test_config=None, config_objects='ecommerce.settings'):
     # a simple page that says hello
     @app.route('/')
     def hello():
-        user = Customer.query.all()
-        for i in user:
-            print('user', i)
         return render_template('products/home-page.html')
+
 
     app.register_blueprint(bp)
 
