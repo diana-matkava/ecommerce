@@ -8,6 +8,13 @@ FLASK_ENV = env.str('FLASK_ENV', default='development')
 SECRET_KEY = env.str('SECRET_KEY')
 SQLALCHEMY_DATABASE_URI = env.str('SQLALCHEMY_DATABASE_URI')
 SQLALCHEMY_TRACK_MODIFICATIONS = True
-UPLOAD_FOLDER_SELLER = env.str('UPLOAD_FOLDER_SELLER', 'media/seller_logo/')
-UPLOAD_FOLDER_CUSTOMER = env.str('UPLOAD_FOLDER_CUSTOMER', 'media/customer_image/')
+UPLOAD_FOLDER = env.str('UPLOAD_FOLDER', 'static/')
 ALLOWED_EXTENSIONS = env.str('ALLOWED_EXTENSIONS', {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'})
+
+# MAIL_SERVER = 'smtp.googlemail.com'
+# MAIL_PORT = 465
+# MAIL_USE_TLS = False
+# MAIL_USE_SSL = True
+
+# MAIL_USERNAME = env.str['MAIL_USERNAME']
+# MAIL_PASSWORD = env.str['MAIL_PASSWORD']

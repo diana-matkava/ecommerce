@@ -19,7 +19,7 @@
             <div class="text-center" style="margin: 0 20px;">
                 <h1>{{title}}</h1>
             </div>
-            <form action="{{ request.path }}" method="POST" class="card-body" novalidate>
+            <form action="{{ request.path }}" method="POST" class="card-body" enctype="multipart/form-data"  novalidate>
                 {{ form.csrf_token }}
             
                 {% with messages = get_flashed_messages() %}
@@ -80,6 +80,16 @@
                 <div class="alert" role="alert">
                     {{ error }}
                 </div> 
+                {% endfor%}
+
+                <div class="form-group mb-3">
+                    {{ form.avatar.label(class="text", style='color: grey; margin-left: 20px;') }}
+                    {{ form.avatar(class_="form-control",placeholder="Avatar", type='file', id="formFile")}}
+                </div>
+                {% for error in form.avatar.errors %}
+                <div class="alert" role="alert">
+                    {{ error }}
+                </div>
                 {% endfor%}
                 {% endif %}
                 <!--end-->

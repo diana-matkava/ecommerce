@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{%block extrastyle%}
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth/profile_customer.css')}}">
+{%endblock%}
+
+{%block title%}Customer page{%endblock%}
+
+{%block content%}
+<div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+    <div class="card p-4">
+        <div class=" image d-flex flex-column justify-content-center align-items-center"> 
+            {% if user.avatar %}
+                <img class="avatar" src="{{url_for('static', filename=user.avatar)}}" height="100"/> 
+            {% else %}
+                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="225px" height="225px">
+            {% endif %}
+            <span class="name mt-3">{{user.username}}</span> 
+            <span class="idd">{{user.email}}</span>
+            <div class="d-flex flex-row justify-content-center align-items-center gap-2"> 
+                <span class="idd1">******</span>
+            </div>
+            <div class=" d-flex mt-2"> 
+                <a class="btn btn-dark" href="{{ url_for('auth.edit_customer_profile') }}">Edit Profile</a> 
+            </div>
+            <div class="d-flex flex-row justify-content-center align-items-center mt-3"> 
+                <span class="number">1069 <span class="follow">Orders</span></span> 
+            </div>
+            <div class="d-flex flex-row justify-content-center align-items-center mt-3"> 
+                <span class="number">1069 <span class="follow">Comments</span></span> 
+            </div>
+            
+            
+            <div class="text mt-3"> 
+                Order in progress:
+            </div>
+            <div class=" px-2 rounded mt-4 date "> 
+                <span class="join">Joined May,2021</span> 
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

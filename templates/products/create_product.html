@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+
+{% block extratitle %}Edit Product{% endblock %}
+
+{% block extastyle %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/products/product.css')}}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="main-body">
+    
+          <!-- Breadcrumb -->
+          <nav aria-label="breadcrumb" class="main-breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{{url_for('home')}}">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Create Product</li>
+            </ol>
+          </nav>
+          <!-- /Breadcrumb -->
+    <form action="" method="POST" enctype="multipart/form-data" novalidate>
+      {{form.csrf_token}}
+
+        <div class="col-md-8">
+          <div class="card mb-3">
+            <div class="card-body">
+
+                <div class="col">
+                  <div class="form-group row" >
+                    {{ form.name.label}}
+                    {{ form.name(class_="form-control")}}
+                  </div>
+                </div>
+                {% for error in form.name.errors %}
+                    <div class="alert" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor%}
+                
+                <div class="col">
+                  <div class="form-group row">
+                    {{ form.description.label}}
+                    {{ form.description(class_="form-control")}}
+                  </div>
+                </div>
+                {% for error in form.description.errors %}
+                <div class="alert" role="alert">
+                    {{ error }}
+                </div>
+                {% endfor%}
+
+              <hr>
+                <div class="col">
+                  <div class="form-group row">
+                    {{ form.price.label}}
+                    {{ form.price(class_="form-control", type='number')}}
+                  </div>
+                </div>
+
+                {% for error in form.price.errors %}
+                    <div class="alert" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor%}
+
+              <hr>
+              <div class="col">
+                <div class="form-group row">
+                    {{ form.quantity.label}}
+                    {{ form.quantity(class_="form-control", type='number')}}
+                </div>
+              </div>
+
+                {% for error in form.quantity.errors %}
+                    <div class="alert" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor%}
+
+              <hr>
+              <div class="col">
+                <div class="form-group row">
+                    {{ form.category.label}}
+                    {{ form.category(class_="form-control")}}
+                </div>
+              </div>
+
+                {% for error in form.category.errors %}
+                    <div class="alert" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor%}
+
+              <hr>
+              <div class="col">
+                <div class="form-group row">
+                    {{ form.image.label}}
+                    <input type="file" class="form-control" id='formFile' multiple name='image'>
+                </div>
+              </div>
+
+                {% for error in form.image.errors %}
+                    <div class="alert" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor%}
+
+                {% for field, errors in form.errors.items() %}
+                <div class="alert alert-error">
+                    {{ form[field].label }}: {{ ', '.join(errors) }}
+                </div>
+                {% endfor %}
+
+              {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                  {% for message in messages %}
+                  <def class="alert" role="alert" style="margin-top: 20px; color: red;">
+                      * {{ message }}
+                  </def>
+                    {% endfor %}
+                {% endif %}
+              {% endwith %}
+
+
+              <br><br>
+              <div class="row">
+                <div class="col-sm-12">
+                  <button class="btn btn-info" type="submit">Submit</button>
+                  <a class="btn btn-light" href="{{url_for('product.create_product')}}">Back</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+     
+    </div>
+  </form>
+{% endblock %}

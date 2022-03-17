@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{%block extrastyle%}
+<link rel="stylesheet" href="{{url_for('static', filename='css/auth/profile_customer.css')}}">
+{%endblock%}
+
+{%block title%}Edit Customer Page{%endblock%}
+
+{%block content%}
+<div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+    <div class="card p-4" style="width: 500px; min-width: 300px;">
+        <div class=" image d-flex flex-column justify-content-center align-items-center"> 
+            
+            <form action="" method="post" enctype="multipart/form-data">
+                {{csrf_token}}
+
+                <div class="image-upload">
+                    <label for="file">
+                        {% if user.avatar %}
+                        <img class="avatar" src="{{url_for('static', filename=user.avatar)}}"/> 
+                        {% else %}
+                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="225px" height="225px">
+                        {% endif %}
+                    </label>
+                    <input class="form-control" id="file" type="file" name="avatar" value={{user.avatar}}>
+                </div>  
+                <div class="intend"></div>
+
+                <div class="form-group mb-6">
+                    <label for="username">Username: </label>
+                    <input class="form-control" type="text" name="username" value={{user.username}}>
+                </div>      
+                <div class="form-group mb-6">
+                    <label for="email">Email: </label>
+                    <input class="form-control" type="text" name="email" value={{user.email}}>
+                </div>  
+                <div class="intend"></div>
+                
+                <div class="form-group mb-6">
+                    <label for="password">Current Password: </label>
+                    <input class="form-control" type="password" name="password" placeholder='*******'>
+                </div>   
+                <div class="form-group mb-6">
+                    <label for="new_password">New Password: </label>
+                    <input class="form-control" type="password" name="new_password">
+                </div>  
+                <div class="form-group mb-6">
+                    <label for="repeat_password">Repeat Password: </label>
+                    <input class="form-control" type="password" name="repeat_password">
+                </div>  
+                 
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <def class="alert" role="alert" style="margin-top: 20px; color: red;">
+                            {{ message }}
+                        </def>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="intend"></div>
+
+                <div class="flex_box">
+                    <div class=" d-flex mt-2"> 
+                        <button type="submit" class="btn btn-dark" >Apply</button> 
+                    </div>
+                    <div class=" d-flex mt-2"> 
+                        <a class="btn btn-light" href="{{ url_for('auth.edit_customer_profile') }}">Back</a> 
+                    </div>
+                </div>
+                
+            </form>
+            
+            <div class="d-flex flex-row justify-content-center align-items-center mt-3"> 
+                <span class="number">1069 <span class="follow">Orders</span></span> 
+            </div>
+            <div class="d-flex flex-row justify-content-center align-items-center mt-3"> 
+                <span class="number">1069 <span class="follow">Comments</span></span> 
+            </div>
+            
+            
+            <div class="text mt-3"> 
+                Order in progress:
+            </div>
+            <div class=" px-2 rounded mt-4 date "> 
+                <span class="join">Joined May,2021</span> 
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

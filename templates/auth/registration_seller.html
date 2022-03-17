@@ -116,7 +116,7 @@
                         {% endfor%}
                         
                         <div class="form-group mb-3">
-                            {{ form.logo.label(class="ftext", style='color: grey; margin-left: 20px;') }}
+                            {{ form.logo.label(class="text", style='color: grey; margin-left: 20px;') }}
                             {{ form.logo(class_="form-control",placeholder="Company Logo", type='file', id="formFile")}}
                         </div>
                         {% for error in form.logo.errors %}

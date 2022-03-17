@@ -27,18 +27,13 @@ class CustomerRegistrationForm(FlaskForm):
         Length(8, 20),
         EqualTo('pwd', message='Password must match')
     ])
-    # submit = SubmitField("Submit")
+    avatar = StringField('Avatar')
 
 
     def validate_email(self, email):
         if Customer.query.filter_by(email=email.data).first() or \
             Seller.query.filter_by(email=email.data).first():
             raise ValidationError('Email already taken')
-
-
-# class CustomerRegistrationForm(ModelForm):
-#     class Meta:
-#         model = Customer
 
 
 class SellerRegistrationForm(FlaskForm):
@@ -85,6 +80,7 @@ class SellerRegistrationForm(FlaskForm):
         self.busines_type.choices = [(a.id, a.name) for a in Type.query.order_by(Type.name)]
         self.category.choices = [(a.id, a.name) for a in Category.query.order_by(Category.name)]
         self.country.choices = [(a.alpha_2, a.name) for a in pycountry.countries]
+
 
 class LoginForm(FlaskForm):
     email = StringField('email', validators=[

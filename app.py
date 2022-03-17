@@ -1,9 +1,11 @@
 import os
 import sys
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from ecommerce.auth.views import bp, login_manager
+from ecommerce.products.views import pr
 from ecommerce.extentions import db, migrate, bcrypt
 from ecommerce.auth.models import *
+from ecommerce.products.models import *
 
 
 def create_app(test_config=None, config_objects='ecommerce.settings'):
@@ -31,12 +33,17 @@ def create_app(test_config=None, config_objects='ecommerce.settings'):
 
     # a simple page that says hello
     @app.route('/')
-    def hello():
+    def home():
         return render_template('products/home-page.html')
+    
+    @app.route('/media/<filename>')
+    def media(filename):
+        return send_from_directory('/home/diana/Documents/my_projects/ecommerce/ecommerce/media', filename)
 
 
     app.register_blueprint(bp)
-
+    app.register_blueprint(pr)
+    
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=True)
     bcrypt.init_app(app)
