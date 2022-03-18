@@ -3,8 +3,8 @@
 
 {% block extratitle %}Edit Product{% endblock %}
 
-{% block extastyle %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/products/product.css')}}">
+{% block extrastyle %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/products/product.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -20,11 +20,16 @@
             </ol>
           </nav>
           <!-- /Breadcrumb -->
+
+          <div style="margin: -40px 0 40px 0;">
+            <h1 style="text-align: center;">Start Sell With Us</h1>
+          </div>
+          
     <form action="" method="POST" enctype="multipart/form-data" novalidate>
       {{form.csrf_token}}
 
-        <div class="col-md-8">
-          <div class="card mb-3">
+        <div class="col mb-8" style="max-width: 800px; margin: auto;">
+          <div class="card mb-">
             <div class="card-body">
 
                 <div class="col">
@@ -128,7 +133,7 @@
               <div class="row">
                 <div class="col-sm-12">
                   <button class="btn btn-info" type="submit">Submit</button>
-                  <a class="btn btn-light" href="{{url_for('product.create_product')}}">Back</a>
+                  <a class="btn btn-light" href="{{url_for('create_product')}}">Back</a>
                 </div>
               </div>
             </div>

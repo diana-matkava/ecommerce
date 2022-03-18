@@ -11,6 +11,7 @@
     <link href="{{url_for('static', filename='css/mdb.min.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/style.min.css')}}" rel="stylesheet">
     <link href="{{ url_for( 'static', filename='css/home.css')}}" rel="stylesheet">
+    <title>{% block extratitle %}{% endblock %}</title>
     {%block extrastyle%}{%endblock%}
 </head>
 
@@ -18,7 +19,7 @@
 {%block navbar%}{% include 'inclusion/navbar.html' %}{%endblock%}
 
 
-<main class="mt-5 pt-4">
+<main class="mt-5 pt-4 content_">
 {%block content%}{%endblock%}
 </main>
 

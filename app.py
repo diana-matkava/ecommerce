@@ -30,11 +30,6 @@ def create_app(test_config=None, config_objects='ecommerce.settings'):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    # a simple page that says hello
-    @app.route('/')
-    def home():
-        return render_template('products/home-page.html')
     
     @app.route('/media/<filename>')
     def media(filename):

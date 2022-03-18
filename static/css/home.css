@@ -1,3 +1,6 @@
+.content_ {
+    min-height: 100%;
+}
 img.logo {
     width: 35px;
     height: 35px;
