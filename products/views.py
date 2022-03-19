@@ -16,18 +16,21 @@ from ecommerce.auth.models import Seller, Customer
 
 pr = Blueprint('', __name__, url_prefix='/')
 
-
-@pr.route('/')
-def home():
+@pr.route('/', methods=['GET'])
+@pr.route('/<id>', methods=['GET'])
+def home(id=None):
     data = {
-        'products': Product.query.all(),
-        'time': datetime.datetime.now()
+        'ad_products':  Product.query.all()[::4],
+        'products': Product.query.all() if not id \
+            else db.session.query(Product).filter(
+                Product.product_category.any(ProductCategory.id.in_([id]))),
+        'time': datetime.datetime.now(),
+        'categories': ProductCategory.query.all()
     }
-   
     return render_template('products/home-page.html', **data)
 
 
-@pr.route('/<id>', methods=['GET', 'POST'])
+@pr.route('/product/<id>', methods=['GET', 'POST'])
 def product_page(id):
     product = Product.query.get(id)
     return render_template('products/product-page.html', product=product)

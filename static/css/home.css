@@ -39,3 +39,6 @@ img {
 .alert::before{
     content: '*';
 }
+.fab-big {
+    font-size: 34px;
+}

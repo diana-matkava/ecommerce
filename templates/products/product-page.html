@@ -6,6 +6,21 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/products/product.css') }}">
 {% endblock %}
 
+{% block script %}
+<script>
+  $('.carousel').carousel()
+
+  function myFunction() {
+    var x = document.getElementById("myDIV");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
+</script>
+{% endblock %}
+
 {% block content %}
 
 {% if product %}
@@ -15,46 +30,30 @@
   <div class="row wow fadeIn">
     
     <div class="col-md-6 mb-4">
-      <script>
-        $('.carousel').carousel()
+  
+      <div id="carouselExampleControls"  class="carousel slide " data-ride="carousel" style="margin-bottom: 18px;"
+          data-interval="2000">
 
-        function myFunction() {
-          var x = document.getElementById("myDIV");
-          if (x.style.display === "none") {
-            x.style.display = "block";
-          } else {
-            x.style.display = "none";
-          }
-        }
-    </script>
-    
-    
-    <div id="carouselExampleControls"  class="carousel slide " data-ride="carousel" style="margin-bottom: 18px;"
-         data-interval="2000">
-        <div class="carousel-inner" style="height: 350px;">
-            {%for image in product.images %}
-            {% if loop.first %}
-            <div class="carousel-item active"  style="max-height: 350px; object-fit: cover;">
-                <img class="d-block w-100" style="height: 350px;" src="{{url_for('static', filename=image.path)}}" alt="Second slide">
-            </div>
-            {% else %}
-            <div class="carousel-item"  style="max-height: 350px;">
-                <img class="d-block w-100" style="height: 350px;" src="{{url_for('static', filename=image.path)}}" alt="Second slide">
-            </div>
-            {% endif %}
-            {%endfor%}
+          <div class="carousel-inner" style="height: 350px;">
+              {%for image in product.images %}
+              
+              <div class="carousel-item {% if loop.first %}active{% endif %}"  style="max-height: 350px; object-fit: cover;">
+                  <img class="d-block w-100" style="height: 350px;" src="{{url_for('static', filename=image.path)}}" alt="Second slide">
+              </div>
+                            
+              {%endfor%}
+          </div>
+
+          <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true" style="height: 350px;"></span>
+              <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true" style="height: 350px;"></span>
+              <span class="sr-only">Next</span>
+          </a>
         </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true" style="height: 350px;"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true" style="height: 350px;"></span>
-            <span class="sr-only">Next</span>
-        </a>
     </div>
-    </div>
-
 
 
     <div class="col-md-6 mb-4">

@@ -22,28 +22,20 @@
                         <span class="sr-only">(current)</span>
                     </a>
                 </li>
+                {% if current_user.role %}
                 <li class="nav-item">
-                    <a class="nav-link waves-effect" href="#" target="_blank">About MDB</a>
+                    <a class="nav-link waves-effect" href="{{url_for('create_product')}}">
+                        <span class="clearfix d-none d-sm-inline">Add new Product </span>
+                    </a>
                 </li>
+                {% endif %}
                 <li class="nav-item">
-                    <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
-                       target="_blank">Free download</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="https://mdbootstrap.com/education/bootstrap/" target="_blank">Free
-                        tutorials</a>
+                    <a class="nav-link waves-effect" href="#" >Privacy policy</a>
                 </li>
             </ul>
 
             <!-- Right -->
             <ul class="navbar-nav nav-flex-icons">
-                {% if current_user.role %}
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{{url_for('create_product')}}">
-                        <span class="clearfix d-none d-sm-inline">+ Add new Product </span>
-                    </a>
-                </li>
-                {% else %}
                 <li class="nav-item">
                     <a class="nav-link waves-effect">
                         <span class="badge red z-depth-1 mr-1"> 1 </span>
@@ -51,7 +43,7 @@
                         <span class="clearfix d-none d-sm-inline-block"> Cart </span>
                     </a>
                 </li>
-                {% endif %}
+                
 
                 {% if current_user.is_authenticated %}
                     <div class="dropdown">
