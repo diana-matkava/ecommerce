@@ -1,147 +1,117 @@
-{% extendS 'base.html' %}
+{% extends 'base.html' %}
 
 {% block extratitle %}Edit Product{% endblock %}
 
 {% block extastyle %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/auth/profile_seller.css')}}">
+<style>
+  .image-upload>input {
+      display: none;
+    }
+  .image-upload {
+      width: fit-content; 
+      margin: auto;
+  }
+  .image-upload:hover{
+      opacity: 0.7;
+  }
+  .form-group {
+    max-width: 400px;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 
 <div class="container">
     <div class="main-body">
-    
-          <!-- Breadcrumb -->
+      
           <nav aria-label="breadcrumb" class="main-breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="{{url_for('home')}}">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">Edit Product</li>
             </ol>
           </nav>
-          <!-- /Breadcrumb -->
+          <div class="mt-4 mb-4 text-center">
+            <h1>Edit {{product}}</h1>
+          </div>
+          
     <form action="" method="post" enctype="multipart/form-data">
       {{csrf_token}}
 
       <div class="row">
-
-          <div class="col-md-4 mb-3">
+          <div class="col">
             <div class="card">
               <div class="card-body">
                 
-                  <div class="image-upload">
-                    <label for="file">
-                      {% if user.logo %}
-                        <img class="avatar" src="{{url_for('static', filename=user.logo)}}" alt="">
-                      {% else %} 
-                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="225px" height="225px">
-                      {% endif %}
-                    </label>
-                    <input type="file" class="form-control" id="file" name="logo" value="{{user.logo}}">
-                  </div>
-                  
-                  <div class="mt-3">
-                    <p class="text-muted font-size-sm text-center">Edit Logo</p>
-                  </div>
+                <div class="image-upload">
+                  <label for="file">
+                    <div class="col">
 
-                  <div class="intend"></div>
-
-                  <div class="form-group mb-6">
-                    <label for="password">Current Password: </label>
-                    <input class="form-control" type="password" name="password" placeholder='*******'>
-                </div>   
-                <div class="form-group mb-6">
-                    <label for="new_password">New Password: </label>
-                    <input class="form-control" type="password" name="new_password">
-                </div>  
-                <div class="form-group mb-6">
-                    <label for="repeat_password">Repeat Password: </label>
-                    <input class="form-control" type="password" name="repeat_password">
-                </div>  
-
-              </div>
-            </div>
-          </div>
-
-        <div class="col-md-8">
-          <div class="card mb-3">
-            <div class="card-body">
-
-                <div class="col">
-                  <div class="form-group row" >
-                    <label class="w-150" for="first_name">First Name: </label>
-                    <input class="form-control w-400" type="text" name="first_name" value={{user.first_name}}>
-                  </div>
-                </div>
+                      <div id="carouselExampleControls"  class="carousel slide " data-ride="carousel" style="margin-bottom: 18px;"
+                          data-interval="2000">
                 
-                <div class="col">
-                  <div class="form-group row">
-                    <label class="w-150" for="last_name">Last Name: </label>
-                    <input class="form-control w-400" type="text" name="last_name" value={{user.last_name}}>
+                          <div class="carousel-inner">
+                              {%for image in product.images %}
+                              
+                              <div class="carousel-item {% if loop.first %}active{% endif %}"  style="max-height: 350px;  object-fit: cover;">
+                                  <img class="d-block w-100" src="{{url_for('static', filename=image.path)}}" alt="Second slide">
+                              </div>
+                                            
+                              {%endfor%}
+                          </div>
+                
+                          <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                              <span class="carousel-control-prev-icon" aria-hidden="true" style="height: 350px;"></span>
+                              <span class="sr-only">Previous</span>
+                          </a>
+                          <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                              <span class="carousel-control-next-icon" aria-hidden="true" style="height: 350px;"></span>
+                              <span class="sr-only">Next</span>
+                          </a>
+                        </div>
+                    </div>
+                  </label>
+                  <input type="file" class="form-control" id="file" name="images" value="{{product.images}}" multiple hidden>
+                </div>
+
+                <div class="col-md-6 mb-4 ml-auto mr-auto">
+                  <div class="form-group row" >
+                    <label for="name">Product Title: </label>
+                    <input class="form-control" type="text" name="name" value='{{product.name}}'>
                   </div>
+                  <hr>
                 </div>
-              <hr>
-                <div class="col">
-                  <div class="form-group row">
-                    <label class="w-150"  for="company_name">Company Name: </label>
-                    <input class="form-control w-400" type="text" name="company_name" value={{user.company_name}}>
+
+                <div class="col-md-6 mb-4 ml-auto mr-auto">
+                  <div class="form-group row" >
+                    <label for="description">Description: </label>
+                    <textarea name="description" class="form-control" cols="30" rows="10">{{product.description}}</textarea>
                   </div>
+                  <hr>
                 </div>
 
-              <hr>
-              <div class="col">
-                <div class="form-group row">
-                  <label class="w-150" for="email">E-mail: </label>
-                  <input class="form-control w-400" type="email" name="email" value={{user.email}}>
+                <div class="col-md-6 mb-4 ml-auto mr-auto">
+                  <div class="form-group row" >
+                    <label for="price">Price: </label>
+                    <input class="form-control" type="number" name="price" value={{product.price}}>
+                  </div>
+                  <hr>
                 </div>
-              </div>
 
-              <hr>
-              <div class="col">
-                <div class="form-group row">
-                  <label class="w-150" for="phone">Phone Number: </label>
-                  <input class="form-control w-400" type="text" name="phone" value="+{{user.phone.country_code}}{{user.phone.national_number}}">
+                <div class="col-md-6 mb-4 ml-auto mr-auto">
+                  <div class="form-group row" >
+                    <label for="quamtity">Quantity: </label>
+                    <input class="form-control" type="number" name="quantity" value={{product.quantity}}>
+                  </div>
+                  <hr>
                 </div>
-              </div>
 
-              <hr>
-              <div class="col">
-                <div class="form-group row">
-                  <label class="w-150" for="country">Country: </label>
-                  <select name="country" id="country" class="form-control w-400" >
-                    {% for country in countries %}
-                      {% if country.name == user.country %}
-                      <option value="{{country.alpha_2}}" selected>{{country.name}}</option>
-                      {% else %}
-                      <option value="{{country.alpha_2}}">{{country.name}}</option>
-                      {% endif %}
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              <hr>
-              <div class="col">
-                <div class="form-group row">
-                  <label class="w-150" for="type">Business type: </label>
-                  <select name="type" id="type"  class="form-control w-400" >
-                    {% for type in business_types %}
-                      {% if [type] == user.busines_type %}
-                        <option value="{{type}}" selected>{{type}}</option>
-                      {% else %}
-                        <option value="{{type}}">{{type}}</option>
-                      {%endif%}
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              <hr>
-              <div class="col">
+              <div class="col-md-6 mb-4 ml-auto mr-auto">
                 <div class="form-group row">
                   <label class="w-150" for="type">Category: </label>
                   <select name="category" id="category" class="form-control w-400" multiple>
                     {% for category in categories %}
-                      {% if category in user.category %}
+                      {% if category in product.product_category %}
                         <option value='{{category}}' selected>{{category}}</option>
                       {% else %}
                         <option value='{{category}}'>{{category}}</option>
@@ -149,9 +119,24 @@
                     {% endfor %}
                   </select>
                 </div>
-              </div>
+                <hr>
+              </div> 
 
-              <hr>
+                <div class="col-md-6 mb-4 ml-auto mr-auto">
+                  <ul class="list-group">
+                    <li class="d-flex align-items-center text-muted">
+                      Owner: {{current_user}}
+                    </li>
+                    <li class="d-flex align-items-center text-muted">
+                      Likes   
+                      <span class="badge badge-danger badge-pill ml-3">{{product.like}}</span>
+                    </li>
+                    <li class="d-flex  align-items-center text-muted">
+                      Date: {{product.created}}
+                    </li>
+                  </ul>
+                </div>
+              
               {% with messages = get_flashed_messages() %}
               {% if messages %}
                   {% for message in messages %}
@@ -163,11 +148,38 @@
               {% endwith %}
               <br><br>
               <div class="row">
-                <div class="col-sm-12">
+                <div class="col-md-6 mb-4 ml-auto mr-auto">
                   <button class="btn btn-info" type="submit">Submit</button>
-                  <a class="btn btn-light" href="{{url_for('auth.profile')}}">Back</a>
+                  <a class="btn btn-light" href="{{url_for('home')}}">Back</a>
+                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter">
+                    Delete
+                  </button>
                 </div>
               </div>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Delete {{product}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Are you really sure that you want to delete this product immediately and irrevocably?
+                  </div>
+                  <div class="modal-footer">
+                    <a href="{{url_for('delete_product', id=product.id)}}" class="btn btn-danger">Delete</a>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
             </div>
           </div>
         </div>

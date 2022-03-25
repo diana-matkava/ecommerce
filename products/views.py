@@ -1,3 +1,4 @@
+from crypt import methods
 import datetime
 import os
 import sys
@@ -16,8 +17,8 @@ from ecommerce.auth.models import Seller, Customer
 
 pr = Blueprint('', __name__, url_prefix='/')
 
-@pr.route('/', methods=['GET'])
-@pr.route('/<id>', methods=['GET'])
+@pr.route('/', methods=['GET', 'POST', 'PUT'])
+@pr.route('/<id>', methods=['GET', 'POST', 'PUT'])
 def home(id=None):
     data = {
         'ad_products':  Product.query.all()[::4],
@@ -27,6 +28,9 @@ def home(id=None):
         'time': datetime.datetime.now(),
         'categories': ProductCategory.query.all()
     }
+    if request.method == 'POST':
+        search = request.form['search']
+        data['products'] = Product.query.filter(Product.name.contains(search)).all()
     return render_template('products/home-page.html', **data)
 
 
@@ -62,7 +66,7 @@ def create_product():
                         db.session.add(product_image)
                         product.images.extend([product_image])
                     else:
-                        flash('You can appload txt, pdf, png, jpg, jpeg, gif extensions')
+                        flash(f'You can appload only png, jpg or jpeg extensions. The file {image} is not available')
             else:
                 flash('You have not choose any images')
             
@@ -83,6 +87,63 @@ def create_product():
 @pr.route('/edit_product/<id>', methods=['GET', 'POST'])
 def edit_product(id):
     session.pop('_flashes', None)
-    form = CreateProductForm()
+    product = Product.query.get(id)
+    data = {
+        'form': CreateProductForm(),
+        'product': product,
+        'categories': ProductCategory.query.all()
+    }
+    if request.method == 'POST':
+        product.name = request.form.get('name')
+        product.description = request.form.get('description')
+        product.price = request.form.get('price')
+        product.quantity = request.form.get('quantity')
 
-    return render_template('products/edit_product.html', form=form)
+        categories = [ProductCategory.query.filter_by(name=category).first() for category in request.form.getlist('category')]
+        product.product_category = categories
+        print(categories)
+
+        images = request.files.getlist('images')
+        new_images = []
+        for image in images:
+            if image.filename != '':
+                if allowed_extension(image.filename):
+                    path = os.path.join(
+                        UPLOAD_FOLDER, 
+                        'img/user_inputs/products/', 
+                        secure_filename(image.filename)
+                        ) 
+                    image.save(os.path.join(path))
+                    product_image = Image(
+                        path=os.path.join('img/user_inputs/products/', 
+                        secure_filename(image.filename))
+                        )
+                    db.session.add(product_image)
+                    new_images.append(product_image)
+                else:
+                    flash(f'You can appload only png, jpg or jpeg extensions. The file {image} is not available')
+        if new_images:
+            product.images = []
+            product.images.extend(new_images)
+        db.session.add(product)
+        db.session.commit()
+        return redirect(url_for('product_page', id=id))
+    return render_template('products/edit_product.html', **data)
+
+
+@pr.route('/like_product', methods=['GET', 'PUT'])
+def like_product():
+    if request.method == 'PUT':
+        current_user.like_product(request.form.get('id'))
+        return ('', 204)
+
+
+@pr.route('/delete_product/<id>', methods=['GET', 'POST', 'DELETE'])
+def delete_product(id):
+    Product.query.get(id).delete()
+    return redirect(url_for('product_page', id=id))
+
+
+@pr.route('/card', methods=['GET', 'POST'])
+def card(id=None):
+    return render_template('products/checkout-page.html')

@@ -1,3 +1,4 @@
+from crypt import methods
 import os
 import sys
 import pycountry
@@ -240,4 +241,16 @@ def login():
 @bp.route('/logout', methods=('GET', ))
 def logout():
     logout_user()
+    return redirect(url_for('home'))
+
+
+@bp.route('/delete_customer/<id>', methods=['GET', 'POST', 'DELETE'])
+def delete_customer(id):
+    Customer.query.get(id).delete()
+    return redirect(url_for('home'))
+
+
+@bp.route('/delete_seller/<id>', methods=['GET', 'POST', 'DELETE'])
+def delete_seller(id):
+    Seller.query.get(id).delete()
     return redirect(url_for('home'))

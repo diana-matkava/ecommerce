@@ -60,14 +60,20 @@
       <div class="p-4">
         <div class="mb-3">
           {% for category in product.product_category %}
-          <a href="#">
+          <a href="{{url_for('home', id=category.id)}}">
             <span class="badge badge-pill badge-info mr-3">{{category.name}}</span>
           </a>
           {% endfor %}
         </div>
-
+        
         <p class="lead"><span>Price: {{product.price}}$</span></p>
         <p><span>Quantity: {{product.quantity}}</span></p>
+        <div>
+          <p style="color:rgb(242, 74, 74)" class="mb-0">
+            <button class="btn btn-link p-0" onclick="likeProduct({{product.id}})"><i class="fa fa-heart" style="color: {%if product in current_user.liked_products%} red {%else%} rgb(126, 126, 126) {%endif%};"></i></button>
+            <span style="font-size: smaller;">{{product.like}} likes</span>
+          </p>
+        </div>
         <p class="lead font-weight-bold">Description</p>
         <p>{{product.description|truncate(200, True)}}</p>
         

@@ -5,11 +5,22 @@ import sqlalchemy.types as types
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from ecommerce.extentions import db
+from ecommerce.products.models import Product
 
 
 categories = db.Table('categories', db.Model.metadata,
     Column('category_id', Integer, ForeignKey('category.id'), primary_key=True),
     Column('seller_id', Integer, ForeignKey('seller.id'), primary_key=True)
+)
+
+seller_likes = db.Table('seller_likes', db.Model.metadata, 
+    Column('product_id', Integer, ForeignKey('product.id'), primary_key=True),
+    Column('seller_id', Integer, ForeignKey('seller.id'), primary_key=True)
+)
+
+customer_likes = db.Table('customer_likes', db.Model.metadata, 
+    Column('product_id', Integer, ForeignKey('product.id'), primary_key=True),
+    Column('customer_id', Integer, ForeignKey('customer.id'), primary_key=True)
 )
 
 
@@ -22,14 +33,31 @@ class User(UserMixin):
     password = Column(String(125), nullable=False)
     role = Column(Integer, nullable=False, default=R_CUSTOMER)
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def like_product(self, id):
+        product = Product.query.get(id)
+        if product not in self.liked_products:
+            self.liked_products.extend([product])
+            product.like += 1
+        else:
+            self.liked_products.remove(product)
+            product.like -= 1
+        db.session.add(product)
+        db.session.commit()
+
 
 class Customer(User, db.Model):
     username = Column(String(50), nullable=False)
     avatar = Column(Integer, ForeignKey('customer_avatar.id'))
+    liked_products = relationship('Product', secondary=customer_likes, 
+        backref=db.backref('customer', lazy=True))
 
     def __repr__(self):
         return f'{self.username}'
-
+    
 
 class Seller(User, db.Model):
     first_name = Column(String(50))
@@ -43,8 +71,9 @@ class Seller(User, db.Model):
     busines_type = relationship("Type", backref="busines_type", lazy=True)
     phone = Column(PhoneNumberType(), nullable=False)
     logo = Column(Integer, ForeignKey('company_logo.id'), nullable=True)
-
-
+    liked_products = relationship('Product', secondary=seller_likes, 
+        backref=db.backref('seller', lazy=True))
+    
     def __repr__(self):
         return f'{self.company_name}'
 

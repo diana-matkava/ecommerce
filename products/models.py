@@ -1,3 +1,4 @@
+from ast import For
 import datetime
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime
 from sqlalchemy.orm import relationship
@@ -13,6 +14,10 @@ product_categories = db.Table('product_categories', db.Model.metadata,
     Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
 )
 
+
+cards = db.Table('cards', db.Model.metadata, 
+    Column('card_id', Integer, ForeignKey('card.id'), primary_key=True),
+    Column('product_id', Integer, ForeignKey('product.id'), primary_key=True))
 
 class Product(db.Model):
     id = Column(Integer(), primary_key=True)
@@ -35,6 +40,21 @@ class Product(db.Model):
 
     def __repr__(self):
         return f'{self.name}'
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+class Card(db.Model):
+    __tablename__ = 'card'
+
+    id = Column(Integer(), primary_key=True)
+    products = relationship('Product', secondary=cards, lazy='subquery',
+                backref=db.backref('card', lazy=True))
+    customer = Column(String(225), nullable=False)
+    price = Column(Integer())
+    promo = Column(Integer())
 
 
 class Image(db.Model):

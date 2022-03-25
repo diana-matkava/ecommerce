@@ -42,3 +42,10 @@ img {
 .fab-big {
     font-size: 34px;
 }
+
+.like {
+    color: rgb(126, 126, 126);
+}
+.like:focus {
+    color:red;    
+}

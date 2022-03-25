@@ -117,9 +117,9 @@
               </ul>
           </ul>
 
-        <form class="form-inline">
+        <form class="form-inline" method="POST">
           <div class="md-form my-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search">
           </div>
         </form>
       </div>
@@ -143,18 +143,27 @@
           <a href="{{url_for('product_page', id=product.id)}}" class="grey-text">
             <h5>{{product}}</h5>
           </a>
-          <h5>
+
+          <h4 class="font-weight-bold">
+            <strong>${{product.price}}</strong>
+          </h4>
+
+          <p>
             <strong>
-              <a href="" class="dark-grey-text">{{product.category}}
+              <a href="{{url_for('home', id=product.product_category[0].id)}}" class="dark-grey-text">{{product.category}}
                 <span class="badge badge-pill badge-primary">{{product.product_category[0]}}</span>
                 {% if (time - product.created).days <= 7 %}<span class="badge badge-pill danger-color">NEW</span>{% endif %}
               </a>
             </strong>
-          </h5>
+          </p>
 
-          <h4 class="font-weight-bold blue-text">
-            <strong>{{product.price}}$</strong>
-          </h4>
+          <div>
+            <p style="color:rgb(242, 74, 74)" class="mb-0">
+              <button class="btn btn-link p-0" onclick="likeProduct({{product.id}})"><i class="fa fa-heart" style="color: {%if product in current_user.liked_products%} red {%else%} rgb(126, 126, 126) {%endif%};"></i></button>
+              <span style="font-size: smaller;">{{product.like}} likes</span>
+            </p>
+          </div>
+          
 
         </div>
       </div>

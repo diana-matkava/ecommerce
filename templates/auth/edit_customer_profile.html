@@ -66,6 +66,9 @@
                     <div class=" d-flex mt-2"> 
                         <a class="btn btn-light" href="{{ url_for('auth.edit_customer_profile') }}">Back</a> 
                     </div>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter">
+                        Delete
+                      </button>
                 </div>
                 
             </form>
@@ -87,4 +90,25 @@
         </div>
     </div>
 </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Delete Profile</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you really sure that you want to delete your account immediately and irrevocably?
+        </div>
+        <div class="modal-footer">
+          <a href="{{url_for('auth.delete_customer', id=user.id)}}" class="btn btn-danger">Delete</a>
+          <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {%endblock%}
