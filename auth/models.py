@@ -32,9 +32,14 @@ class User(UserMixin):
     email = Column(String(125), unique=True, nullable=False)
     password = Column(String(125), nullable=False)
     role = Column(Integer, nullable=False, default=R_CUSTOMER)
+    card_id = Column(Integer, nullable=True)
 
     def delete(self):
         db.session.delete(self)
+        db.session.commit()
+
+    def save(self):
+        db.session.add(self)
         db.session.commit()
 
     def like_product(self, id):

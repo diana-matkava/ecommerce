@@ -1,6 +1,7 @@
 from crypt import methods
 import datetime
 import os
+from shutil import ExecError
 import sys
 from unicodedata import category
 from .models import Product
@@ -11,7 +12,7 @@ from ecommerce.extentions import db
 from ecommerce.settings import UPLOAD_FOLDER
 from ecommerce.utils import allowed_extension
 from ecommerce.products.forms import CreateProductForm
-from ecommerce.products.models import Product, ProductCategory, Image
+from ecommerce.products.models import Product, ProductCategory, Image, Card, Order
 from ecommerce.auth.models import Seller, Customer
 
 
@@ -36,7 +37,61 @@ def home(id=None):
 
 @pr.route('/product/<id>', methods=['GET', 'POST'])
 def product_page(id):
+    session.pop('_flashes', None)
     product = Product.query.get(id)
+
+    if request.method == 'POST':
+        user = Seller.query.filter_by(email=current_user.email)[0] if \
+            Seller.query.filter_by(email=current_user.email)[0] else \
+            Customer.query.filter_by(email=current_user.email)[0] 
+
+        def create_order(product, quantity):
+            order = Order(
+                product=product,
+                quantity=quantity
+                )
+            order.save()
+            return order
+
+        try:
+            if not user.card_id:
+                create_order(product.id, request.form.get('quantity'))
+
+                card = Card(
+                    customer=user.email
+                )
+                card.product_order.extend([order])
+                
+                card.save()
+                user.card_id = card.id
+                db.session.add(user)
+                db.session.commit()
+            else:
+                
+                card = Card.query.filter_by(customer=user.email)[0]
+                # product_list = [i.product for i in card.product_order]
+                # if product.id in product_list:
+                #     order.quantity += int(request.form.get('quantity'))
+                #     order.save()
+
+                if card.product_order:
+                    num = 0
+                    for order in card.product_order:
+                        if product == order.product_obj:
+                            order.quantity += int(request.form.get('quantity'))
+                            order.save()
+                            num = 1
+                    if not num:
+                        order = create_order(product.id, request.form.get('quantity'))
+                        card.product_order.extend([order])
+                else:
+                    order = create_order(product.id, request.form.get('quantity'))
+                    card.product_order.extend([order])
+                card.save()
+
+            flash(f"Product {product.name} was added to card", 'success')
+        except Exception as _ex:
+            flash(f'{_ex}')
     return render_template('products/product-page.html', product=product)
 
 
@@ -56,7 +111,7 @@ def create_product():
             product.product_category.extend([ProductCategory.query.get(category) for category in form.category.data])
 
             images = request.files.getlist('image')
-            print(images, file=sys.stdout)
+            
             if images:
                 for image in images:
                     if allowed_extension(image.filename):
@@ -101,7 +156,6 @@ def edit_product(id):
 
         categories = [ProductCategory.query.filter_by(name=category).first() for category in request.form.getlist('category')]
         product.product_category = categories
-        print(categories)
 
         images = request.files.getlist('images')
         new_images = []
@@ -146,4 +200,13 @@ def delete_product(id):
 
 @pr.route('/card', methods=['GET', 'POST'])
 def card(id=None):
-    return render_template('products/checkout-page.html')
+    data = {
+        'card': None
+    }
+    if current_user.card_id:
+        card = Card.query.get(current_user.card_id)
+        data = {
+            'card': card,
+        }
+        print(card.get_quantity())
+    return render_template('products/card.html', **data)

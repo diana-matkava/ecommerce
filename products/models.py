@@ -14,10 +14,10 @@ product_categories = db.Table('product_categories', db.Model.metadata,
     Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
 )
 
-
-cards = db.Table('cards', db.Model.metadata, 
+orders = db.Table('orders', db.Model.metadata, 
     Column('card_id', Integer, ForeignKey('card.id'), primary_key=True),
-    Column('product_id', Integer, ForeignKey('product.id'), primary_key=True))
+    Column('order_id', Integer, ForeignKey('order.id'), primary_key=True))
+
 
 class Product(db.Model):
     id = Column(Integer(), primary_key=True)
@@ -50,11 +50,38 @@ class Card(db.Model):
     __tablename__ = 'card'
 
     id = Column(Integer(), primary_key=True)
-    products = relationship('Product', secondary=cards, lazy='subquery',
+    product_order = relationship('Order', secondary=orders, lazy='subquery',
                 backref=db.backref('card', lazy=True))
     customer = Column(String(225), nullable=False)
-    price = Column(Integer())
     promo = Column(Integer())
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def get_quantity(self):
+        quantity = 0
+        for order in self.product_order:
+            quantity += order.quantity
+        return quantity
+
+    def get_total_price(self):
+        price = 0
+        for order in self.product_order:
+            price += order.product_obj.price * order.quantity
+        return price
+
+
+class Order(db.Model):
+    __tablename__ = 'order'
+    id = Column(Integer(), primary_key=True)
+    product = Column(Integer(), ForeignKey('product.id'), nullable=True)
+    product_obj = db.relationship("Product", backref=db.backref("product", uselist=False))
+    quantity = Column(Integer, nullable=False)
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
 
 class Image(db.Model):

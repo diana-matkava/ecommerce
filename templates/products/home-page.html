@@ -45,7 +45,7 @@
         
         <div class="carousel-item {% if loop.first %}active{%endif%}">
           <div class="view"
-                style="background-image: url({{url_for('static', filename=product.images[0].path)}}); background-repeat: no-repeat; background-size: cover;">
+                style="background-image: url({{url_for('static', filename=product.images[0].path)}}); background-size: 33%; background-position: center;">
             <div class="mask rgba-black-strong d-flex justify-content-center align-items-center"> 
               <div class="text-center white-text mx-5 wow fadeIn">
 
@@ -56,8 +56,7 @@
                 <p class="mb-4 d-none d-md-block" style="max-width: 700px;">
                   <strong>{{product.description|truncate(200, True)}}</strong>
                 </p>
-
-                <a href="#" class="btn btn-outline-white btn-lg">Add to Cart <i class="fas fa-shopping-cart"></i></a>
+                
                 <a href="{{url_for('product_page', id=product.id)}}" class="btn btn-outline-white btn-lg">Product Page</a>
 
               </div>
@@ -94,7 +93,7 @@
           <li class="nav-item active">
             <a class="nav-link" href="{{url_for('home')}}">All</a>
           </li>
-
+          {%if categories%}
           {% for category in categories[:4] %}
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('home', id=category.id)}}">{{category}}</a>
@@ -116,6 +115,7 @@
                 </div>
               </ul>
           </ul>
+          {%endif%}
 
         <form class="form-inline" method="POST">
           <div class="md-form my-0">
@@ -131,27 +131,25 @@
 
   {% for product in products%}
     <div class="col-lg-3 col-md-6 mb-4">
-      <div class="card" style="height: 275px">
+      <div class="card" style="height: 350px">
         <div class="view overlay">
           <img src="{{ url_for('static', filename=product.images[0].path)}}"
-             class="card-img-top" alt="Image"  style="height: 135px">
+             class="card-img-top" alt="Image"  style="height: 225px;">
           <a href="{{url_for('product_page', id=product.id)}}">
             <div class="mask rgba-white-slight"></div>
           </a>
         </div>
         <div class="card-body text-center">
-          <a href="{{url_for('product_page', id=product.id)}}" class="grey-text">
-            <h5>{{product}}</h5>
+          <a href="{{url_for('product_page', id=product.id)}}">
+            <p style="font-size: {%if product.name|length< 15%}large{%else%}smaller{%endif%}; color: black;">{{product.name|truncate(23, True)}}<span class="grey-text" style="margin-left: 20px; font-size: 18px;"><strong>${{product.price}}</strong></span></p>
           </a>
-
-          <h4 class="font-weight-bold">
-            <strong>${{product.price}}</strong>
-          </h4>
 
           <p>
             <strong>
+              {%if product.product_category%}
               <a href="{{url_for('home', id=product.product_category[0].id)}}" class="dark-grey-text">{{product.category}}
                 <span class="badge badge-pill badge-primary">{{product.product_category[0]}}</span>
+              {%endif%}
                 {% if (time - product.created).days <= 7 %}<span class="badge badge-pill danger-color">NEW</span>{% endif %}
               </a>
             </strong>
@@ -159,8 +157,10 @@
 
           <div>
             <p style="color:rgb(242, 74, 74)" class="mb-0">
-              <button class="btn btn-link p-0" onclick="likeProduct({{product.id}})"><i class="fa fa-heart" style="color: {%if product in current_user.liked_products%} red {%else%} rgb(126, 126, 126) {%endif%};"></i></button>
-              <span style="font-size: smaller;">{{product.like}} likes</span>
+              <button class="btn btn-link p-0" {% if current_user.is_authenticated %} onclick="likeProduct({{product.id}})"{% else %} data-toggle="modal" data-target="#exampleModal"{%endif%}>
+                <i class="fa fa-heart"  id="like{{product.id}}"  style="color: {%if product in current_user.liked_products%} red {%else%} grey {%endif%};"></i>
+              </button>
+              <span style="font-size: smaller;"  id="like_num{{product.id}}">{{product.like}}</span><span style="font-size: smaller;"> likes</span> 
             </p>
           </div>
           
@@ -177,4 +177,25 @@
 
     </div>
   </main>
+
+<!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Log In</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Please Log In to provide some activities
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-black" data-dismiss="modal">Back</button>
+          <a href='{{url_for("auth.login")}}' class="btn btn-light">Log In</a>
+        </div>
+      </div>
+    </div>
+  </div>
 {%endblock%}

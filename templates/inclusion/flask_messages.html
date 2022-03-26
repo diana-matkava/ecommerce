@@ -1,0 +1,8 @@
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    {% for message in messages %}
+        <h5 style="border: 1px solid rgb(137, 137, 221); color: rgb(137, 137, 221); border-radius: 15px; padding: 10px; margin-bottom: -40px;">{{ message }}</h5>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+
