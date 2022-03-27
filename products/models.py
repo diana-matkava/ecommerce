@@ -45,6 +45,10 @@ class Product(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
 
 class Card(db.Model):
     __tablename__ = 'card'

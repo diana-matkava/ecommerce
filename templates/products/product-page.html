@@ -88,9 +88,16 @@
         <button onclick="myFunction()" class="btn btn-link mb-4 p-0" style="color:blue">Show</button>
 
         <form class="d-flex justify-content-left" method="POST">
+
           <input type="number" value="1" aria-label="Search" class="form-control" style="width: 100px" name="quantity">
+          {% if current_user.is_authenticated %}
           <button class="btn btn-primary btn-md my-0 p">Add to cart
             <i class="fas fa-shopping-cart ml-1"></i></button>
+            {%else%}
+            <a class="btn btn-primary btn-md my-0 p" data-toggle="modal" data-target="#exampleModal">Add to cart
+              <i class="fas fa-shopping-cart ml-1"></i></a>
+          </a>
+            {% endif %}
         </form>
         {% if current_user.email == product.owner %}
         <div class="mt-5">

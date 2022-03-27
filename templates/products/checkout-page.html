@@ -2,88 +2,59 @@
 
 {% block title %}Card{% endblock %}
 
+{% block extrastyle %}
+<style>
+  body .field-wrapper {
+      padding: 0%;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-  <!--Main layout-->
   <main class="mt-5 pt-4">
     <div class="container wow fadeIn">
+      <h2 class="my-5 h2 text-center">Make Payment</h2>
 
-      <!-- Heading -->
-      <h2 class="my-5 h2 text-center">Checkout form</h2>
-
-      <!--Grid row-->
       <div class="row">
 
-        <!--Grid column-->
         <div class="col-md-8 mb-4">
-
-          <!--Card-->
           <div class="card">
+            <form class="card-body" novalidate>
 
-            <!--Card content-->
-            <form class="card-body">
-
-              <!--Grid row-->
               <div class="row">
 
-                <!--Grid column-->
                 <div class="col-md-6 mb-2">
-
-                  <!--firstName-->
-                  <div class="md-form ">
-                    <input type="text" id="firstName" class="form-control">
-                    <label for="firstName" class="">First name</label>
+                  <div class="md-form input-group pl-0 mb-5">
+                    <input type="text" class="form-control py-0" placeholder="First name" aria-describedby="basic-addon1">
                   </div>
-
                 </div>
-                <!--Grid column-->
 
-                <!--Grid column-->
                 <div class="col-md-6 mb-2">
-
-                  <!--lastName-->
-                  <div class="md-form">
-                    <input type="text" id="lastName" class="form-control">
-                    <label for="lastName" class="">Last name</label>
+                  <div class="md-form input-group pl-0 mb-5">
+                    <input type="text" class="form-control py-0" placeholder="Last name" aria-describedby="basic-addon1">
                   </div>
-
                 </div>
-                <!--Grid column-->
 
               </div>
-              <!--Grid row-->
 
-              <!--Username-->
+              
               <div class="md-form input-group pl-0 mb-5">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="basic-addon1">@</span>
                 </div>
-                <input type="text" class="form-control py-0" placeholder="Username" aria-describedby="basic-addon1">
+                <input type="text" class="form-control py-0" placeholder="Email" aria-describedby="basic-addon1">
               </div>
 
-              <!--email-->
-              <div class="md-form mb-5">
-                <input type="text" id="email" class="form-control" placeholder="youremail@example.com">
-                <label for="email" class="">Email (optional)</label>
-              </div>
-
-              <!--address-->
+              
               <div class="md-form mb-5">
                 <input type="text" id="address" class="form-control" placeholder="1234 Main St">
                 <label for="address" class="">Address</label>
               </div>
-
-              <!--address-2-->
-              <div class="md-form mb-5">
-                <input type="text" id="address-2" class="form-control" placeholder="Apartment or suite">
-                <label for="address-2" class="">Address 2 (optional)</label>
-              </div>
-
-              <!--Grid row-->
+              
+              
               <div class="row">
 
-                <!--Grid column-->
-                <div class="col-lg-4 col-md-12 mb-4">
-
+                <div class="col-lg-6 col-md-12 mb-4">
                   <label for="country">Country</label>
                   <select class="custom-select d-block w-100" id="country" required>
                     <option value="">Choose...</option>
@@ -92,143 +63,49 @@
                   <div class="invalid-feedback">
                     Please select a valid country.
                   </div>
-
                 </div>
-                <!--Grid column-->
-
-                <!--Grid column-->
-                <div class="col-lg-4 col-md-6 mb-4">
-
-                  <label for="state">State</label>
-                  <select class="custom-select d-block w-100" id="state" required>
-                    <option value="">Choose...</option>
-                    <option>California</option>
-                  </select>
-                  <div class="invalid-feedback">
-                    Please provide a valid state.
-                  </div>
-
-                </div>
-                <!--Grid column-->
-
-                <!--Grid column-->
-                <div class="col-lg-4 col-md-6 mb-4">
-
+                
+                <div class="col-lg-6 col-md-6 mb-4">
                   <label for="zip">Zip</label>
                   <input type="text" class="form-control" id="zip" placeholder="" required>
                   <div class="invalid-feedback">
                     Zip code required.
                   </div>
-
                 </div>
-                <!--Grid column-->
-
-              </div>
-              <!--Grid row-->
-
-              <hr>
-
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="same-address">
-                <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
-              </div>
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="save-info">
-                <label class="custom-control-label" for="save-info">Save this information for next time</label>
+                
               </div>
 
-              <hr>
-
-              <div class="d-block my-3">
-                <div class="custom-control custom-radio">
-                  <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-                  <label class="custom-control-label" for="credit">Credit card</label>
-                </div>
-                <div class="custom-control custom-radio">
-                  <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-                  <label class="custom-control-label" for="debit">Debit card</label>
-                </div>
-                <div class="custom-control custom-radio">
-                  <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" required>
-                  <label class="custom-control-label" for="paypal">Paypal</label>
-                </div>
+              <div id="card-element" style="padding-left: 25px;"> 
+                <!-- A TCO IFRAME will be inserted here. -->
               </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="cc-name">Name on card</label>
-                  <input type="text" class="form-control" id="cc-name" placeholder="" required>
-                  <small class="text-muted">Full name as displayed on card</small>
-                  <div class="invalid-feedback">
-                    Name on card is required
-                  </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="cc-number">Credit card number</label>
-                  <input type="text" class="form-control" id="cc-number" placeholder="" required>
-                  <div class="invalid-feedback">
-                    Credit card number is required
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-3 mb-3">
-                  <label for="cc-expiration">Expiration</label>
-                  <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
-                  <div class="invalid-feedback">
-                    Expiration date required
-                  </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                  <label for="cc-expiration">CVV</label>
-                  <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
-                  <div class="invalid-feedback">
-                    Security code required
-                  </div>
-                </div>
-              </div>
+              
               <hr class="mb-4">
-              <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+              <button class="btn btn-primary btn-lg btn-block" type="submit">Pay</button>
 
             </form>
-
           </div>
-          <!--/.Card-->
-
         </div>
-        <!--Grid column-->
-
-        <!--Grid column-->
+        
         <div class="col-md-4 mb-4">
-
-          <!-- Heading -->
           <h4 class="d-flex justify-content-between align-items-center mb-3">
             <span class="text-muted">Your cart</span>
-            <span class="badge badge-secondary badge-pill">3</span>
+            <span class="badge badge-primary badge-pill">{{cart.get_quantity()}}</span>
           </h4>
 
-          <!-- Cart -->
+          
           <ul class="list-group mb-3 z-depth-1">
+            {% for order in cart.product_order %}
             <li class="list-group-item d-flex justify-content-between lh-condensed">
               <div>
-                <h6 class="my-0">Product name</h6>
-                <small class="text-muted">Brief description</small>
+                <h6 class="my-0">{{order.product_obj.name}}</h6>
+                <small class="text-muted">{{order.product_obj.description|truncate(35, true)}}</small>
               </div>
-              <span class="text-muted">$12</span>
+              <span class="text-muted">{{order.product_obj.quantity}} x {{order.product_obj.price}}</span>
             </li>
-            <li class="list-group-item d-flex justify-content-between lh-condensed">
-              <div>
-                <h6 class="my-0">Second product</h6>
-                <small class="text-muted">Brief description</small>
-              </div>
-              <span class="text-muted">$8</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between lh-condensed">
-              <div>
-                <h6 class="my-0">Third item</h6>
-                <small class="text-muted">Brief description</small>
-              </div>
-              <span class="text-muted">$5</span>
-            </li>
+            {% endfor %}
+            
+
+            <!-- if prom applied -->
             <li class="list-group-item d-flex justify-content-between bg-light">
               <div class="text-success">
                 <h6 class="my-0">Promo code</h6>
@@ -236,32 +113,73 @@
               </div>
               <span class="text-success">-$5</span>
             </li>
+
             <li class="list-group-item d-flex justify-content-between">
               <span>Total (USD)</span>
-              <strong>$20</strong>
+              <strong>{{cart.get_total_price()}}</strong>
             </li>
           </ul>
-          <!-- Cart -->
-
-          <!-- Promo code -->
+          
           <form class="card p-2">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Promo code" aria-label="Recipient's username" aria-describedby="basic-addon2">
               <div class="input-group-append">
-                <button class="btn btn-secondary btn-md waves-effect m-0" type="button">Redeem</button>
+                <button class="btn btn-primary btn-md waves-effect m-0" type="button">Redeem</button>
               </div>
             </div>
           </form>
-          <!-- Promo code -->
-
         </div>
-        <!--Grid column-->
-
       </div>
-      <!--Grid row-->
-
     </div>
   </main>
-  <!--Main layout-->
 
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="https://2pay-js.2checkout.com/v1/2pay.js"></script>
+<script>
+  window.addEventListener('load', function() {
+  // Initialize the 2Pay.js client.
+  let jsPaymentClient = new TwoPayClient('AVLRNG');
+
+  // Create the component that will hold the card fields.
+  let component = jsPaymentClient.components.create('card');
+
+  // Mount the card fields component in the desired HTML tag. This is where the iframe will be located.
+  component.mount('#card-element');
+
+  // Handle form submission.
+  document.getElementById('payment-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    // Extract the Name field value
+    const billingDetails = {
+      name: document.querySelector('#name').value
+    };
+
+    // Call the generate method using the component as the first parameter
+    // and the billing details as the second one
+    jsPaymentClient.tokens.generate(component, billingDetails).then((response) => {
+      console.log(response.token);
+
+      jQuery.ajax(
+        {
+            'url': '/subscription/api/23/',
+            'type': 'POST',
+            'contentType': 'application/json; charset=UTF-8',
+            'data': JSON.stringify({'content':response.token}),
+            'dataType': 'json',
+            'success': function ( return_data ) {
+
+                                //success body
+
+                              }
+        }
+);
+    }).catch((error) => {
+      console.error(error);
+    });
+  });
+});
+</script>
 {% endblock %}

@@ -36,9 +36,9 @@
 
             <!-- Right -->
             <ul class="navbar-nav nav-flex-icons">
+                
                 <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{{url_for('card')}}">
-                        <span class="badge red z-depth-1 mr-1"> 1 </span>
+                    <a class="nav-link waves-effect" {% if not current_user.is_authenticated %} data-toggle="modal" data-target="#exampleModal"{%endif%} href="{% if current_user.is_authenticated %}{{url_for('card')}}{% endif %}">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="clearfix d-none d-sm-inline-block"> Cart </span>
                     </a>

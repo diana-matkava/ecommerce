@@ -50,7 +50,9 @@ def product_page(id):
                 product=product,
                 quantity=quantity
                 )
+            product.quantity -= int(quantity)
             order.save()
+            product.save()
             return order
 
         try:
@@ -69,16 +71,14 @@ def product_page(id):
             else:
                 
                 card = Card.query.filter_by(customer=user.email)[0]
-                # product_list = [i.product for i in card.product_order]
-                # if product.id in product_list:
-                #     order.quantity += int(request.form.get('quantity'))
-                #     order.save()
 
                 if card.product_order:
                     num = 0
                     for order in card.product_order:
                         if product == order.product_obj:
                             order.quantity += int(request.form.get('quantity'))
+                            product.quantity -= int(request.form.get('quantity'))
+                            product.save()
                             order.save()
                             num = 1
                     if not num:
@@ -210,3 +210,12 @@ def card(id=None):
         }
         print(card.get_quantity())
     return render_template('products/card.html', **data)
+
+
+@pr.route('/checkout/<cart_id>', methods=['GET', 'POST'])
+def checkout(cart_id):
+    cart = Card.query.get(cart_id)
+    data = {
+        'cart': cart
+    }
+    return render_template('products/checkout-page.html', **data)

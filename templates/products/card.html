@@ -41,7 +41,7 @@
       {% if card.product_order %}
       <li class="list-group-item d-flex justify-content-between">
         <span>Total (USD):  <strong>{{card.get_total_price()}}</strong></span>
-        <a href="#" class="btn btn-primary btn-md waves-effect m-0" type="button">Buy</a>
+        <a href="{{url_for('checkout', cart_id=card.id)}}" class="btn btn-primary btn-md waves-effect m-0" type="button">Buy</a>
       </li>
       {% endif %}
     </ul>
