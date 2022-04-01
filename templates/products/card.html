@@ -15,13 +15,18 @@
     <!-- Heading -->
     <h4 class="d-flex justify-content-between align-items-center mb-3 mt-5">
       <span class="text-muted">Your cart</span>
-      <span class="badge badge-primary badge-pill">{{card.get_quantity()}}</span>
+      <div>
+        <span class="badge badge-primary badge-pill">{{card.get_quantity()}}</span>
+        <span class="badge badge-warning badge-pill">></span>
+        <span class="badge badge-danger badge-pill">x</span>
+      </div>
+      
     </h4>
 
     <!-- Cart -->
     <ul class="list-group mb-3 z-depth-1">
         {% for order in card.product_order %}
-      <li class="list-group-item d-flex justify-content-between lh-condensed">
+      <li class="d-flex justify-content-between lh-condensed p-3" style="border-bottom: 1px solid rgb(224, 221, 221);">
           <div class="row">
             <div class="col-3">
                 <a href="{{url_for('product_page', id=order.product)}}">
@@ -29,17 +34,28 @@
                 </a>
             </div>
             <div class="col-9" style="max-width: 500px;">
-                <h4 class="my-0">{{order.product_obj}}</h4>
+                <h4 class="my-0">{{order.product_obj.name}}</h4>
                 <small class="text-muted">{{order.product_obj.description|truncate(125, true) }}</small>
             </div>
           </div>
           
-        <span class="text-muted">{{order.quantity}} </span><span class="text-muted px-1" style="font-size: small;">  x  </span><span class="text-muted"> {{order.product_obj.price}}</span>
+          <span class="badge badge-warning badge-pill text-muted px-1" style="height: 15px; margin: 3px 5px 0 0;">-</span>
+          <span class="badge badge-success badge-pill text-muted px-1" style="height: 15px; margin: 3px 5px 0 0;">+</span>
+          <span class="text-muted">{{order.quantity}} </span>
+          <span class="text-muted px-1" style="font-size: small;">  x  </span>
+          <span class="text-muted"> {{order.product_obj.price}}</span>
+      </li>
+      <li class="justify-content-between lh-condensed p-3" style="list-style-type: none; margin: -80px 25px 0 0; ">
+        <p style="text-align: right;">
+          <!-- <span class="badge badge-danger badge-pill text-muted px-1" style="width: 25px;">x</span> -->
+          <span class="" style="color: red; font-size: 26px; font-weight: 200;">x</span>
+        </p>
+        
       </li>
       {% endfor %}
       
       {% if card.product_order %}
-      <li class="list-group-item d-flex justify-content-between">
+      <li class="d-flex justify-content-between p-3">
         <span>Total (USD):  <strong>{{card.get_total_price()}}</strong></span>
         <a href="{{url_for('checkout', cart_id=card.id)}}" class="btn btn-primary btn-md waves-effect m-0" type="button">Buy</a>
       </li>
@@ -49,6 +65,8 @@
 
   </div>
   <!--Grid column-->
+
+  {%else%}
 
   {% endif %}
 {% endblock %}

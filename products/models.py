@@ -38,8 +38,6 @@ class Product(db.Model):
     like = Column(Integer(), default=0, nullable=True)
     created = Column(DateTime(), default=datetime.datetime.now(), nullable=True)
 
-    def __repr__(self):
-        return f'{self.name}'
 
     def delete(self):
         db.session.delete(self)
@@ -60,8 +58,14 @@ class Card(db.Model):
     promo = Column(Integer())
 
     def save(self):
-        db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except Exception as _ex:
+            print(_ex)
+            db.session.rollback()
+        finally:
+            db.session.close
 
     def get_quantity(self):
         quantity = 0
@@ -84,8 +88,14 @@ class Order(db.Model):
     quantity = Column(Integer, nullable=False)
 
     def save(self):
-        db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except Exception as _ex:
+            print(_ex)
+            db.session.rollback()
+        finally:
+            db.session.close
 
 
 class Image(db.Model):

@@ -31,6 +31,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/registration_customer', methods=('GET', 'POST'), strict_slashes=False)
 def registrate_customer():
+    session.pop('_flashes', None)
     form = CustomerRegistrationForm()
     if form.validate_on_submit():
         try:
@@ -60,6 +61,7 @@ def registrate_customer():
 
 @bp.route('/registration_seller', methods=('GET', 'POST'))
 def registrate_seller():
+    session.pop('_flashes', None)
     form = SellerRegistrationForm()
     if form.validate_on_submit():
         try:
@@ -105,6 +107,7 @@ def profile():
 @login_required
 @bp.route('/edit_customer_profile', methods=('GET', 'POST', 'PUT'))
 def edit_customer_profile():
+    session.pop('_flashes', None)
     if request.method == 'POST':
         user = Customer.query.get(current_user.id)
         user.username = request.form.get('username') 
@@ -148,16 +151,15 @@ def edit_customer_profile():
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('auth.profile'))
-    user = Customer.query.get(9)
-    return render_template('auth/edit_customer_profile.html', user=user)
+    return render_template('auth/edit_customer_profile.html', user=current_user)
 
 
 @login_required
 @bp.route('/edit_seller_profile', methods=('GET', 'POST'))
 def edit_seller_profile():
-    user = Seller.query.get(current_user.id)
+    session.pop('_flashes', None)
     data = {
-        'user': user,
+        'user': current_user,
         'countries': pycountry.countries,
         'business_types': Type.query.all(),
         'categories': Category.query.all()
@@ -214,6 +216,7 @@ def edit_seller_profile():
 
 @bp.route('/login', methods=('GET', 'POST'), strict_slashes=False)
 def login():
+    session.pop('_flashes', None)
     form = LoginForm()
     if form.validate_on_submit():
         try:

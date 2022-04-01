@@ -39,39 +39,32 @@ def home(id=None):
 def product_page(id):
     session.pop('_flashes', None)
     product = Product.query.get(id)
-
+    
     if request.method == 'POST':
-        user = Seller.query.filter_by(email=current_user.email)[0] if \
-            Seller.query.filter_by(email=current_user.email)[0] else \
-            Customer.query.filter_by(email=current_user.email)[0] 
-
-        def create_order(product, quantity):
+        user = current_user
+        def create_order(quantity):
             order = Order(
-                product=product,
-                quantity=quantity
+                product=product.id,
+                quantity=int(quantity)
                 )
             product.quantity -= int(quantity)
-            order.save()
             product.save()
             return order
 
         try:
             if not user.card_id:
-                create_order(product.id, request.form.get('quantity'))
+                order = create_order(request.form.get('quantity'))
 
-                card = Card(
-                    customer=user.email
-                )
+                card = Card(customer=user.email)
                 card.product_order.extend([order])
-                
                 card.save()
+
                 user.card_id = card.id
                 db.session.add(user)
                 db.session.commit()
-            else:
                 
+            else:
                 card = Card.query.filter_by(customer=user.email)[0]
-
                 if card.product_order:
                     num = 0
                     for order in card.product_order:
@@ -82,14 +75,15 @@ def product_page(id):
                             order.save()
                             num = 1
                     if not num:
-                        order = create_order(product.id, request.form.get('quantity'))
+                        order = create_order(request.form.get('quantity'))
                         card.product_order.extend([order])
                 else:
-                    order = create_order(product.id, request.form.get('quantity'))
+                    order = create_order(request.form.get('quantity'))
                     card.product_order.extend([order])
+                    
                 card.save()
 
-            flash(f"Product {product.name} was added to card", 'success')
+            flash(f"Product {product.name} was added to card")
         except Exception as _ex:
             flash(f'{_ex}')
     return render_template('products/product-page.html', product=product)
@@ -203,12 +197,12 @@ def card(id=None):
     data = {
         'card': None
     }
+    print(current_user.card_id)
     if current_user.card_id:
         card = Card.query.get(current_user.card_id)
         data = {
             'card': card,
         }
-        print(card.get_quantity())
     return render_template('products/card.html', **data)
 
 
