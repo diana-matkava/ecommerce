@@ -1,3 +1,4 @@
+from ast import operator
 from crypt import methods
 import datetime
 import os
@@ -179,13 +180,6 @@ def edit_product(id):
     return render_template('products/edit_product.html', **data)
 
 
-@pr.route('/like_product', methods=['GET', 'PUT'])
-def like_product():
-    if request.method == 'PUT':
-        current_user.like_product(request.form.get('id'))
-        return ('', 204)
-
-
 @pr.route('/delete_product/<id>', methods=['GET', 'POST', 'DELETE'])
 def delete_product(id):
     Product.query.get(id).delete()
@@ -213,3 +207,31 @@ def checkout(cart_id):
         'cart': cart
     }
     return render_template('products/checkout-page.html', **data)
+
+
+@pr.route('/like_product', methods=['GET', 'PUT'])
+def like_product():
+    if request.method == 'PUT':
+        current_user.like_product(request.form.get('id'))
+        return ('', 204)
+
+
+@pr.route('/change_product_amount', methods=['POST'])
+def change_product_amount():
+    if request.method == 'POST':
+        order = Order.query.get(request.form.get('order_id'))
+        operator = request.form.get('operator')
+        if operator:
+            order.quantity += 1
+        else:
+            order.quantity -= 1
+        order.save()
+        return ('', 204)
+
+
+@pr.route('/delete_order', methods=['POST'])
+def delete_order():
+    if request.method == 'POST':
+        order = Order.query.get(request.form.get('order_id'))
+        order.delete()
+        return ('', 204)

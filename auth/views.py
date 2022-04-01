@@ -130,6 +130,23 @@ def edit_customer_profile():
                 avatar.save(os.path.join(path))
                 user.avatar = os.path.join('img/user_inputs/customer_avatar/', secure_filename(avatar.filename))
                 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
         current_pwd = request.form.get('password')
         if current_pwd:
             if check_password_hash(user.password, current_pwd):

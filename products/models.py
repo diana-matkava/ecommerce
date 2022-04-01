@@ -66,6 +66,10 @@ class Card(db.Model):
             db.session.rollback()
         finally:
             db.session.close
+    
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
     def get_quantity(self):
         quantity = 0
@@ -96,6 +100,10 @@ class Order(db.Model):
             db.session.rollback()
         finally:
             db.session.close
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
 
 class Image(db.Model):

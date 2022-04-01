@@ -4,7 +4,19 @@
 
 {% block extrastyle %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/products/card.scss')}}">
+<style>
+  .button {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+</style>
 {%endblock%}
+
 
 {% block content %}
 
@@ -16,8 +28,7 @@
     <h4 class="d-flex justify-content-between align-items-center mb-3 mt-5">
       <span class="text-muted">Your cart</span>
       <div>
-        <span class="badge badge-primary badge-pill">{{card.get_quantity()}}</span>
-        <span class="badge badge-warning badge-pill">></span>
+        <span id="total_amount" class="badge badge-primary badge-pill">{{card.get_quantity()}}</span>
         <span class="badge badge-danger badge-pill">x</span>
       </div>
       
@@ -26,37 +37,61 @@
     <!-- Cart -->
     <ul class="list-group mb-3 z-depth-1">
         {% for order in card.product_order %}
-      <li class="d-flex justify-content-between lh-condensed p-3" style="border-bottom: 1px solid rgb(224, 221, 221);">
+      <li id="order_block{{order.id}}" class="d-flex justify-content-between lh-condensed p-3" style="border-bottom: 1px solid rgb(224, 221, 221);">
           <div class="row">
             <div class="col-3">
                 <a href="{{url_for('product_page', id=order.product)}}">
                     <img style="max-width: 100%;" src="{{url_for('static', filename=order.product_obj.images[0].path)}}" alt="APE">
                 </a>
             </div>
-            <div class="col-9" style="max-width: 500px;">
+            <div class="col-9" style="max-width: 450px;">
                 <h4 class="my-0">{{order.product_obj.name}}</h4>
                 <small class="text-muted">{{order.product_obj.description|truncate(125, true) }}</small>
             </div>
           </div>
-          
-          <span class="badge badge-warning badge-pill text-muted px-1" style="height: 15px; margin: 3px 5px 0 0;">-</span>
-          <span class="badge badge-success badge-pill text-muted px-1" style="height: 15px; margin: 3px 5px 0 0;">+</span>
-          <span class="text-muted">{{order.quantity}} </span>
+          <a onclick="changeAmountOfProduct({{order.quantity}}, '-', {{order.id}})"  style="margin-right: 20px; width: 10px;">
+            <span id="add_product" class="badge badge-warning badge-pill">-</span>
+          </a>
+
+          <a onclick="changeAmountOfProduct({{order.quantity}}, '+', {{order.id}})"  style="margin-right: 20px;  width: 10px;">
+            <span id="add_product" class="badge badge-success badge-pill">+</span>
+          </a>
+          <span id="order{{order.id}}" class="text-muted">{{order.quantity}}</span>
           <span class="text-muted px-1" style="font-size: small;">  x  </span>
-          <span class="text-muted"> {{order.product_obj.price}}</span>
+          <span id="order_price{{order.id}}" class="text-muted"> {{order.product_obj.price}}</span>
       </li>
-      <li class="justify-content-between lh-condensed p-3" style="list-style-type: none; margin: -80px 25px 0 0; ">
-        <p style="text-align: right;">
+      <li id="order_edit_btn{{order.id}}" class="justify-content-between lh-condensed p-3" style="list-style-type: none; margin: -80px 25px 0 0;">
+        <a href='#' data-toggle="modal" data-target="#exampleModalCenter" style="text-align: right;">
           <!-- <span class="badge badge-danger badge-pill text-muted px-1" style="width: 25px;">x</span> -->
           <span class="" style="color: red; font-size: 26px; font-weight: 200;">x</span>
-        </p>
+        </a>
         
       </li>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Delete Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Are you really sure you want to delete this Product/s from your cart?
+              </div>
+              <div class="modal-footer">
+                <a onclick="deleteOrder({{order.id}})" class="btn btn-danger">Delete</a>
+                <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
       {% endfor %}
       
       {% if card.product_order %}
       <li class="d-flex justify-content-between p-3">
-        <span>Total (USD):  <strong>{{card.get_total_price()}}</strong></span>
+        <span>Total (USD):  <strong id="total_price">{{card.get_total_price()}}</strong></span>
         <a href="{{url_for('checkout', cart_id=card.id)}}" class="btn btn-primary btn-md waves-effect m-0" type="button">Buy</a>
       </li>
       {% endif %}
@@ -65,8 +100,7 @@
 
   </div>
   <!--Grid column-->
-
   {%else%}
 
-  {% endif %}
+{% endif %}
 {% endblock %}
