@@ -35,6 +35,7 @@ class Product(db.Model):
     )
 
     owner = Column(String(225), nullable=True)
+    owner_name = Column(String(225), nullable=True)
     like = Column(Integer(), default=0, nullable=True)
     created = Column(DateTime(), default=datetime.datetime.now(), nullable=True)
 

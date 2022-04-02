@@ -35,7 +35,7 @@
 
 {% if card %}
 <!--Grid column-->
-<div class="col-md-5 mx-auto my-auto">
+<div id="cart_block" class="col-md-5 mx-auto my-auto">
 
     <!-- Heading -->
     <h4 class="d-flex justify-content-between align-items-center mb-3 mt-5">
@@ -51,7 +51,7 @@
     </h4>
 
     <!-- Cart -->
-    <ul class="list-group mb-3 z-depth-1">
+    <ul id="ul_cart" class="list-group mb-3 z-depth-1">
         {% for order in card.product_order %}
       <li id="order_block{{order.id}}" class="justify-content-between lh-condensed p-3" style="border-bottom: 1px solid rgb(224, 221, 221); display: flex;">
           <div class="row">
@@ -65,11 +65,11 @@
                 <small class="text-muted">{{order.product_obj.description|truncate(125, true) }}</small>
             </div>
           </div>
-          <a onclick="changeAmountOfProduct({{order.quantity}}, '-', {{order.id}})"  style="margin-right: 20px; width: 10px;">
+          <a onclick="changeAmountOfProduct({{order.quantity}}, '-', {{order.id}}, {{card.id}})"  style="margin-right: 5px; padding-left: 10px;">
             <span id="add_product" class="badge badge-warning badge-pill">-</span>
           </a>
 
-          <a onclick="changeAmountOfProduct({{order.quantity}}, '+', {{order.id}})"  style="margin-right: 20px;  width: 10px;">
+          <a onclick="changeAmountOfProduct({{order.quantity}}, '+', {{order.id}}, {{card.id}})"  style="margin-right: 20px;  width: 10px;">
             <span id="add_product" class="badge badge-success badge-pill">+</span>
           </a>
           <span id="order{{order.id}}" class="text-muted">{{order.quantity}}</span>
@@ -94,7 +94,7 @@
                 Are you really sure you want to delete this Product/s from your cart?
               </div>
               <div class="modal-footer">
-                <a onclick="deleteOrder({{order.id}})" class="btn btn-danger"  data-dismiss="modal">Delete </a>
+                <a onclick="deleteOrder({{order.id}}, {{card.id}})" class="btn btn-danger"  data-dismiss="modal">Delete </a>
                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
               </div>
             </div>
@@ -134,14 +134,14 @@
 
   </div>
   <!--Grid column-->
-  {%else%}
-<div class="row">
+  {%endif%}
+<div id="empty_cart" {%if card %}style="display: none;"{%else%} class="row" {% endif %}>
   <div class="center-block">
     <div class="col-md-12 mx-auto center-block" style="margin-top: 30%;">
-      <i class="fas fa-shopping-cart" style="font-size: 1040%; margin-bottom: 30%; margin-left: 20px; color: rgb(191, 188, 188);"></i>
+      <i class="fas fa-shopping-cart" style="font-size: 1040%; margin-bottom: 30%; margin-left: 20px; color: rgb(191, 188, 188); text-shadow: 2px 3px rgb(167, 166, 166);"></i>
       <h2 style="color: rgb(191, 188, 188);">Your cart is empty</h2>
     </div>
   </div>
 </div>
-{% endif %}
+
 {% endblock %}

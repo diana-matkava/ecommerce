@@ -28,7 +28,7 @@ def home(id=None):
             else db.session.query(Product).filter(
                 Product.product_category.any(ProductCategory.id.in_([id]))),
         'time': datetime.datetime.now(),
-        'categories': ProductCategory.query.all()
+        'categories': ProductCategory.query.all(),
     }
     if request.method == 'POST':
         search = request.form['search']
@@ -55,6 +55,7 @@ def product_page(id):
         try:
             if not user.card_id:
                 order = create_order(request.form.get('quantity'))
+                order.save()
 
                 card = Card(customer=user.email)
                 card.product_order.extend([order])
@@ -101,7 +102,9 @@ def create_product():
                 description=form.description.data,
                 price=form.price.data,
                 quantity=form.quantity.data,
-                owner=current_user.email
+                owner=current_user.email,
+                # owner_name=current_user.name if current_user.name else \
+                #     current_user.company_name
             )
             product.product_category.extend([ProductCategory.query.get(category) for category in form.category.data])
 
@@ -219,12 +222,16 @@ def like_product():
 def change_product_amount():
     if request.method == 'POST':
         order = Order.query.get(request.form.get('order_id'))
+        product = Product.query.get(order.product)
         operator = request.form.get('operator')
-        if operator:
+        if operator == '+':
             order.quantity += 1
+            product.quantity -= 1
         else:
             order.quantity -= 1
+            product.quantity += 1
         order.save()
+        product.save()
         return ('', 204)
 
 
@@ -232,15 +239,25 @@ def change_product_amount():
 def delete_order():
     if request.method == 'POST':
         order = Order.query.get(request.form.get('order_id'))
+        product = Product.query.get(order.product)
+        product.quantity += order.quantity
         order.delete()
         return ('', 204)
 
 
+@pr.route('/delete_cart', methods=['POST'])
 @pr.route('/delete_cart/<cart_id>', methods=['GET'])
-def delete_cart(cart_id):
+def delete_cart(cart_id=None):
     print(cart_id)
+    if not cart_id:
+        if request.method == 'POST':
+            cart_id = request.form.get('cart_id')
     cart = Card.query.get(cart_id)
-    current_user.card_id = ''
+    for product in cart.product_order:
+        product.product_obj.quantity += product.quantity
+        db.session.add(product)
+    db.session.commit()
+    current_user.card_id = 0
     db.session.add(current_user)
     cart.delete()
     return redirect(url_for('card'))
