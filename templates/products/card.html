@@ -12,7 +12,20 @@
 	padding: 0;
 	font: inherit;
 	cursor: pointer;
-	outline: inherit;
+	outline: none;
+}
+.button:active{
+  outline: none;
+}
+
+.button:focus{
+  outline: none;
+}
+
+.center-block {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
 }
 </style>
 {%endblock%}
@@ -29,7 +42,10 @@
       <span class="text-muted">Your cart</span>
       <div>
         <span id="total_amount" class="badge badge-primary badge-pill">{{card.get_quantity()}}</span>
-        <span class="badge badge-danger badge-pill">x</span>
+        <button class="button close pull-right " type="button" data-toggle="modal" data-target="#cartModalCenter" style="margin-left: 10px;">
+          <span class="badge badge-danger badge-pill">x</span>
+        </button>
+        
       </div>
       
     </h4>
@@ -37,7 +53,7 @@
     <!-- Cart -->
     <ul class="list-group mb-3 z-depth-1">
         {% for order in card.product_order %}
-      <li id="order_block{{order.id}}" class="d-flex justify-content-between lh-condensed p-3" style="border-bottom: 1px solid rgb(224, 221, 221);">
+      <li id="order_block{{order.id}}" class="justify-content-between lh-condensed p-3" style="border-bottom: 1px solid rgb(224, 221, 221); display: flex;">
           <div class="row">
             <div class="col-3">
                 <a href="{{url_for('product_page', id=order.product)}}">
@@ -60,15 +76,12 @@
           <span class="text-muted px-1" style="font-size: small;">  x  </span>
           <span id="order_price{{order.id}}" class="text-muted"> {{order.product_obj.price}}</span>
       </li>
-      <li id="order_edit_btn{{order.id}}" class="justify-content-between lh-condensed p-3" style="list-style-type: none; margin: -80px 25px 0 0;">
-        <a href='#' data-toggle="modal" data-target="#exampleModalCenter" style="text-align: right;">
-          <!-- <span class="badge badge-danger badge-pill text-muted px-1" style="width: 25px;">x</span> -->
-          <span class="" style="color: red; font-size: 26px; font-weight: 200;">x</span>
-        </a>
-        
+      <li id="order_edit_btn{{order.id}}" class="p-3" style="list-style-type: none; margin-top: -60px">
+        <button class="button close pull-right" type="button" data-toggle="modal" data-target="#exampleModalCenter{{order.id}}" style="color: red; font-size: 26px;"> x
+        </button>
       </li>
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <!-- Modal delete order-->
+        <div class="modal fade" id="exampleModalCenter{{order.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
               <div class="modal-header">
@@ -81,14 +94,35 @@
                 Are you really sure you want to delete this Product/s from your cart?
               </div>
               <div class="modal-footer">
-                <a onclick="deleteOrder({{order.id}})" class="btn btn-danger">Delete</a>
+                <a onclick="deleteOrder({{order.id}})" class="btn btn-danger"  data-dismiss="modal">Delete </a>
                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
               </div>
             </div>
           </div>
         </div>
       {% endfor %}
-      
+
+
+      <!-- Modal delete cart-->
+      <div class="modal fade" id="cartModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Delete Cart</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Are you really sure you want to delete this cart?
+            </div>
+            <div class="modal-footer">
+              <a href="{{url_for('delete_cart', cart_id=card.id)}}"  class="btn btn-danger"  >Delete</a>
+              <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
       {% if card.product_order %}
       <li class="d-flex justify-content-between p-3">
         <span>Total (USD):  <strong id="total_price">{{card.get_total_price()}}</strong></span>
@@ -101,6 +135,13 @@
   </div>
   <!--Grid column-->
   {%else%}
-
+<div class="row">
+  <div class="center-block">
+    <div class="col-md-12 mx-auto center-block" style="margin-top: 30%;">
+      <i class="fas fa-shopping-cart" style="font-size: 1040%; margin-bottom: 30%; margin-left: 20px; color: rgb(191, 188, 188);"></i>
+      <h2 style="color: rgb(191, 188, 188);">Your cart is empty</h2>
+    </div>
+  </div>
+</div>
 {% endif %}
 {% endblock %}

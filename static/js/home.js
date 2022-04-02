@@ -44,6 +44,7 @@ function changeAmountOfProduct(quantity, operator, order_id) {
 }
 
 function deleteOrder(order_id) {
+  console.log(order_id);
   $.ajax ({
     type: 'POST',
     url: '/delete_order',
@@ -51,6 +52,7 @@ function deleteOrder(order_id) {
       'order_id': order_id,
     },
     success: function () {
+      
         block = document.getElementById('order_block'+ order_id);
         block_btn = document.getElementById('order_edit_btn'+order_id)
         block.style.display = 'none'

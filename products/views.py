@@ -191,7 +191,6 @@ def card(id=None):
     data = {
         'card': None
     }
-    print(current_user.card_id)
     if current_user.card_id:
         card = Card.query.get(current_user.card_id)
         data = {
@@ -235,3 +234,13 @@ def delete_order():
         order = Order.query.get(request.form.get('order_id'))
         order.delete()
         return ('', 204)
+
+
+@pr.route('/delete_cart/<cart_id>', methods=['GET'])
+def delete_cart(cart_id):
+    print(cart_id)
+    cart = Card.query.get(cart_id)
+    current_user.card_id = ''
+    db.session.add(current_user)
+    cart.delete()
+    return redirect(url_for('card'))
