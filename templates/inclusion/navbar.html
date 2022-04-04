@@ -25,10 +25,16 @@
                 {% if current_user.role %}
                 <li class="nav-item">
                     <a class="nav-link waves-effect" href="{{url_for('create_product')}}">
-                        <span class="clearfix d-none d-sm-inline">Add new Product </span>
+                        <span class="clearfix d-none d-sm-inline">Add Product </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link waves-effect" href="{{url_for('checkout.marketing_tools')}}">
+                        <span class="clearfix d-none d-sm-inline">Marketing Tools</span>
                     </a>
                 </li>
                 {% endif %}
+                
                 <li class="nav-item">
                     <a class="nav-link waves-effect" href="#" >Privacy policy</a>
                 </li>

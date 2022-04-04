@@ -1,11 +1,14 @@
 import os
 import sys
 from flask import Flask, render_template, send_from_directory
+from flask_currency import Currency
 from ecommerce.auth.views import bp, login_manager
 from ecommerce.products.views import pr
-from ecommerce.extentions import db, migrate, bcrypt
+from ecommerce.checkout.views import checkout
+from ecommerce.extentions import db, migrate, bcrypt, humanize
 from ecommerce.auth.models import *
 from ecommerce.products.models import *
+from ecommerce.checkout.models import *
 
 
 def create_app(test_config=None, config_objects='ecommerce.settings'):
@@ -38,10 +41,16 @@ def create_app(test_config=None, config_objects='ecommerce.settings'):
 
     app.register_blueprint(bp)
     app.register_blueprint(pr)
+    app.register_blueprint(checkout)
     
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=True)
     bcrypt.init_app(app)
     login_manager.init_app(app)
+    humanize.init_app(app)
+
+    # @humanize.localeselector
+    # def get_locale():
+    #     return 'ru_RU'
 
     return app

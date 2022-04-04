@@ -175,6 +175,7 @@ def edit_customer_profile():
 @bp.route('/edit_seller_profile', methods=('GET', 'POST'))
 def edit_seller_profile():
     session.pop('_flashes', None)
+    user = current_user
     data = {
         'user': current_user,
         'countries': pycountry.countries,

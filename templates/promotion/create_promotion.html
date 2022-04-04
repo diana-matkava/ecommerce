@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{%block title%}Marketing tools{%endblock%}
+
+{%block extrastyle%}
+<style>
+  input[type="datetime-local" i] {
+    border: 1px solid rgb(186, 185, 185);
+    border-radius: 5px;
+    padding: 10px;
+    color: grey;
+    align-items: center;
+    display: -webkit-inline-flex;
+    padding-inline-start: 1px;
+    cursor: default;
+    overflow: hidden;
+    padding: 0px;
+}
+
+</style>
+{%endblock%}
+
+{% block script%}
+<script src="{{url_for('static', filename='js/promotion.js')}}"></script>
+{%endblock%}
+
+{%block content%}
+<main class="mt-5 pt-4">
+    <div class="container wow fadeIn">
+      <h2 class="my-5 h2 text-center">Create Promotion</h2>
+
+      <div class="row">
+
+        <div class="col-8 mx-auto">
+          <div class="card">
+            <form class="card-body" novalidate action="" method="POST">
+                {{csrf_token}}
+
+                <div class="md-form input-group pl-0 mb-5">
+                    {{ form.title.label}}
+                    {{ form.title(class_="form-control py-2")}}
+                </div>
+                {% for error in form.title.errors %}
+                    <div class="alert" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor%}
+
+                <div class="md-form input-group pl-0 mb-5">
+                    {{ form.description.label}}
+                    {{ form.description(class_="form-control py-2")}}
+                </div>
+                {% for error in form.description.errors %}
+                    <div class="alert" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor%}
+
+                <div class="row">
+                    <div class="col-lg-4 col-md-12 mb-4">
+
+                        <div class="md-form input-group pl-0 mb-5">
+                            {{ form.discount_value.label}}
+                            {{ form.discount_value(class_="form-control py-2")}}
+                        </div>
+                        {% for error in form.discount_value.errors %}
+                            <div class="alert" role="alert">
+                                {{ error }}
+                            </div>
+                        {% endfor%}
+                    </div>  
+
+                    <div class="col-lg-2 col-md-6 mb-4">
+                      <div class="form-group">
+                      {{ form.currency.label(class_="text-muted")}}
+                      {{ form.currency(class_="form-control")}}
+                      </div>
+                      {% for error in form.currency.errors %}
+                          <div class="alert" role="alert">
+                              {{ error }}
+                          </div>
+                      {% endfor%}
+                    </div>
+                    
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="form-group">
+                            {{ form.discount_type.label(class_="text-muted")}}
+                            {{ form.discount_type(class_="form-control")}}
+                        </div>
+                        {% for error in form.discount_type.errors %}
+                            <div class="alert" role="alert">
+                                {{ error }}
+                            </div>
+                        {% endfor%}
+
+                    </div>
+                    
+                </div>  
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="form-group">
+                            {{ form.coupon_type.label(class_="text-muted")}}
+                            {{ form.coupon_type(class_="form-control")}}
+                        </div>
+                    {% for error in form.coupon_type.errors %}
+                        <div class="alert" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor%}
+                    </div>
+
+                    <div class="col-lg-5 col-md-6 mb-4" id="m_quantity" style="display: none;">
+                        <div class="form-group">
+                          <label for="quantity" class="text-muted">Quantity</label>
+                          <input type="number" id="coupon_quantity" name="quantity" placeholder="" class="form-control" min="0">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-1 col-md-6 mb-4 mt-4" id="m_button" style="display: none;">
+                      <a onclick="generateCoupons()" class="text-muted" style="font-size: large;"><i id="g_button" class="fa fa-check"></i></a>
+                    </div>
+
+                </div>
+                <div class="form-group mb-5" id="m_coupon" style="display: none;">
+                  <textarea id="m_coupons"  name="coupons" id="" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+
+                
+              <div class="form-group" style="max-width: 330px;">
+                  {{ form.products.label(class_="text-muted")}}
+                  {{ form.products(class_="form-control")}}
+              </div>
+              {% for error in form.products.errors %}
+                  <div class="alert" role="alert">
+                      {{ error }}
+                  </div>
+              {% endfor%}
+
+              <div class="row" style="margin-top: 40px;">
+
+                <div class="col-lg-6 col-md-6 mb-4">
+                  <div class="form-group datetime">
+                    <label for="start_day" class="text-muted"> Start at</label>
+                    <div>
+                      <input type="datetime-local" id="start_day"
+                    name="start_day"">
+                    </div>
+                  </div>
+                </div>
+                
+                  <div class="col-lg-6 col-md-6 mb-4">
+                    <div class="form-group">
+                      <label for="end_day" class="text-muted">End at</label>
+                      <div>
+                        <input type="datetime-local" id="end_day"
+                      name="end_day">
+                      </div>
+                    </div>
+                  </div>
+
+              </div>
+
+              <div class="md-form input-group pl-0 mb-4" id="instant">
+                {{ form.instant_discount.label}}
+                {{ form.instant_discount(class_="form-control py-2 mt-4")}}
+              </div>
+              {% for error in form.instant_discount.errors %}
+                  <div class="alert" role="alert">
+                      {{ error }}
+                  </div>
+              {% endfor%}
+
+            <div class="md-form input-group pl-0 mb-5">
+              {{ form.active.label}}
+              {{ form.active(class_="form-control py-2 mt-4")}}
+            </div>
+            {% for error in form.description.errors %}
+                <div class="alert" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor%}
+
+              {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                  {% for message in messages %}
+                  <def class="alert" role="alert" style="margin-top: 20px; color: red;">
+                      * {{ message }}
+                  </def>
+                    {% endfor %}
+                {% endif %}
+              {% endwith %}
+              
+              <hr class="mb-4">
+              <div class="row">
+                <div class="col-sm-12">
+                  <button class="btn btn-info" type="submit">Submit</button>
+                  <a class="btn btn-light" href="{{url_for('create_product')}}">Back</a>
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+  {%endblock%}

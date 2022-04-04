@@ -47,7 +47,7 @@
 
               
               <div class="md-form mb-5">
-                <input type="text" id="address" class="form-control" placeholder="1234 Main St">
+                <input type="text" id="address" class="form-control" placeholder="Main St">
                 <label for="address" class="">Address</label>
               </div>
               
@@ -78,6 +78,9 @@
               <div id="card-element" style="padding-left: 25px;"> 
                 <!-- A TCO IFRAME will be inserted here. -->
               </div>
+              <p style="color: grey; font-size: smaller; text-align: center;">We don't handle cart sensitive data. <br>
+                Doesn't rely on us? Use official 2checkout payment 
+                <a href="">service</a></p>
               
               <hr class="mb-4">
               <button class="btn btn-primary btn-lg btn-block" type="submit">Pay</button>
@@ -100,7 +103,7 @@
                 <h6 class="my-0">{{order.product_obj.name}}</h6>
                 <small class="text-muted">{{order.product_obj.description|truncate(35, true)}}</small>
               </div>
-              <span class="text-muted">{{order.product_obj.quantity}} x {{order.product_obj.price}}</span>
+              <span class="text-muted">{{order.quantity}} x {{order.product_obj.price}}</span>
             </li>
             {% endfor %}
             

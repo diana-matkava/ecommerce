@@ -1,9 +1,5 @@
-from ast import operator
-from crypt import methods
 import datetime
 import os
-from shutil import ExecError
-import sys
 from unicodedata import category
 from .models import Product
 from flask import Blueprint, flash, render_template, redirect, session, url_for, request
@@ -14,7 +10,6 @@ from ecommerce.settings import UPLOAD_FOLDER
 from ecommerce.utils import allowed_extension
 from ecommerce.products.forms import CreateProductForm
 from ecommerce.products.models import Product, ProductCategory, Image, Card, Order
-from ecommerce.auth.models import Seller, Customer
 
 
 pr = Blueprint('', __name__, url_prefix='/')

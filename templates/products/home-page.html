@@ -51,11 +51,15 @@
 
                 <h1 class="mb-4"><strong>{{product.name}}</strong></h1>
   
-                <p><strong>{{product.owner_name}}</strong></p>
+                <p><strong>{{product.owner}}</strong></p>
   
                 <p class="mb-4 d-none d-md-block" style="max-width: 700px;">
                   <strong>{{product.description|truncate(200, True)}}</strong>
                 </p>
+                <p class="mb-4 d-none d-md-block" style="font-size: smaller;">
+                  Added {{product.created|humanize}}
+                </p>
+                
                 
                 <a href="{{url_for('product_page', id=product.id)}}" class="btn btn-outline-white btn-lg">Product Page</a>
 
@@ -161,6 +165,7 @@
                 <i class="fa fa-heart"  id="like{{product.id}}"  style="color: {%if product in current_user.liked_products%} red {%else%} grey {%endif%};"></i>
               </button>
               <span style="font-size: smaller;"  id="like_num{{product.id}}">{{product.like}}</span><span style="font-size: smaller;"> likes</span> 
+              <span style="font-size: smaller; color: grey; margin-left: 10px;">{{product.created|humanize}}</span>
             </p>
           </div>
           

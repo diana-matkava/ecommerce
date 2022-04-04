@@ -123,14 +123,20 @@
           </div>
         </div>
       </div>
-      {% if card.product_order %}
       <li class="d-flex justify-content-between p-3">
         <span>Total (USD):  <strong id="total_price">{{card.get_total_price()}}</strong></span>
         <a href="{{url_for('checkout', cart_id=card.id)}}" class="btn btn-primary btn-md waves-effect m-0" type="button">Buy</a>
       </li>
-      {% endif %}
     </ul>
     <!-- Cart -->
+    <form  style="max-width: 400px;">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Promo code" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <button class="btn btn-primary btn-md waves-effect m-0" type="button">Redeem</button>
+        </div>
+      </div>
+    </form>
 
   </div>
   <!--Grid column-->

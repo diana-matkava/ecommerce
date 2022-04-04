@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_bootstrap import Bootstrap
 from sqlalchemy import MetaData
 from flask_sqlalchemy import SQLAlchemy
+from flask_humanize import Humanize
 
 metadata = MetaData(
     naming_convention={
@@ -20,3 +21,4 @@ db=SQLAlchemy(metadata=metadata)
 migrate = Migrate()
 bcrypt = Bcrypt()
 bootstrap = Bootstrap()
+humanize = Humanize()
