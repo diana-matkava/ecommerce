@@ -6,6 +6,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from ecommerce.extentions import db
 from ecommerce.products.models import Product
+from ecommerce.checkout.models import Promotion
 
 
 categories = db.Table('categories', db.Model.metadata,
@@ -21,6 +22,11 @@ seller_likes = db.Table('seller_likes', db.Model.metadata,
 customer_likes = db.Table('customer_likes', db.Model.metadata, 
     Column('product_id', Integer, ForeignKey('product.id'), primary_key=True),
     Column('customer_id', Integer, ForeignKey('customer.id'), primary_key=True)
+)
+
+promotions = db.Table('promotions', db.Model.metadata, 
+    Column('promotion_id', Integer, ForeignKey('promotion.id'), primary_key=True),
+    Column('seller_id', Integer, ForeignKey('seller.id'), primary_key=True)
 )
 
 
@@ -78,6 +84,10 @@ class Seller(User, db.Model):
     logo = Column(Integer, ForeignKey('company_logo.id'), nullable=True)
     liked_products = relationship('Product', secondary=seller_likes, 
         backref=db.backref('seller', lazy=True))
+    promotion = relationship(
+        Promotion, secondary=promotions, lazy='subquery',
+        backref=db.backref('seller', lazy=True)
+    )
     
     def __repr__(self):
         return f'{self.company_name}'

@@ -1,11 +1,13 @@
+from locale import currency
 import sys
 import uuid
 import datetime
-from ecommerce.checkout.models import Coupon, Promotion
+from xmlrpc.client import boolean
+from ecommerce.checkout.models import Coupon, Currency, Promotion, DiscountType, CouponType
 from ecommerce.products.models import Product
 from ecommerce.extentions import db
 from flask.json import jsonify
-from flask import Blueprint, request, render_template, redirect, session, url_for
+from flask import Blueprint, request, render_template, redirect, session, url_for, flash
 from flask_login import current_user, login_required
 from ecommerce.checkout.forms import PromotionForm
 
@@ -29,39 +31,66 @@ def create_promotion():
     }
 
     if request.method == 'POST':
-        promotion = Promotion(
-            title=request.form.get('title'),
-            description=request.form.get('description'),
-            discount_type=request.form.get('discount_type'),
-            discount_value=int(request.form.get('discount_value')),
-            coupon_type=request.form.get('coupon_type'),
-            currency=request.form.get('currency'),
-            start_day=request.form.get('start_day'),
-            end_day=request.form.get('end_day'),
-            instant_discount=request.form.get('instant_discount'),
-            active=request.form.get('active')
-        )
+        try:
+            promotion = Promotion(
+                title=request.form.get('title'),
+                description=request.form.get('description'),
+                discount_type=DiscountType[request.form.get('discount_type')],
+                discount_value=int(request.form.get('discount_value')),
+                coupon_type=CouponType[request.form.get('coupon_type')],
+                currency_id=int(request.form.get('currency')),
+                start_day=datetime.datetime.strptime(
+                     request.form['start_day'][:-6],
+                     '%Y-%m-%d'
+                     ) if request.form.get('start_day') else None,
+                end_day=datetime.datetime.strptime(
+                     request.form['end_day'][:-6],
+                     '%Y-%m-%d'
+                     ) if request.form.get('end_day') else None,
+                instant_discount=True if request.form.get('instant_discount') else False,
+                active=True if request.form.get('active') else None
+            )
+            
+            promotion.products.extend([Product.query.get(int(product)) for product in request.form.getlist('products')])
 
-        promotion.products.extend([Product.query.get(product) for product in request.form.get('products')])
+            promotion.save()
+        
+            coupons = request.form.get('coupons')
+            if coupons:
+                for coupon in coupons.splitlines():
+                    coupon = Coupon(
+                        code=coupon,
+                        promotion_id=promotion.id
+                    )
+                    promotion.coupon.extend([coupon])
 
-        coupons = request.form.get('coupons')
-        if coupons:
-            for coupon in coupons.splitlines():
+                    db.session.add(promotion)
+                    db.session.add(coupon)
+            else:
+                
                 coupon = Coupon(
-                    id=coupon,
+                    code=str(uuid.uuid4())[:18].replace('-', ''),
                     promotion=promotion
                 )
                 promotion.coupon.extend([coupon])
-                coupon.save()
-        else:
-            code = str(uuid.uuid4())[:18].replace('-', '')
-            coupon = Coupon(
-                    id=code,
-                    promotion=promotion
-                )
-            promotion.coupon.extend([coupon])
-            coupon.save()
-        promotion.save()
+
+                db.session.add(coupon)
+                db.session.add(promotion)
+
+            try:
+                current_user.promotion.extend([promotion])
+                db.session.add(current_user)
+                db.session.commit()
+                flash('Promotion added')
+                return redirect(url_for('checkout.marketing_tools'))
+            except Exception as _ex:
+                flash(_ex)
+
+        except Exception as _ex:
+            flash(_ex)
+        
+    else:
+        flash('Something went wrong')
     return render_template('promotion/create_promotion.html', **data)
 
 

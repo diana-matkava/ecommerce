@@ -163,7 +163,7 @@
 
               <div class="md-form input-group pl-0 mb-4" id="instant">
                 {{ form.instant_discount.label}}
-                {{ form.instant_discount(class_="form-control py-2 mt-4")}}
+                {{ form.instant_discount(class_="form-control py-2 mt-4", value='True')}}
               </div>
               {% for error in form.instant_discount.errors %}
                   <div class="alert" role="alert">
@@ -173,7 +173,7 @@
 
             <div class="md-form input-group pl-0 mb-5">
               {{ form.active.label}}
-              {{ form.active(class_="form-control py-2 mt-4")}}
+              {{ form.active(class_="form-control py-2 mt-4", value='True')}}
             </div>
             {% for error in form.description.errors %}
                 <div class="alert" role="alert">

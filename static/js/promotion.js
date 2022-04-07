@@ -1,5 +1,5 @@
 $('#m_select').on('change', function () {
-        
+    
     var isDirty = !this.options[this.selectedIndex].defaultSelected;
 
     if (isDirty) {
@@ -8,7 +8,7 @@ $('#m_select').on('change', function () {
         button = document.getElementById('m_button')
         coupon = document.getElementById('m_coupon')
         instant = document.getElementById('instant')
-        if (select_value == 'CouponType.multiple') {
+        if (select_value == 'multiple') {
             quantity.style.display = 'block'
             button.style.display = 'block'
             coupon.style.display = 'block'

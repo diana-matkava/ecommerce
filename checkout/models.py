@@ -4,6 +4,7 @@ import uuid
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+from flask import flash
 from ecommerce.extentions import db
 from ecommerce.products.models import Product
 
@@ -26,6 +27,9 @@ class CouponType(enum.Enum):
     @classmethod
     def choices(cls):
         return [(choice, choice.name) for choice in cls]
+    
+    def __str__(self):
+        return self.name
 
 
 class DiscountType(enum.Enum):
@@ -35,6 +39,9 @@ class DiscountType(enum.Enum):
     @classmethod
     def choices(cls):
         return [(choice, choice.name) for choice in cls]
+    
+    def __str__(self):
+        return self.name
 
 
 class Currency(db.Model):
@@ -74,7 +81,7 @@ class Promotion(db.Model):
     ''' Starting date. The date when you set the promotion to start.
         Is NULL for promotions that start immediately after they are
         created. '''
-    start_day = Column(DateTime(), default=datetime.datetime.now())
+    start_day = Column(DateTime(), default=datetime.datetime.now(), nullable=True)
 
 
     ''' Ending date. The date when you set the promotion to end. Is
@@ -93,13 +100,19 @@ class Promotion(db.Model):
         db.session.commit()
 
 
-
 class Coupon(db.Model):
     __tablename__ = 'coupon'
-    id = Column(UUID(as_uuid=True), primary_key=True, default=str(uuid.uuid4())[:18].replace('-', ''))
+    id = Column(Integer(), primary_key=True)
+    code = Column(String(18), default=str(uuid.uuid4())[:18].replace('-', ''))
     promotion_id = Column(Integer(), ForeignKey('promotion.id'))
     promotion = relationship(Promotion, backref=db.backref('promotion', uselist=False))
 
     def save(self):
-        db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except Exception as _ex:
+            print(_ex)
+            db.session.rollback()
+        finally:
+            db.session.close

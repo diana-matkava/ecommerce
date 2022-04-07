@@ -1,7 +1,7 @@
 from locale import currency
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, validators, SelectMultipleField, SelectField, BooleanField, IntegerField, DateTimeField
+from wtforms import StringField, PasswordField, validators, SelectMultipleField, SelectField, BooleanField, IntegerField, DateTimeField, DateField
 from wtforms.validators import InputRequired, Length, ValidationError
 from ecommerce.checkout.models import Promotion, Coupon, DiscountType, CouponType, Currency
 from ecommerce.products.models import Product
@@ -9,19 +9,18 @@ from ecommerce.products.models import Product
 
 class PromotionForm(FlaskForm):
 	title = StringField('Title', validators=[
-		Length(0, 225, message='Please input valid title')])
+		Length(0, 225, message='Please input valid title'), InputRequired()])
 	description = StringField('Description', validators=[
 		Length(0, 1124, message='Please input valid description')])
 	discount_type = SelectField('Discount type', validate_choice=False, 
 		validators=[InputRequired()])
 	discount_value = IntegerField('Discount value')
-	coupon_type = SelectField('Coupon type', validate_choice=False, validators=[InputRequired()],
-		render_kw={'id': 'm_select'})
-	currency = SelectField('Currency', validate_choice=False, validators=[InputRequired()])
+	coupon_type = SelectField('Coupon type', validate_choice=False, render_kw={'id': 'm_select'})
+	currency = SelectField('Currency', validate_choice=False)
 	products = SelectMultipleField('Apply discount for: ', validate_choice=False, 
 		render_kw={'style':'height: 250px'})
-	start_day = DateTimeField('Start in')
-	end_day = DateTimeField('End in')
+	start_day = DateField('Start in')
+	end_day = DateField('End in')
 	instant_discount = BooleanField('Apply instantly for every selected products')
 	active = BooleanField()
 
