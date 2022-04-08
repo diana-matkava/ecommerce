@@ -99,6 +99,9 @@ class Promotion(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def count_products(self):
+        return len(self.products)
+
 
 class Coupon(db.Model):
     __tablename__ = 'coupon'
@@ -106,6 +109,7 @@ class Coupon(db.Model):
     code = Column(String(18), default=str(uuid.uuid4())[:18].replace('-', ''))
     promotion_id = Column(Integer(), ForeignKey('promotion.id'))
     promotion = relationship(Promotion, backref=db.backref('promotion', uselist=False))
+    active = Column(Boolean(), nullable=True, default=True)
 
     def save(self):
         try:

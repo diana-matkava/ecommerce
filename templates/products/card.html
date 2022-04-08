@@ -129,14 +129,15 @@
       </li>
     </ul>
     <!-- Cart -->
-    <form  style="max-width: 400px;">
-      <div class="input-group">
-        <input type="text" class="form-control" placeholder="Promo code" aria-label="Recipient's username" aria-describedby="basic-addon2">
+      <div class="input-group"  style="max-width: 400px;">
+        <input id="code" type="text" class="form-control" placeholder="Promo code" aria-label="Recipient's username" aria-describedby="basic-addon2">
         <div class="input-group-append">
-          <button class="btn btn-primary btn-md waves-effect m-0" type="button">Redeem</button>
+          <a id="find_promotion" class="btn btn-primary btn-md waves-effect m-0" onclick="findCoupon()" type="button">Find Promotion</a>
+          <a id="apply_promotion" class="btn btn-primary btn-md waves-effect m-0" onclick="findCoupon()" type="button" style="display: none;">Apply</a>
+          <input id="id_coupon" type="hidden">
         </div>
       </div>
-    </form>
+      <p id="promotion_message" style="display: none; color: red; margin: 10px;">* No Promotion Found</p>
 
   </div>
   <!--Grid column-->

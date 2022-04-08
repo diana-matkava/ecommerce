@@ -3,11 +3,73 @@
 {%block title%}Marketing tools{%endblock%}
 
 {%block content%}
-    
+
+{% if current_user.promotion %}
+<main class="mt-5 pt-4">
+    <div class="container wow fadeIn">
+      <h2 class="my-5 h2 text-center">Your promotions</h2>
+
+      <div class="row">
+        {% for promotion in promotions %}
+
+        <div class="col-lg-6">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <h5 class="card-title">{{promotion.title}}</h5>
+                        </div>
+                        <div class="col-sm-4 mx-0 my-2">
+                        <h6 class="card-subtitle mb-2 text-muted">
+                    {%if promotion.discount_type.name == 'fixed'%} 
+                    <span style="font-size: small;">{{promotion.currency}}</span> 
+                    {%endif%}
+                    {{promotion.discount_value}}
+                    {%if promotion.discount_type.name == 'persent'%}%{%endif%}</h6>
+                        </div>
+                    </div>
+                
+                {% if promotion.description %}
+                <p class="card-text" style="max-width: 200px;">{{promotion.description}}</p>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p style="font-size: small;">{%if promotion.coupon_type == 'single'%} Single {% else %} Multiple {%endif%}type</p>
+                    </div>
+                    <div class="col-sm-4 mx-0">
+                        <span style="font-size: small;"><a href="http://">SHOW</a></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p style="font-size: small;">Available for {{promotion.count_products()}} products</p>
+                    </div>
+                    <div class="col-sm-4 mx-0">
+                        <span style="font-size: small;"><a href="http://">SHOW</a></span>
+                    </div>
+                </div>
+                {% if promotion.start_day%}
+                    <p>{{promotion.start_day}}</p>
+                {%endif%}
+                {% if promotion.end_day%}
+                    <p>{{promotion.end_day}}</p>
+                {%endif%}
+                <p><a href="">{%if promotion.active%}Activate{%else%}Deactivate{%endif%}</a></p>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+      {% endfor %}
+    </div>    
+</main>
+{% else %}
     <div class="center-block">
         <p style="text-align: center;"><i class="fa fa-code" style="font-size: 840%; margin: 8% 0 7% 0; color: rgb(191, 188, 188); text-shadow: 2px 3px rgb(167, 166, 166); "></i></p>
         <h2 style="color: rgb(191, 188, 188); text-align: center; margin-bottom: 3%;">You have no promotion</h2>
         <p style="text-align: center;"><a href="{{url_for('checkout.create_promotion')}}" class="nav-link border border-light rounded waves-effect mr-2">Add promotion</a></p>
         
     </div>
+{% endif %}
 {%endblock%}

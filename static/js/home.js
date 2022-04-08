@@ -56,6 +56,7 @@ function deleteOrder(order_id, cart_id) {
   })
 }
 
+
 function changeAmountOfProduct(quantity, operator, order_id, cart_id) {
   $.ajax({
     type: 'POST',
@@ -96,6 +97,57 @@ function changeAmountOfProduct(quantity, operator, order_id, cart_id) {
           }
         }
       }
+      }
+    }
+  })
+}
+
+
+function activatePromotion() {
+  id_coupon = document.getElementById('id_coupon').value
+  $.ajax ({
+    type: 'POST',
+    url: '/activate_promotion',
+    data: {
+      'code': id_coupon
+    },
+    success: function(data) {
+      location.reload()
+    }
+  })
+}
+
+
+function findCoupon() {
+  code = document.getElementById('code').value
+  console.log(code)
+  $.ajax ({
+    type: 'POST',
+    url: '/promotion/find_coupon',
+    data: {
+      'code': code
+    },
+    success: function(data) {
+      if (data.promotion) {
+        el = document.getElementById('promotion_message')
+        f_btn = document.getElementById('find_promotion')
+        id_coupon = document.getElementById('id_coupon')
+        id_coupon.value = data.promotion
+        a_btn = document.getElementById('apply_promotion')
+        if (data.type === 'persent') {
+          el.innerHTML = `Promotion ${data.title} with ${data.value}% discount was found`
+        } else {
+          el.innerHTML = `Promotion ${data.title} with ${data.value} ${data.type} discount was found`
+        }
+        console.log(id_coupon.value)
+        
+        f_btn.style.display = 'none'
+        a_btn.style.display = 'block'
+        el.style.color = 'blue'
+        el.style.display = 'block'
+      } else {
+        el = document.getElementById('promotion_message')
+        el.style.display = 'block'
       }
     }
   })

@@ -7,16 +7,26 @@ from ecommerce.checkout.models import Coupon, Currency, Promotion, DiscountType,
 from ecommerce.products.models import Product
 from ecommerce.extentions import db
 from flask.json import jsonify
+from flask_login import login_required
 from flask import Blueprint, request, render_template, redirect, session, url_for, flash
 from flask_login import current_user, login_required
 from ecommerce.checkout.forms import PromotionForm
 
 
 checkout = Blueprint('checkout', __name__, url_prefix='/checkout')
+promotion = Blueprint('promotion', __name__, url_prefix='/promotion')
 
+
+@login_required
 @checkout.route('/marketing_tools', methods=['GET'])
 def marketing_tools():
-    return render_template('promotion/marketing_tools.html')
+    data = dict()
+    if current_user.promotion:
+        data = {
+            'promotions': current_user.promotion
+        }
+        
+    return render_template('promotion/marketing_tools.html', **data)
 
 
 @checkout.route('/create_promotion', methods=['GET', 'POST'])
@@ -103,3 +113,26 @@ def generate_coupon():
             coupons.append(str(uuid.uuid4())[:18].replace('-', ''))
 
         return jsonify(list_of_data=coupons)
+
+
+@promotion.route('/find_coupon', methods=['POST'])
+def find_coupon():
+    if request.method == 'POST':
+        code = request.form.get('code')
+        coupon = Coupon.query.filter_by(code=code, active=True)[0]
+        code = coupon.code if coupon else None
+        if code:
+            data = {
+                'promotion': code,
+                'title': coupon.promotion.title,
+                'value': coupon.promotion.discount_value,
+                'type': coupon.promotion.discount_type.name
+            }
+        return  jsonify(**data)
+
+
+@promotion.route('/apply_promotion', method=['POST'])
+def apply_promotion():
+    if request.method == 'POST':
+        
+        pass
