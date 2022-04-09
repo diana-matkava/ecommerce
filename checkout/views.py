@@ -115,11 +115,15 @@ def generate_coupon():
         return jsonify(list_of_data=coupons)
 
 
-@promotion.route('/find_coupon', methods=['POST'])
+@promotion.route('/find_coupon', methods=['PUT'])
 def find_coupon():
-    if request.method == 'POST':
+    if request.method == 'PUT':
         code = request.form.get('code')
-        coupon = Coupon.query.filter_by(code=code, active=True)[0]
+        data = dict()
+        try:
+            coupon = Coupon.query.filter_by(code=code, active=True)[0]
+        except:
+            coupon = None
         code = coupon.code if coupon else None
         if code:
             data = {
@@ -131,8 +135,16 @@ def find_coupon():
         return  jsonify(**data)
 
 
-@promotion.route('/apply_promotion', method=['POST'])
+@promotion.route('/apply_promotion', methods=['POST'])
 def apply_promotion():
     if request.method == 'POST':
-        
-        pass
+        coupon = Coupon.query.filter_by(code=request.form.get('code'))[0]
+        coupon.active = False
+        current_user.coupons.extend([coupon])
+        current_user.active_discount = True
+        db.session.add(coupon)
+        db.session.add(current_user)
+        db.session.commit()
+        return ('', 204)
+
+    

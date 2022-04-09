@@ -1,12 +1,13 @@
+from xmlrpc.client import Boolean
 from flask_login import UserMixin
 from sqlalchemy_utils import PhoneNumberType
 
 import sqlalchemy.types as types
-from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, Table, Boolean
 from sqlalchemy.orm import relationship
 from ecommerce.extentions import db
 from ecommerce.products.models import Product
-from ecommerce.checkout.models import Promotion
+from ecommerce.checkout.models import Promotion, Coupon
 
 
 categories = db.Table('categories', db.Model.metadata,
@@ -29,6 +30,16 @@ promotions = db.Table('promotions', db.Model.metadata,
     Column('seller_id', Integer, ForeignKey('seller.id'), primary_key=True)
 )
 
+active_codes_for_custmr = db.Table('active_codes_for_custmr', db.Model.metadata, 
+    Column('coupon_id', Integer, ForeignKey('coupon.id'), primary_key=True),
+    Column('customer_id', Integer, ForeignKey('customer.id'), primary_key=True)    
+)
+
+active_codes_for_sel = db.Table('active_codes_for_sel', db.Model.metadata, 
+    Column('coupon_id', Integer, ForeignKey('coupon.id'), primary_key=True),
+    Column('seller_id', Integer, ForeignKey('seller.id'), primary_key=True)    
+)
+
 
 class User(UserMixin):
     __abstract__ = True
@@ -39,6 +50,7 @@ class User(UserMixin):
     password = Column(String(125), nullable=False)
     role = Column(Integer, nullable=False, default=R_CUSTOMER)
     card_id = Column(Integer, nullable=True)
+    active_discount = Column(Boolean, default=False, nullable=True)
 
     def delete(self):
         db.session.delete(self)
@@ -65,6 +77,8 @@ class Customer(User, db.Model):
     avatar = Column(Integer, ForeignKey('customer_avatar.id'))
     liked_products = relationship('Product', secondary=customer_likes, 
         backref=db.backref('customer', lazy=True))
+    coupons = relationship(Coupon, secondary=active_codes_for_custmr, lazy='subquery', 
+                backref=db.backref('customer', lazy=True))
 
     def __repr__(self):
         return f'{self.username}'
@@ -86,8 +100,10 @@ class Seller(User, db.Model):
         backref=db.backref('seller', lazy=True))
     promotion = relationship(
         Promotion, secondary=promotions, lazy='subquery',
-        backref=db.backref('seller', lazy=True)
-    )
+        backref=db.backref('seller', lazy=True))
+    coupons = relationship(Coupon, secondary=active_codes_for_sel, lazy='subquery', 
+                backref=db.backref('seller', lazy=True))
+    
     
     def __repr__(self):
         return f'{self.company_name}'

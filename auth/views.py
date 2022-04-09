@@ -100,8 +100,7 @@ def registrate_seller():
 def profile():
     if current_user.role:
         return render_template('auth/profile_seller.html', user=current_user)
-    elif not current_user.role:
-        return render_template('auth/profile_customer.html', user=current_user)
+    return render_template('auth/profile_customer.html', user=current_user)
 
 
 @login_required

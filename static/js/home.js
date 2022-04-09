@@ -103,11 +103,11 @@ function changeAmountOfProduct(quantity, operator, order_id, cart_id) {
 }
 
 
-function activatePromotion() {
+function applyPromotion() {
   id_coupon = document.getElementById('id_coupon').value
   $.ajax ({
     type: 'POST',
-    url: '/activate_promotion',
+    url: '/promotion/apply_promotion',
     data: {
       'code': id_coupon
     },
@@ -120,9 +120,8 @@ function activatePromotion() {
 
 function findCoupon() {
   code = document.getElementById('code').value
-  console.log(code)
   $.ajax ({
-    type: 'POST',
+    type: 'PUT',
     url: '/promotion/find_coupon',
     data: {
       'code': code
@@ -139,8 +138,6 @@ function findCoupon() {
         } else {
           el.innerHTML = `Promotion ${data.title} with ${data.value} ${data.type} discount was found`
         }
-        console.log(id_coupon.value)
-        
         f_btn.style.display = 'none'
         a_btn.style.display = 'block'
         el.style.color = 'blue'

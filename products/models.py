@@ -1,5 +1,6 @@
 from ast import For
 import datetime
+from flask_login import current_user
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime
 from sqlalchemy.orm import relationship
 from ecommerce.extentions import db
@@ -83,6 +84,24 @@ class Card(db.Model):
         for order in self.product_order:
             price += order.product_obj.price * order.quantity
         return price
+    
+    def price_with_discount(self):
+        price = 0
+        for order in self.product_order:
+            if current_user.active_discount:
+                discount_type = current_user.coupons[-1].promotion.discount_type.name 
+                discount_value = current_user.coupons[-1].promotion.discount_value
+                discount_products = current_user.coupons[-1].promotion.products
+
+                if order.product_obj in discount_products:
+                    if discount_type == 'fixed':
+                        if self.product_obj.price >= discount_value:
+                            price += order.product_obj.price - discount_value * order.quantity
+                    else:
+                        price += order.product_obj.price * (1-(discount_value / 100)) * order.quantity
+                else:
+                    price += order.product_obj.price * order.quantity
+        return price
 
 
 class Order(db.Model):
@@ -105,6 +124,17 @@ class Order(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def get_price(self):
+        if current_user.active_discount:
+            if current_user.coupons[-1].promotion.discount_type.name == 'fixed':
+                if self.product_obj.price >= current_user.coupons.promotion.discount_value:
+                    price = self.product_obj.price - current_user.coupons.promotion.discount_value
+            else:
+                price = self.product_obj.price * current_user.coupons.promotion.discount_value // 100
+        else:
+            price = self.product_obj.price
+        return price
 
 
 class Image(db.Model):

@@ -187,7 +187,7 @@ def delete_product(id):
 @pr.route('/card', methods=['GET', 'POST'])
 def card(id=None):
     data = {
-        'card': None
+        'card': None,
     }
     if current_user.card_id:
         card = Card.query.get(current_user.card_id)

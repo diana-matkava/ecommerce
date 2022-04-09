@@ -124,7 +124,17 @@
         </div>
       </div>
       <li class="d-flex justify-content-between p-3">
+        {% if current_user.active_discount %}
+        <span>Total (USD):  <strong id="total_price" style='text-decoration: line-through; color: red;'>{{card.get_total_price()}}</strong> 
+          <strong id="total_price">
+           | {{ card.price_with_discount() }}
+           <span style="font-size: small; color: grey"> {{current_user.coupons[-1].promotion.title}} {{current_user.coupons[-1].promotion.discount_value}} 
+            {% if current_user.coupons[-1].promotion.discount_type.name == 'persent'%}%{%else%}{{current_user.coupons[-1].promotion.currency}}{%endif%}</span>
+          </strong>
+        </span>
+        {%else%}
         <span>Total (USD):  <strong id="total_price">{{card.get_total_price()}}</strong></span>
+        {%endif%}
         <a href="{{url_for('checkout', cart_id=card.id)}}" class="btn btn-primary btn-md waves-effect m-0" type="button">Buy</a>
       </li>
     </ul>
@@ -133,7 +143,7 @@
         <input id="code" type="text" class="form-control" placeholder="Promo code" aria-label="Recipient's username" aria-describedby="basic-addon2">
         <div class="input-group-append">
           <a id="find_promotion" class="btn btn-primary btn-md waves-effect m-0" onclick="findCoupon()" type="button">Find Promotion</a>
-          <a id="apply_promotion" class="btn btn-primary btn-md waves-effect m-0" onclick="findCoupon()" type="button" style="display: none;">Apply</a>
+          <a id="apply_promotion" class="btn btn-primary btn-md waves-effect m-0" onclick="applyPromotion()" type="button" style="display: none;">Apply</a>
           <input id="id_coupon" type="hidden">
         </div>
       </div>
