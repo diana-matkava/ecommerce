@@ -18,7 +18,7 @@ function likeProduct(id) {
 }
 
 
-function deleteOrder(order_id, cart_id) {
+function deleteOrder(order_id, cart_id, discount=0) {
   total_amount = document.getElementById('total_amount')
   order_amount = document.getElementById('order'+order_id)
   order_price = document.getElementById('order_price'+order_id)
@@ -46,6 +46,12 @@ function deleteOrder(order_id, cart_id) {
         if (order_amount != 1) {
           total_amount.innerHTML = Number(total_amount.textContent) - Number(order_amount.textContent);
           total_price.innerHTML = Number(total_price.textContent) - Number(order_amount.textContent) * Number(order_price.textContent);
+          if (discount) {
+            order_discount_price = document.getElementById('order_discount_price'+order_id).textContent;
+            total_discount_price = document.getElementById('total_discount_price');
+            total_discount_price.innerHTML = (
+              Number(total_discount_price.textContent) - Number(order_amount.textContent) * Number(order_discount_price)).toFixed(2);
+          }
         }
         block = document.getElementById('order_block'+ order_id);
         block_btn = document.getElementById('order_edit_btn'+order_id);
@@ -57,7 +63,7 @@ function deleteOrder(order_id, cart_id) {
 }
 
 
-function changeAmountOfProduct(quantity, operator, order_id, cart_id) {
+function changeAmountOfProduct(quantity, operator, order_id, cart_id, discount=0) {
   $.ajax({
     type: 'POST',
     url: '/change_product_amount',
@@ -73,16 +79,32 @@ function changeAmountOfProduct(quantity, operator, order_id, cart_id) {
           el.innerHTML = Number(el.textContent) + Number(1);
           total_amount.innerHTML = Number(total_amount.textContent) + Number(1);
           total_price.innerHTML = Number(total_price.textContent) + Number(order_price.textContent);
+          if (discount) {
+            order_discount_price = document.getElementById('order_discount_price'+order_id).textContent;
+            total_discount_price = document.getElementById('total_discount_price');
+            total_discount_price.innerHTML = (Number(total_discount_price.textContent) + Number(order_discount_price)).toFixed(2);
+            console.log(total_discount_price)
+          }
         } else {
           total_amount.innerHTML = Number(total_amount.textContent) - Number(1);
           total_price.innerHTML = Number(total_price.textContent) - Number(order_price.textContent);
           el.innerHTML = Number(el.textContent) - Number(1);
+          if (discount) {
+            order_discount_price = document.getElementById('order_discount_price'+order_id).textContent;
+            total_discount_price = document.getElementById('total_discount_price');
+            total_discount_price.innerHTML = (Number(total_discount_price.textContent) - Number(order_discount_price)).toFixed(2);
+            console.log(total_discount_price)
+          }
           if (Number(el.textContent) - Number(1) < 0) {
             block = document.getElementById('order_block'+ order_id);
             block_btn = document.getElementById('order_edit_btn'+order_id);
             block.style.display = 'none';
             block_btn.style.display = 'none';
-            deleteOrder(order_id, cart_id)
+            if (discount) {
+              deleteOrder(order_id, cart_id, 1)
+            } else {
+              deleteOrder(order_id, cart_id)
+            }
             if (Number(total_amount.textContent) - Number(1) < 0) {
               $.ajax({
                 type: 'GET',

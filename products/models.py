@@ -1,4 +1,4 @@
-from ast import For
+from math import trunc
 import datetime
 from flask_login import current_user
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime
@@ -126,15 +126,18 @@ class Order(db.Model):
         db.session.commit()
 
     def get_price(self):
+        price = None
         if current_user.active_discount:
-            if current_user.coupons[-1].promotion.discount_type.name == 'fixed':
-                if self.product_obj.price >= current_user.coupons.promotion.discount_value:
-                    price = self.product_obj.price - current_user.coupons.promotion.discount_value
-            else:
-                price = self.product_obj.price * current_user.coupons.promotion.discount_value // 100
-        else:
-            price = self.product_obj.price
-        return price
+            discount_type = current_user.coupons[-1].promotion.discount_type.name 
+            discount_value = current_user.coupons[-1].promotion.discount_value
+            discount_products = current_user.coupons[-1].promotion.products
+            if self.product_obj in discount_products:
+                if discount_type == 'fixed':
+                    if self.product_obj.price >= discount_value:
+                        price = self.product_obj.price - discount_value
+                else:
+                    price = self.product_obj.price * (1-(discount_value / 100))
+        return float(round(price, 2)) if price else None
 
 
 class Image(db.Model):

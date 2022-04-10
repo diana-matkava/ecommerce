@@ -60,21 +60,29 @@
                     <img style="max-width: 100%;" src="{{url_for('static', filename=order.product_obj.images[0].path)}}" alt="APE">
                 </a>
             </div>
-            <div class="col-9" style="max-width: 450px;">
+            <div class="col-8" style="max-width: 400px;">
                 <h4 class="my-0">{{order.product_obj.name}}</h4>
                 <small class="text-muted">{{order.product_obj.description|truncate(125, true) }}</small>
             </div>
           </div>
-          <a onclick="changeAmountOfProduct({{order.quantity}}, '-', {{order.id}}, {{card.id}})"  style="margin-right: 5px; padding-left: 10px;">
-            <span id="add_product" class="badge badge-warning badge-pill">-</span>
-          </a>
 
-          <a onclick="changeAmountOfProduct({{order.quantity}}, '+', {{order.id}}, {{card.id}})"  style="margin-right: 20px;  width: 10px;">
-            <span id="add_product" class="badge badge-success badge-pill">+</span>
-          </a>
-          <span id="order{{order.id}}" class="text-muted">{{order.quantity}}</span>
-          <span class="text-muted px-1" style="font-size: small;">  x  </span>
-          <span id="order_price{{order.id}}" class="text-muted"> {{order.product_obj.price}}</span>
+            <a onclick="changeAmountOfProduct({{order.quantity}}, '-', {{order.id}}, {{card.id}}, {%if order.get_price()%}1{%endif%})"  style="margin-right: 5px; padding-left: 10px;">
+            <span id="add_product" class="badge badge-warning badge-pill">-</span>
+            </a>
+            <a onclick="changeAmountOfProduct({{order.quantity}}, '+', {{order.id}}, {{card.id}}, {%if order.get_price()%}1{%endif%})" style="margin-right: 20px;  width: 10px;">
+              <span id="add_product" class="badge badge-success badge-pill">+</span>
+            </a>
+            <span id="order{{order.id}}" class="text-muted">{{order.quantity}}</span>
+            <span class="text-muted px-1" style="font-size: small;">  x  </span> 
+            {%if order.get_price() %}
+            <p>
+              <span id="order_price{{order.id}}" style="color: red; text-decoration: line-through;">{{order.product_obj.price}}</span>
+            <span id="order_discount_price{{order.id}}"  style="color: blue">{{order.get_price()}}
+            </span> 
+            </p>
+            {%else%}
+            <span id="order_price{{order.id}}" class="text-muted">{{order.product_obj.price}}</span>
+            {%endif%}
       </li>
       <li id="order_edit_btn{{order.id}}" class="p-3" style="list-style-type: none; margin-top: -60px">
         <button class="button close pull-right" type="button" data-toggle="modal" data-target="#exampleModalCenter{{order.id}}" style="color: red; font-size: 26px;"> x
@@ -94,7 +102,7 @@
                 Are you really sure you want to delete this Product/s from your cart?
               </div>
               <div class="modal-footer">
-                <a onclick="deleteOrder({{order.id}}, {{card.id}})" class="btn btn-danger"  data-dismiss="modal">Delete </a>
+                <a onclick="deleteOrder({{order.id}}, {{card.id}}, {%if order.get_price()%}1{%endif%})" class="btn btn-danger"  data-dismiss="modal">Delete </a>
                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
               </div>
             </div>
@@ -125,9 +133,9 @@
       </div>
       <li class="d-flex justify-content-between p-3">
         {% if current_user.active_discount %}
-        <span>Total (USD):  <strong id="total_price" style='text-decoration: line-through; color: red;'>{{card.get_total_price()}}</strong> 
-          <strong id="total_price">
-           | {{ card.price_with_discount() }}
+        <span>Total (USD):  <strong id="total_price" style='text-decoration: line-through; color: red;'>{{card.get_total_price()}}</strong>  | 
+          <strong id="total_discount_price">
+          {{ card.price_with_discount() }}</strong>
            <span style="font-size: small; color: grey"> {{current_user.coupons[-1].promotion.title}} {{current_user.coupons[-1].promotion.discount_value}} 
             {% if current_user.coupons[-1].promotion.discount_type.name == 'persent'%}%{%else%}{{current_user.coupons[-1].promotion.currency}}{%endif%}</span>
           </strong>
