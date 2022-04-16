@@ -76,12 +76,12 @@
             <span class="text-muted px-1" style="font-size: small;">  x  </span> 
             {%if order.get_price() %}
             <p>
-              <span id="order_price{{order.id}}" style="color: red; text-decoration: line-through;">{{order.product_obj.price}}</span>
+              <span id="order_price{{order.id}}" style="color: red; text-decoration: line-through;">{{order.get_price(disc=False)}}</span>
             <span id="order_discount_price{{order.id}}"  style="color: blue">{{order.get_price()}}
             </span> 
             </p>
             {%else%}
-            <span id="order_price{{order.id}}" class="text-muted">{{order.product_obj.price}}</span>
+            <span id="order_price{{order.id}}" class="text-muted">{{order.get_price(disc=False)}}</span>
             {%endif%}
       </li>
       <li id="order_edit_btn{{order.id}}" class="p-3" style="list-style-type: none; margin-top: -60px">
@@ -132,13 +132,16 @@
         </div>
       </div>
       <li class="d-flex justify-content-between p-3">
-        {% if current_user.active_discount %}
-        <span>Total (USD):  <strong id="total_price" style='text-decoration: line-through; color: red;'>{{card.get_total_price()}}</strong>  | 
+        {% if products_with_disc%}
+        <span id="total_description">Total (USD):  <strong id="total_price" style='text-decoration: line-through; color: red;'>{{card.get_total_price()}}</strong>
+          <span id="discount_description">
+            | 
           <strong id="total_discount_price">
           {{ card.price_with_discount() }}</strong>
            <span style="font-size: small; color: grey"> {{current_user.coupons[-1].promotion.title}} {{current_user.coupons[-1].promotion.discount_value}} 
             {% if current_user.coupons[-1].promotion.discount_type.name == 'persent'%}%{%else%}{{current_user.coupons[-1].promotion.currency}}{%endif%}</span>
           </strong>
+        </span>
         </span>
         {%else%}
         <span>Total (USD):  <strong id="total_price">{{card.get_total_price()}}</strong></span>

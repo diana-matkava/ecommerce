@@ -10,6 +10,7 @@ SQLALCHEMY_DATABASE_URI = env.str('SQLALCHEMY_DATABASE_URI')
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 UPLOAD_FOLDER = env.str('UPLOAD_FOLDER', 'static/')
 ALLOWED_EXTENSIONS = env.str('ALLOWED_EXTENSIONS', {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'})
+CURRENCY_API_KEY = env.str('CURRENCY_API_KEY', default=False)
 
 # MAIL_SERVER = 'smtp.googlemail.com'
 # MAIL_PORT = 465

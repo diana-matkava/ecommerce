@@ -1,9 +1,12 @@
-from math import trunc
 import datetime
+import requests
+import bs4
 from flask_login import current_user
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime
 from sqlalchemy.orm import relationship
+from flask import session
 from ecommerce.extentions import db
+from ecommerce.settings import CURRENCY_API_KEY
 
 images = db.Table('product_images', db.Model.metadata, 
     Column('image_id', Integer, ForeignKey('image.id'), primary_key=True), 
@@ -20,6 +23,17 @@ orders = db.Table('orders', db.Model.metadata,
     Column('order_id', Integer, ForeignKey('order.id'), primary_key=True))
 
 
+
+class Currency(db.Model):
+    __tablename__ = 'currency'
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(255))
+    abr = Column(String(3))
+
+    def __repr__(self):
+        return self.abr
+
+
 class Product(db.Model):
     id = Column(Integer(), primary_key=True)
     name = Column(String(225), nullable=False)
@@ -29,6 +43,8 @@ class Product(db.Model):
         backref=db.backref('product', lazy=True)
     )
     price = Column(Integer())
+    currency_id = Column(Integer(), ForeignKey('currency.id'), nullable=True)
+    currency = relationship(Currency, backref=db.backref('product_currency', uselist=False))
     quantity = Column(Integer())
     product_category = relationship(
         'ProductCategory', secondary=product_categories, lazy='subquery',
@@ -81,13 +97,29 @@ class Card(db.Model):
 
     def get_total_price(self):
         price = 0
+        user_cur = Currency.query.get(current_user.display_currency_id)
         for order in self.product_order:
-            price += order.product_obj.price * order.quantity
-        return price
+            cur_pair = ' '.join([order.product_obj.currency.abr, user_cur.abr])
+            if current_user.display_currency_id == order.product_obj.currency_id:
+                price += order.product_obj.price * order.quantity
+            else:
+                if cur_pair not in session:
+                    url = requests.get(f'https://www.xe.com/currencyconverter/convert/?Amount=1&From={order.product_obj.currency}&To={user_cur}')
+                    soup = bs4.BeautifulSoup( url.text, "html.parser" )
+                    rate = float(soup.find( "p" , class_='result__BigRate-sc-1bsijpp-1 iGrAod' ).text.split(' ')[0])
+                    print(rate)
+                    session[cur_pair] = rate
+                else:
+                    rate = session[cur_pair]
+                price += order.product_obj.price * order.quantity * rate
+
+        return float(round(price, 2))
     
     def price_with_discount(self):
         price = 0
+        user_cur = Currency.query.get(current_user.display_currency_id)
         for order in self.product_order:
+            cur_pair = ' '.join([order.product_obj.currency.abr, user_cur.abr])
             if current_user.active_discount:
                 discount_type = current_user.coupons[-1].promotion.discount_type.name 
                 discount_value = current_user.coupons[-1].promotion.discount_value
@@ -95,13 +127,18 @@ class Card(db.Model):
 
                 if order.product_obj in discount_products:
                     if discount_type == 'fixed':
-                        if self.product_obj.price >= discount_value:
-                            price += order.product_obj.price - discount_value * order.quantity
+                        if order.product_obj.price >= discount_value:
+                            price += (order.product_obj.price - discount_value) * order.quantity
                     else:
                         price += order.product_obj.price * (1-(discount_value / 100)) * order.quantity
                 else:
                     price += order.product_obj.price * order.quantity
-        return price
+
+            if current_user.display_currency_id != order.product_obj.currency_id:
+                rate = session[cur_pair]
+                price += order.product_obj.price * order.quantity * rate
+
+        return float(round(price, 2))
 
 
 class Order(db.Model):
@@ -125,9 +162,11 @@ class Order(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def get_price(self):
+    def get_price(self, disc=True):
         price = None
-        if current_user.active_discount:
+        user_cur = Currency.query.get(current_user.display_currency_id)
+        cur_pair = ' '.join([self.product_obj.currency.abr, user_cur.abr])
+        if current_user.active_discount and disc:
             discount_type = current_user.coupons[-1].promotion.discount_type.name 
             discount_value = current_user.coupons[-1].promotion.discount_value
             discount_products = current_user.coupons[-1].promotion.products
@@ -137,6 +176,13 @@ class Order(db.Model):
                         price = self.product_obj.price - discount_value
                 else:
                     price = self.product_obj.price * (1-(discount_value / 100))
+        else:
+            price = self.product_obj.price
+
+        if current_user.display_currency_id != self.product_obj.currency_id:
+            rate = session[cur_pair]
+            price += self.product_obj.price * rate
+
         return float(round(price, 2)) if price else None
 
 

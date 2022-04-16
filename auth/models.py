@@ -5,8 +5,9 @@ from sqlalchemy_utils import PhoneNumberType
 import sqlalchemy.types as types
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Boolean
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declared_attr
 from ecommerce.extentions import db
-from ecommerce.products.models import Product
+from ecommerce.products.models import Product, Currency
 from ecommerce.checkout.models import Promotion, Coupon
 
 
@@ -51,6 +52,11 @@ class User(UserMixin):
     role = Column(Integer, nullable=False, default=R_CUSTOMER)
     card_id = Column(Integer, nullable=True)
     active_discount = Column(Boolean, default=False, nullable=True)
+
+    @declared_attr
+    def display_currency_id(cls):
+        return Column(Integer, ForeignKey('currency.id'), default=1)
+
 
     def delete(self):
         db.session.delete(self)

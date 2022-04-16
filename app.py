@@ -1,7 +1,6 @@
 import os
 import sys
 from flask import Flask, render_template, send_from_directory
-from flask_currency import Currency
 from ecommerce.auth.views import bp, login_manager
 from ecommerce.products.views import pr
 from ecommerce.checkout.views import checkout, promotion

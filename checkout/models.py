@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from flask import flash
 from ecommerce.extentions import db
-from ecommerce.products.models import Product
+from ecommerce.products.models import Product, Currency
 
 
 products = Table('products', db.Model.metadata,
@@ -42,16 +42,6 @@ class DiscountType(enum.Enum):
     
     def __str__(self):
         return self.name
-
-
-class Currency(db.Model):
-    __tablename__ = 'currency'
-    id = Column(Integer(), primary_key=True)
-    name = Column(String(255))
-    abr = Column(String(3))
-
-    def __repr__(self):
-        return self.abr
 
 
 class Promotion(db.Model):

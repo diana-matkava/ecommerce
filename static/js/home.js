@@ -42,7 +42,6 @@ function deleteOrder(order_id, cart_id, discount=0) {
         empty_block.style.display = 'flex';
         cart_badge.style.display = 'none';
       } else {
-        console.log('here')
         if (order_amount != 1) {
           total_amount.innerHTML = Number(total_amount.textContent) - Number(order_amount.textContent);
           total_price.innerHTML = Number(total_price.textContent) - Number(order_amount.textContent) * Number(order_price.textContent);
@@ -51,6 +50,13 @@ function deleteOrder(order_id, cart_id, discount=0) {
             total_discount_price = document.getElementById('total_discount_price');
             total_discount_price.innerHTML = (
               Number(total_discount_price.textContent) - Number(order_amount.textContent) * Number(order_discount_price)).toFixed(2);
+            if (Number(total_discount_price.textContent) === Number(total_price.textContent)) {
+              discount_description = document.getElementById('discount_description')
+              total_description = document.getElementById('total_price')
+              total_description.style.color = 'black';
+              total_description.style.textDecoration = 'none';
+              discount_description.style.display = 'none';
+            }
           }
         }
         block = document.getElementById('order_block'+ order_id);

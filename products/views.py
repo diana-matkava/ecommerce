@@ -1,5 +1,7 @@
 import datetime
 import os
+import bs4
+import requests
 from unicodedata import category
 from .models import Product
 from flask import Blueprint, flash, render_template, redirect, session, url_for, request
@@ -186,14 +188,22 @@ def delete_product(id):
 
 @pr.route('/card', methods=['GET', 'POST'])
 def card(id=None):
+    session.pop('_flashes', None)
     data = {
         'card': None,
+        'products_with_disc': None
     }
     if current_user.card_id:
         card = Card.query.get(current_user.card_id)
         data = {
             'card': card,
         }
+        if current_user.active_discount:
+            for order in card.product_order:
+                if order.product_obj in current_user.coupons[-1].promotion.products:
+                    data['products_with_disc'] = True
+                    break
+        
     return render_template('products/card.html', **data)
 
 

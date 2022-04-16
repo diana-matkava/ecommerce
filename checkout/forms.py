@@ -3,8 +3,8 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, validators, SelectMultipleField, SelectField, BooleanField, IntegerField, DateTimeField, DateField
 from wtforms.validators import InputRequired, Length, ValidationError
-from ecommerce.checkout.models import Promotion, Coupon, DiscountType, CouponType, Currency
-from ecommerce.products.models import Product
+from ecommerce.checkout.models import Promotion, Coupon, DiscountType, CouponType
+from ecommerce.products.models import Product, Currency
 
 
 class PromotionForm(FlaskForm):
