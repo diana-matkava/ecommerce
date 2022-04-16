@@ -67,12 +67,12 @@
         <div class="mb-3">
           {% for category in product.product_category %}
           <a href="{{url_for('home', id=category.id)}}">
-            <span class="badge badge-pill badge-info mr-3">{{category.name}}</span>
+            <span class="badge badge-pill badge-info mr-3">{{category.name}}</span> 
           </a>
           {% endfor %}
         </div>
         
-        <p class="lead"><span>Price: {{product.price}}$</span></p>
+        <p class="lead"><span>Price: {{product.get_price()}} {{current_user.currency.abr}}</span></p>
         <p><span>Quantity: {{product.quantity}}</span></p>
         <p class="my-2">Owner: <a href="#">{{product.owner_name}}</a></p>
         <p class="my-2">Created: {{product.created|humanize}}</p>

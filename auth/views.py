@@ -4,8 +4,11 @@ import sys
 import pycountry
 from flask import Blueprint, flash, render_template, request, session, url_for, redirect
 from flask_login import login_user, login_required, logout_user, LoginManager, current_user
+from urllib3 import HTTPResponse
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
+
+from ecommerce.products.models import Currency
 from .forms import CustomerRegistrationForm, SellerRegistrationForm, LoginForm
 from .models import User, Customer, Seller, Type, Category
 from ecommerce.extentions import db
@@ -128,24 +131,6 @@ def edit_customer_profile():
                 path = os.path.join(UPLOAD_FOLDER, 'img/user_inputs/customer_avatar/', secure_filename(avatar.filename))
                 avatar.save(os.path.join(path))
                 user.avatar = os.path.join('img/user_inputs/customer_avatar/', secure_filename(avatar.filename))
-                
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                
         current_pwd = request.form.get('password')
         if current_pwd:
             if check_password_hash(user.password, current_pwd):
@@ -274,3 +259,13 @@ def delete_customer(id):
 def delete_seller(id):
     Seller.query.get(id).delete()
     return redirect(url_for('home'))
+
+
+@login_required
+@bp.route('/change_currency', methods=['POST'])
+def change_currency():
+    currency = request.form.get('currency')
+    current_user.display_currency_id = Currency.query.filter_by(abr=currency)[0].id
+    db.session.add(current_user)
+    db.session.commit()
+    return ('', 204)

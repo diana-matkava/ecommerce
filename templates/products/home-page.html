@@ -145,7 +145,7 @@
         </div>
         <div class="card-body text-center">
           <a href="{{url_for('product_page', id=product.id)}}">
-            <p style="font-size: {%if product.name|length< 15%}large{%else%}smaller{%endif%}; color: black;">{{product.name|truncate(23, True)}}<span class="grey-text" style="margin-left: 20px; font-size: 18px;"><strong>${{product.price}}</strong></span></p>
+            <p style="font-size: {%if product.name|length< 15%}large{%else%}smaller{%endif%}; color: black;">{{product.name|truncate(23, True)}}<span class="grey-text" style="margin-left: 20px; font-size: 18px;"><strong>{{product.get_price()}} {{current_user.currency.abr}}</strong></span></p>
           </a>
 
           <p>

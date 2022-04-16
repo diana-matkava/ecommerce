@@ -85,6 +85,7 @@ class Customer(User, db.Model):
         backref=db.backref('customer', lazy=True))
     coupons = relationship(Coupon, secondary=active_codes_for_custmr, lazy='subquery', 
                 backref=db.backref('customer', lazy=True))
+    currency = relationship(Currency, backref=db.backref('customer_currency', uselist=False))
 
     def __repr__(self):
         return f'{self.username}'
@@ -109,6 +110,7 @@ class Seller(User, db.Model):
         backref=db.backref('seller', lazy=True))
     coupons = relationship(Coupon, secondary=active_codes_for_sel, lazy='subquery', 
                 backref=db.backref('seller', lazy=True))
+    currency = relationship(Currency, backref=db.backref('seller_currency', uselist=False))
     
     
     def __repr__(self):

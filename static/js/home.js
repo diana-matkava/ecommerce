@@ -177,3 +177,16 @@ function findCoupon() {
     }
   })
 }
+
+function changeCurrency(currency) {
+  $.ajax({
+    type: 'POST',
+    url: '/auth/change_currency',
+    data: {
+      'currency': currency
+    },
+    success: function() {
+      location.reload()
+    }
+  })
+}

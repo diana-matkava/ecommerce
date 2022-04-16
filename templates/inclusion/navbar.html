@@ -57,7 +57,7 @@
                 {% if current_user.is_authenticated %}
                     <div class="dropdown">
                         <li class="nav-item">
-                            <a href="#" class="nav-link rounded waves-effect mr-2">{{current_user}}</a>
+                            <a href="{{url_for('auth.profile')}}" class="nav-link rounded waves-effect mr-2">{{current_user}}</a>
                         </li>
                         <div class="dropdown-content">
                             {% if current_user %}
@@ -75,15 +75,15 @@
                     </div>
                         {% if current_user.logo %}
                         <li class="nav-item">
-                            <img src="{{url_for('static', filename=current_user.logo)}}" alt="" class="logo">
+                            <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename=current_user.logo)}}" alt="" class="logo"></a>
                         </li>
                         {% elif current_user.avatar %}
                         <li class="nav-item">
-                            <img src="{{url_for('static', filename=current_user.avatar)}}" alt="" class="logo">
+                            <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename=current_user.avatar)}}" alt="" class="logo"></a>
                         </li>
                         {% else %}
                         <li class="nav-item">
-                            <img src="{{url_for('static', filename='img/user_inputs/default/image.png')}}" alt="" class="logo" style='width: 32px;'>
+                            <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename='img/user_inputs/default/image.png')}}" alt="" class="logo" style='width: 32px;'></a>
                         </li>
                         {% endif %}
                 {%else%}
@@ -94,6 +94,21 @@
                         <a href="{{url_for('auth.login')}}" class="nav-link border border-dark btn-dark rounded waves-effect"><span style="color: #fff">Sing In</span></a>
                     </li>
                 {%endif%}
+                <div class="dropdown">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link rounded waves-effect mr-2">{{current_user.currency}}</a>
+                    </li>
+                    <div class="dropdown-currency">
+                        {% set currencies = ['USD', 'EUR', 'UAH', 'RUB', 'CNY', 'GBP'] %}
+                        {% for currency in currencies %}
+                            {% if not currency == current_user.currency.abr %}
+                                <li class="nav-item">
+                                    <a onClick="changeCurrency('{{currency}}')" class="mr-2 waves-effect li-currency">{{currency}}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
             </ul>
 
         </div>

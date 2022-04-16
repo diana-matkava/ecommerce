@@ -56,6 +56,21 @@ class Product(db.Model):
     like = Column(Integer(), default=0, nullable=True)
     created = Column(DateTime(), default=datetime.datetime.now(), nullable=True)
 
+    def get_price(self):
+        price = self.price
+        if current_user.display_currency_id != self.currency_id:
+            cur_pair = ' '.join(['RATE', self.currency.abr, current_user.currency.abr])
+            if cur_pair not in session:
+                url = requests.get(f'https://www.xe.com/currencyconverter/convert/?Amount=1&From={self.currency.abr}&To={current_user.currency.abr}')
+                soup = bs4.BeautifulSoup( url.text, "html.parser" )
+                rate = float(soup.find( "p" , class_='result__BigRate-sc-1bsijpp-1 iGrAod' ).text.split(' ')[0])
+                session[cur_pair] = rate
+            else:
+                rate = session[cur_pair]
+            
+            price = self.price * rate
+        return float(round(price, 2))
+
 
     def delete(self):
         db.session.delete(self)
@@ -97,29 +112,20 @@ class Card(db.Model):
 
     def get_total_price(self):
         price = 0
-        user_cur = Currency.query.get(current_user.display_currency_id)
         for order in self.product_order:
-            cur_pair = ' '.join([order.product_obj.currency.abr, user_cur.abr])
+            cur_pair = ' '.join(['RATE', order.product_obj.currency.abr, current_user.currency.abr])
             if current_user.display_currency_id == order.product_obj.currency_id:
                 price += order.product_obj.price * order.quantity
             else:
-                if cur_pair not in session:
-                    url = requests.get(f'https://www.xe.com/currencyconverter/convert/?Amount=1&From={order.product_obj.currency}&To={user_cur}')
-                    soup = bs4.BeautifulSoup( url.text, "html.parser" )
-                    rate = float(soup.find( "p" , class_='result__BigRate-sc-1bsijpp-1 iGrAod' ).text.split(' ')[0])
-                    print(rate)
-                    session[cur_pair] = rate
-                else:
-                    rate = session[cur_pair]
+                rate = session[cur_pair]
                 price += order.product_obj.price * order.quantity * rate
 
         return float(round(price, 2))
     
     def price_with_discount(self):
         price = 0
-        user_cur = Currency.query.get(current_user.display_currency_id)
         for order in self.product_order:
-            cur_pair = ' '.join([order.product_obj.currency.abr, user_cur.abr])
+            cur_pair = ' '.join(['RATE', order.product_obj.currency.abr, current_user.currency.abr])
             if current_user.active_discount:
                 discount_type = current_user.coupons[-1].promotion.discount_type.name 
                 discount_value = current_user.coupons[-1].promotion.discount_value
@@ -164,8 +170,7 @@ class Order(db.Model):
 
     def get_price(self, disc=True):
         price = None
-        user_cur = Currency.query.get(current_user.display_currency_id)
-        cur_pair = ' '.join([self.product_obj.currency.abr, user_cur.abr])
+        cur_pair = ' '.join(['RATE', self.product_obj.currency.abr, current_user.currency.abr])
         if current_user.active_discount and disc:
             discount_type = current_user.coupons[-1].promotion.discount_type.name 
             discount_value = current_user.coupons[-1].promotion.discount_value
@@ -180,7 +185,14 @@ class Order(db.Model):
             price = self.product_obj.price
 
         if current_user.display_currency_id != self.product_obj.currency_id:
-            rate = session[cur_pair]
+            if cur_pair not in session:
+                url = requests.get(f'https://www.xe.com/currencyconverter/convert/?Amount=1&From={self.product_obj.currency}&To={current_user.currency.abr}')
+                soup = bs4.BeautifulSoup( url.text, "html.parser" )
+                rate = float(soup.find( "p" , class_='result__BigRate-sc-1bsijpp-1 iGrAod' ).text.split(' ')[0])
+                session[cur_pair] = rate
+            else:
+                rate = session[cur_pair]
+            
             price += self.product_obj.price * rate
 
         return float(round(price, 2)) if price else None
