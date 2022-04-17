@@ -1,5 +1,123 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-  <p>Hello world</p>
+<style>
+    a {
+     color: rgb(100, 105, 123);   
+     font-weight: 600;
+    }
+</style>
+
+<div class="row">
+    <div class="col-6">
+        <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Users</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td><a href="../admin/admin_sellers/">Seller</a></td>
+              </tr>
+            </tbody>
+
+            
+            <tbody>
+                <tr>
+                    <td><a href="../admin/customer">Customer</a></td>
+                </tr>
+            </tbody>
+
+              <tbody>
+                <tr>
+                    <td><a href="../admin/type">Business Type</a></td>
+                </tr>
+              </tbody>
+
+              <tbody>
+                <tr>
+                    <td><a href="../admin/category">Business Category</a></td>
+                </tr>
+              </tbody>
+          </table>
+
+    </div>
+    <div class="col-6">
+        <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Product</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><a href="../admin/product">Products</a></td>
+              </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td><a href="../admin/order">Orders</a></td>
+                </tr>
+              </tbody>
+              <tbody>
+                <tr>
+                    <td><a href="../admin/card">Carts</a></td>
+                </tr>
+              </tbody>
+              <tbody>
+                <tr>
+                    <td><a href="../admin/productcategory">Product Category</a></td>
+                </tr>
+              </tbody>
+          </table>
+    </div>
+</div>
+<div class="row mt-5">
+    <div class="col-6">
+        <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Checkout</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="../admin/promotions">Promotions</a></td>
+                </tr>
+              </tbody>
+              <tbody>
+                <tr>
+                    <td><a href="../admin/coupon">Coupons</a></td>
+                </tr>
+              </tbody>
+              <tbody>
+                <tr>
+                    <td><a href="../admin/currency">Currency</a></td>
+                </tr>
+              </tbody>
+          </table>
+    </div>
+    <div class="col-6">
+        <!-- <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">Handle</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+              </tr>
+            </tbody>
+          </table> -->
+    </div>
+</div>
 {% endblock %}
