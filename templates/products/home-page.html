@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{%block title%}MDB{%endblock%}
+{%block title%}FMP{%endblock%}
 
 {%block extrastyle%}
 <style type="text/css">
@@ -85,7 +85,7 @@
 
 <main>
   <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-dark mdb-color lighten-3 mt-3 mb-5">
+    <nav class="navbar navbar-expand-lg navbar-dark lighten-3 mt-3 mb-5" style="background-color: rgb(135, 192, 227);">
       <span class="navbar-brand">Categories</span>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
         aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -143,9 +143,9 @@
             <div class="mask rgba-white-slight"></div>
           </a>
         </div>
-        <div class="card-body text-center">
+        <div class="card-body text-center" style="max-height: 125px; margin-top: 0px; padding: 0px 5px;">
           <a href="{{url_for('product_page', id=product.id)}}">
-            <p style="font-size: {%if product.name|length< 15%}large{%else%}smaller{%endif%}; color: black;">{{product.name|truncate(23, True)}}<span class="grey-text" style="margin-left: 20px; font-size: 18px;"><strong>{{product.get_price()}} {{current_user.currency.abr}}</strong></span></p>
+            <p style="font-size: {%if product.name|length< 15%}large{%else%}smaller{%endif%}; color: black;">{{product.name|truncate(23, True)}}<span class="grey-text" style="margin-left: 20px; font-size: 18px;"><strong style="font-size: small;">{{product.get_price()}} {{current_user.currency.abr}}</strong></span></p>
           </a>
 
           <p>

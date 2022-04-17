@@ -5,6 +5,7 @@ from flask_bootstrap import Bootstrap
 from sqlalchemy import MetaData
 from flask_sqlalchemy import SQLAlchemy
 from flask_humanize import Humanize
+from flask_admin import Admin
 
 metadata = MetaData(
     naming_convention={
@@ -22,3 +23,4 @@ migrate = Migrate()
 bcrypt = Bcrypt()
 bootstrap = Bootstrap()
 humanize = Humanize()
+admin = Admin(name='ECM Admin Panel', template_mode='bootstrap4')

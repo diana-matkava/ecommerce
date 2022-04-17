@@ -84,7 +84,8 @@ function changeAmountOfProduct(quantity, operator, order_id, cart_id, discount=0
         if (operator === '+') {
           el.innerHTML = Number(el.textContent) + Number(1);
           total_amount.innerHTML = Number(total_amount.textContent) + Number(1);
-          total_price.innerHTML = Number(total_price.textContent) + Number(order_price.textContent);
+          total_price.innerHTML = (Number(total_price.textContent) + Number(order_price.textContent)).toFixed(2);
+          console.log(total_price)
           if (discount) {
             order_discount_price = document.getElementById('order_discount_price'+order_id).textContent;
             total_discount_price = document.getElementById('total_discount_price');
@@ -93,13 +94,12 @@ function changeAmountOfProduct(quantity, operator, order_id, cart_id, discount=0
           }
         } else {
           total_amount.innerHTML = Number(total_amount.textContent) - Number(1);
-          total_price.innerHTML = Number(total_price.textContent) - Number(order_price.textContent);
+          total_price.innerHTML = (Number(total_price.textContent) - Number(order_price.textContent)).toFixed(2);
           el.innerHTML = Number(el.textContent) - Number(1);
           if (discount) {
             order_discount_price = document.getElementById('order_discount_price'+order_id).textContent;
             total_discount_price = document.getElementById('total_discount_price');
             total_discount_price.innerHTML = (Number(total_discount_price.textContent) - Number(order_discount_price)).toFixed(2);
-            console.log(total_discount_price)
           }
           if (Number(el.textContent) - Number(1) < 0) {
             block = document.getElementById('order_block'+ order_id);

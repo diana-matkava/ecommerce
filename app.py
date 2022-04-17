@@ -4,10 +4,12 @@ from flask import Flask, render_template, send_from_directory
 from ecommerce.auth.views import bp, login_manager
 from ecommerce.products.views import pr
 from ecommerce.checkout.views import checkout, promotion
-from ecommerce.extentions import db, migrate, bcrypt, humanize
+from ecommerce.extentions import db, migrate, bcrypt, humanize, admin
 from ecommerce.auth.models import *
 from ecommerce.products.models import *
 from ecommerce.checkout.models import *
+from flask_admin.contrib.sqla import ModelView
+from ecommerce.admin import CustomerAdminView
 
 
 def create_app(test_config=None, config_objects='ecommerce.settings'):
@@ -49,6 +51,12 @@ def create_app(test_config=None, config_objects='ecommerce.settings'):
     login_manager.init_app(app)
     humanize.init_app(app)
 
+
+
+    admin.init_app(app)
+    admin.add_view(ModelView(Seller, db.session))
+    admin.add_view(ModelView(Product, db.session))
+    admin.add_view(CustomerAdminView(db.session))
     # @humanize.localeselector
     # def get_locale():
     #     return 'ru_RU'

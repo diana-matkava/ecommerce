@@ -3,7 +3,7 @@
 
         <!-- Brand -->
         <a class="navbar-brand waves-effect" href="{{url_for('home')}}">
-            <strong class="blue-text">MDB</strong>
+            <strong class="blue-text">FMP</strong>
         </a>
 
         <!-- Collapse -->
@@ -83,7 +83,7 @@
                         </li>
                         {% else %}
                         <li class="nav-item">
-                            <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename='img/user_inputs/default/image.png')}}" alt="" class="logo" style='width: 32px;'></a>
+                            <a href="{{url_for('auth.profile')}}"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="" class="logo" style='width: 32px;'></a>
                         </li>
                         {% endif %}
                 {%else%}
@@ -96,7 +96,7 @@
                 {%endif%}
                 <div class="dropdown">
                     <li class="nav-item">
-                        <a href="#" class="nav-link rounded waves-effect mr-2">{{current_user.currency}}</a>
+                        <a href="#" class="nav-link rounded waves-effect mr-2" style="color: rgb(43, 172, 220); font-size: smaller; margin: 3px 0 0 5px; font-weight: 400;">{{current_user.currency}}</a>
                     </li>
                     <div class="dropdown-currency">
                         {% set currencies = ['USD', 'EUR', 'UAH', 'RUB', 'CNY', 'GBP'] %}
