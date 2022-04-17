@@ -67,7 +67,6 @@ class Product(db.Model):
                 session[cur_pair] = rate
             else:
                 rate = session[cur_pair]
-            
             price = self.price * rate
         return float(round(price, 2))
 
@@ -123,7 +122,7 @@ class Card(db.Model):
         return float(round(price, 2))
     
     def price_with_discount(self):
-        price = 0
+        price, total_price = 0, 0
         for order in self.product_order:
             cur_pair = ' '.join(['RATE', order.product_obj.currency.abr, current_user.currency.abr])
             if current_user.active_discount:
@@ -135,16 +134,23 @@ class Card(db.Model):
                     if discount_type == 'fixed':
                         if order.product_obj.price >= discount_value:
                             price += (order.product_obj.price - discount_value) * order.quantity
-                    else:
+                        else:
+                            price += order.product_obj.price * order.quantity
+                    elif discount_type == 'persent':
                         price += order.product_obj.price * (1-(discount_value / 100)) * order.quantity
                 else:
                     price += order.product_obj.price * order.quantity
+                
+                total_price += price
+                
 
-            if current_user.display_currency_id != order.product_obj.currency_id:
-                rate = session[cur_pair]
-                price += order.product_obj.price * order.quantity * rate
-
-        return float(round(price, 2))
+                if current_user.display_currency_id != order.product_obj.currency_id:
+                    rate = session[cur_pair]
+                    total_price -= price
+                    total_price = price * rate
+                
+                price = 0
+        return float(round(total_price, 2))
 
 
 class Order(db.Model):
@@ -171,19 +177,6 @@ class Order(db.Model):
     def get_price(self, disc=True):
         price = None
         cur_pair = ' '.join(['RATE', self.product_obj.currency.abr, current_user.currency.abr])
-        if current_user.active_discount and disc:
-            discount_type = current_user.coupons[-1].promotion.discount_type.name 
-            discount_value = current_user.coupons[-1].promotion.discount_value
-            discount_products = current_user.coupons[-1].promotion.products
-            if self.product_obj in discount_products:
-                if discount_type == 'fixed':
-                    if self.product_obj.price >= discount_value:
-                        price = self.product_obj.price - discount_value
-                else:
-                    price = self.product_obj.price * (1-(discount_value / 100))
-        else:
-            price = self.product_obj.price
-
         if current_user.display_currency_id != self.product_obj.currency_id:
             if cur_pair not in session:
                 url = requests.get(f'https://www.xe.com/currencyconverter/convert/?Amount=1&From={self.product_obj.currency}&To={current_user.currency.abr}')
@@ -193,7 +186,19 @@ class Order(db.Model):
             else:
                 rate = session[cur_pair]
             
-            price += self.product_obj.price * rate
+            price = self.product_obj.price * rate
+
+        discount_products = current_user.coupons[-1].promotion.products
+        if self.product_obj in discount_products and disc:
+            discount_type = current_user.coupons[-1].promotion.discount_type.name 
+            discount_value = current_user.coupons[-1].promotion.discount_value
+            if discount_type == 'fixed':
+                if self.product_obj.price >= discount_value:
+                    price = price - discount_value
+                else:
+                    price = price
+            elif discount_type == 'persent':
+                price = price * (1-(discount_value / 100))
 
         return float(round(price, 2)) if price else None
 
