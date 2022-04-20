@@ -92,8 +92,8 @@ class Customer(User, db.Model):
     
 
 class Seller(User, db.Model):
-    first_name = Column(String(50))
-    last_name = Column(String(50))
+    first_name = Column(String(50), nullable=True)
+    last_name = Column(String(50), nullable=True)
     company_name = Column(String(125), nullable=False)
     country = Column(String(125), nullable=False)
     category = relationship(

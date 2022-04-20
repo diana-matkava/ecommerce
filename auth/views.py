@@ -25,7 +25,7 @@ login_manager.login_message_category = "info"
 def load_user(id):
     if not session['role']:
         return Customer.query.get(int(id))
-    if session['role']:
+    if session['role'] > 0:
         return Seller.query.get(int(id))
 
 
@@ -269,3 +269,16 @@ def change_currency():
     db.session.add(current_user)
     db.session.commit()
     return ('', 204)
+
+
+def create_superuser(email, password):
+    seller = Seller.query.filter_by(email=email)
+    customer = Customer.query.filter_by(email=email)
+    if seller or customer:
+        print('This email already taken')
+    else:
+        superuser = Seller(email=email, password=password, role=2)
+        db.session.add(superuser)
+        db.session.commit()
+        load_user(id)
+    pass
