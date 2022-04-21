@@ -71,8 +71,11 @@
           </a>
           {% endfor %}
         </div>
-        
+        {%if current_user.is_authenticated%}
         <p class="lead"><span>Price: {{product.get_price()}} {{current_user.currency.abr}}</span></p>
+        {%else%}
+        <p class="lead"><span>Price: {{product.get_price()}} {{product.currency}}</span></p>
+        {%endif%}
         <p><span>Quantity: {{product.quantity}}</span></p>
         <p class="my-2">Owner: <a href="#">{{product.owner_name}}</a></p>
         <p class="my-2">Created: {{product.created|humanize}}</p>

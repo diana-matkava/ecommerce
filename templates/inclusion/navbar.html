@@ -94,6 +94,7 @@
                         <a href="{{url_for('auth.login')}}" class="nav-link border border-dark btn-dark rounded waves-effect"><span style="color: #fff">Sing In</span></a>
                     </li>
                 {%endif%}
+                {% if current_user.is_authenticated %}
                 <div class="dropdown">
                     <li class="nav-item">
                         <a href="#" class="nav-link rounded waves-effect mr-2" style="color: rgb(43, 172, 220); font-size: smaller; margin: 3px 0 0 5px; font-weight: 400;">{{current_user.currency}}</a>
@@ -109,6 +110,7 @@
                         {% endfor %}
                     </div>
                 </div>
+                {%endif%}
             </ul>
 
         </div>

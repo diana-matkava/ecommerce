@@ -19,7 +19,8 @@ pr = Blueprint('', __name__, url_prefix='/')
 @pr.route('/', methods=['GET', 'POST', 'PUT'])
 @pr.route('/<id>', methods=['GET', 'POST', 'PUT'])
 def home(id=None):
-    [print(key[0:3]) for key in list(session.keys()) if key[0:3] == 'RATE']
+
+    print(session)
     data = {
         'ad_products':  Product.query.all()[::4],
         'products': Product.query.all() if not id \

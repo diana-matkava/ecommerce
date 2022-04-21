@@ -270,15 +270,7 @@ def change_currency():
     db.session.commit()
     return ('', 204)
 
-
-def create_superuser(email, password):
-    seller = Seller.query.filter_by(email=email)
-    customer = Customer.query.filter_by(email=email)
-    if seller or customer:
-        print('This email already taken')
-    else:
-        superuser = Seller(email=email, password=password, role=2)
-        db.session.add(superuser)
-        db.session.commit()
-        load_user(id)
-    pass
+@bp.route('/createsupeuser', methods=['POST'])
+def create_superuser(id):
+    load_user(id)
+    return ('', 204)

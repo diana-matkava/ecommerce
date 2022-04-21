@@ -94,14 +94,14 @@ class Customer(User, db.Model):
 class Seller(User, db.Model):
     first_name = Column(String(50), nullable=True)
     last_name = Column(String(50), nullable=True)
-    company_name = Column(String(125), nullable=False)
-    country = Column(String(125), nullable=False)
+    company_name = Column(String(125), nullable=True)
+    country = Column(String(125), nullable=True)
     category = relationship(
         'Category', secondary=categories, lazy='subquery',
         backref=db.backref('seller', lazy=True)
         )
     busines_type = relationship("Type", backref="busines_type", lazy=True)
-    phone = Column(PhoneNumberType(), nullable=False)
+    phone = Column(PhoneNumberType(), nullable=True)
     logo = Column(Integer, ForeignKey('company_logo.id'), nullable=True)
     liked_products = relationship('Product', secondary=seller_likes, 
         backref=db.backref('seller', lazy=True))

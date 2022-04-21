@@ -58,7 +58,7 @@ class Product(db.Model):
 
     def get_price(self):
         price = self.price
-        if current_user.display_currency_id != self.currency_id:
+        if current_user.is_authenticated and current_user.display_currency_id != self.currency_id:
             cur_pair = ' '.join(['RATE', self.currency.abr, current_user.currency.abr])
             if cur_pair not in session:
                 url = requests.get(f'https://www.xe.com/currencyconverter/convert/?Amount=1&From={self.currency.abr}&To={current_user.currency.abr}')
@@ -125,7 +125,7 @@ class Card(db.Model):
         price, total_price = 0, 0
         for order in self.product_order:
             cur_pair = ' '.join(['RATE', order.product_obj.currency.abr, current_user.currency.abr])
-            if current_user.active_discount:
+            if current_user and current_user.active_discount:
                 discount_type = current_user.coupons[-1].promotion.discount_type.name 
                 discount_value = current_user.coupons[-1].promotion.discount_value
                 discount_products = current_user.coupons[-1].promotion.products
@@ -177,7 +177,7 @@ class Order(db.Model):
     def get_price(self, disc=True):
         price = None
         cur_pair = ' '.join(['RATE', self.product_obj.currency.abr, current_user.currency.abr])
-        if current_user.display_currency_id != self.product_obj.currency_id:
+        if current_user and current_user.display_currency_id != self.product_obj.currency_id:
             if cur_pair not in session:
                 url = requests.get(f'https://www.xe.com/currencyconverter/convert/?Amount=1&From={self.product_obj.currency}&To={current_user.currency.abr}')
                 soup = bs4.BeautifulSoup( url.text, "html.parser" )
