@@ -1,7 +1,7 @@
 import os
 import sys
-from unicodedata import name
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, send_from_directory
+from ecommerce.admin import BusinessTypeAdminView, CustomerAdminView, ProductAdminView, SellerAdminView
 from ecommerce.auth.views import bp, login_manager
 from ecommerce.products.views import pr
 from ecommerce.checkout.views import checkout, promotion
@@ -10,6 +10,7 @@ from ecommerce.auth.models import *
 from ecommerce.products.models import *
 from ecommerce.checkout.models import *
 from flask_admin.contrib.sqla import ModelView
+from ecommerce.admin import AdminIndex
 
 def create_app(test_config=None, config_objects='ecommerce.settings'):
     # create and configure the app
@@ -52,8 +53,21 @@ def create_app(test_config=None, config_objects='ecommerce.settings'):
     login_manager.init_app(app)
     humanize.init_app(app)
 
-    # Admin Page
-    # admin.init_app(app)
+    admin.init_app(app, index_view=AdminIndex)
+
+    admin.add_view(SellerAdminView(db.session, category='Users', endpoint='admin_sellers'))
+    admin.add_view(CustomerAdminView(db.session, category='Users'))
+    admin.add_view(BusinessTypeAdminView(db.session, category='Users', name='Business Type'))
+    admin.add_view(ModelView(Category, db.session, category='Users', name='Business Category'))
+
+    admin.add_view(ProductAdminView(db.session, category='Products'))
+    admin.add_view(ModelView(Order, db.session, category='Products'))
+    admin.add_view(ModelView(Card, db.session, category='Products'))
+    admin.add_view(ModelView(ProductCategory, db.session, category='Products'))
+
+    admin.add_view(ModelView(Promotion, db.session, category='Checkout', endpoint='promotions'))
+    admin.add_view(ModelView(Coupon, db.session, category='Checkout'))
+    admin.add_view(ModelView(Currency, db.session, category='Checkout'))
 
     
 

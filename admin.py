@@ -1,13 +1,8 @@
 from flask_admin.contrib.sqla import ModelView
-from ecommerce.extentions import admin, db
-from ecommerce.products.models import Product, Card, Order, ProductCategory, Currency
-from ecommerce.auth.models import Seller, Customer, Type, Category
-from ecommerce.checkout.models import Promotion, Coupon
-from ecommerce.app import create_app
-from ecommerce.extentions import admin
-
-
-
+from flask_login import current_user
+from ecommerce.products.models import Product
+from ecommerce.auth.models import Seller, Customer, Type
+from ecommerce.checkout.models import Promotion
 
 class CustomerAdminView(ModelView):
     can_view_details = True
@@ -47,23 +42,4 @@ class PromotionAdminView(ModelView):
 
     def __init__(self, session, **kwargs):
         super(PromotionAdminView, self).__init__(Promotion, session, **kwargs)
-        self.name = 'sdsdsdsd'
-
-app = create_app()
-admin.init_app(app)
-
-admin.add_view(SellerAdminView(db.session, category='Users', endpoint='admin_sellers'))
-admin.add_view(CustomerAdminView(db.session, category='Users'))
-admin.add_view(BusinessTypeAdminView(db.session, category='Users', name='Business Type'))
-admin.add_view(ModelView(Category, db.session, category='Users', name='Business Category'))
-
-
-admin.add_view(ProductAdminView(db.session, category='Products'))
-admin.add_view(ModelView(Order, db.session, category='Products'))
-admin.add_view(ModelView(Card, db.session, category='Products'))
-admin.add_view(ModelView(ProductCategory, db.session, category='Products'))
-
-
-admin.add_view(ModelView(Promotion, db.session, category='Checkout', endpoint='promotions'))
-admin.add_view(ModelView(Coupon, db.session, category='Checkout'))
-admin.add_view(ModelView(Currency, db.session, category='Checkout'))
+        self.name = 'promotion'
