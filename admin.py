@@ -1,7 +1,7 @@
 from flask_admin.contrib.sqla import ModelView
-from ecommerce.products.models import Product
-from ecommerce.auth.models import Seller, Customer, Type
-from ecommerce.checkout.models import Promotion
+from .products.models import Product
+from .auth.models import Seller, Customer, Type
+from .checkout.models import Promotion
 
 
 class CustomerAdminView(ModelView):

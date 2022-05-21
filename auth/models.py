@@ -6,9 +6,9 @@ import sqlalchemy.types as types
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
-from ecommerce.extentions import db
-from ecommerce.products.models import Product, Currency
-from ecommerce.checkout.models import Promotion, Coupon
+from ..extentions import db
+from ..products.models import Product, Currency
+from ..checkout.models import Promotion, Coupon
 
 
 categories = db.Table('categories', db.Model.metadata,

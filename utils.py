@@ -1,4 +1,4 @@
-from ecommerce.settings import ALLOWED_EXTENSIONS
+from .settings import ALLOWED_EXTENSIONS
 
 
 def allowed_extension(filename):

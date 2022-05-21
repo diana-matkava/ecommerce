@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import validators, SelectMultipleField, StringField, IntegerField
 from wtforms.validators import InputRequired, Length, ValidationError, Regexp
 from wtforms.widgets import TextArea
-from ecommerce.products.models import Product, Image, ProductCategory
+from ..products.models import Product, Image, ProductCategory
 
 
 class CreateProductForm(FlaskForm):

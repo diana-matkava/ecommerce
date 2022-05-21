@@ -1,1 +1,1 @@
-from ecommerce.auth import models
+from .auth import models

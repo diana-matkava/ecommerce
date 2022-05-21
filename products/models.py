@@ -5,8 +5,8 @@ from flask_login import current_user
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime
 from sqlalchemy.orm import relationship
 from flask import session
-from ecommerce.extentions import db
-from ecommerce.settings import CURRENCY_API_KEY
+from ..extentions import db
+from ..settings import CURRENCY_API_KEY
 
 images = db.Table('product_images', db.Model.metadata, 
     Column('image_id', Integer, ForeignKey('image.id'), primary_key=True), 

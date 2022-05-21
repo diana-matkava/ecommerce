@@ -3,14 +3,14 @@ import sys
 import uuid
 import datetime
 from xmlrpc.client import boolean
-from ecommerce.checkout.models import Coupon, Currency, Promotion, DiscountType, CouponType
-from ecommerce.products.models import Product
-from ecommerce.extentions import db
+from ..checkout.models import Coupon, Currency, Promotion, DiscountType, CouponType
+from ..products.models import Product
+from ..extentions import db
 from flask.json import jsonify
 from flask_login import login_required
 from flask import Blueprint, request, render_template, redirect, session, url_for, flash
 from flask_login import current_user, login_required
-from ecommerce.checkout.forms import PromotionForm
+from ..checkout.forms import PromotionForm
 
 
 checkout = Blueprint('checkout', __name__, url_prefix='/checkout')

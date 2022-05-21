@@ -7,12 +7,12 @@ from urllib3 import HTTPResponse
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
-from ecommerce.products.models import Currency
+from ..products.models import Currency
 from .forms import CustomerRegistrationForm, SellerRegistrationForm, LoginForm
 from .models import User, Customer, Seller, Type, Category
-from ecommerce.extentions import db
-from ecommerce.settings import UPLOAD_FOLDER
-from ecommerce.utils import allowed_extension
+from ..extentions import db
+from ..settings import UPLOAD_FOLDER
+from ..utils import allowed_extension
 
 login_manager = LoginManager()
 login_manager.session_protection = "strong"

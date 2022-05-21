@@ -1,25 +1,39 @@
 import os
-import sys
 from flask import Flask, send_from_directory, render_template
-from ecommerce.admin import BusinessTypeAdminView, CustomerAdminView, ProductAdminView, SellerAdminView
-from ecommerce.auth.views import bp, login_manager
-from ecommerce.products.views import pr
-from ecommerce.checkout.views import checkout, promotion
-from ecommerce.extentions import db, migrate, bcrypt, humanize, admin
-from ecommerce.auth.models import *
-from ecommerce.products.models import *
-from ecommerce.checkout.models import *
+from .admin import BusinessTypeAdminView, CustomerAdminView, ProductAdminView, SellerAdminView
+from .auth.views import bp, login_manager
+from .products.views import pr
+from .checkout.views import checkout, promotion
+from .extentions import db, migrate, bcrypt, humanize, admin
+from .auth.models import *
+from .products.models import *
+from .checkout.models import *
 from flask_admin.contrib.sqla import ModelView
 
-def create_app(test_config=None, config_objects='ecommerce.settings'):
+
+
+from email.policy import default
+from environs import Env
+
+env = Env()
+env.read_env()
+
+
+
+def create_app(test_config=None, config_objects='.settings.py'):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object(config_objects)
-    # app.config.from_mapping(
-    #     SECRET_KEY='dev',
-    #     SQLALCHEMY_DATABASE_URI='sqlite:///ecm.sqlite3',
-    #     SQLALCHEMY_TRACK_MODIFICATIONS=True
-    # )
+    # app.config.from_object(config_objects)
+    app.config.from_mapping(
+        FLASK_APP = env.str('FLASK_APP', default='app.py'),
+        FLASK_ENV = env.str('FLASK_ENV', default='development'),
+        SECRET_KEY = env.str('SECRET_KEY', default='surepHardSecretKye'),
+        SQLALCHEMY_DATABASE_URI = env.str('SQLALCHEMY_DATABASE_URI', default='sqlite:///ecm.sqlite3'),
+        SQLALCHEMY_TRACK_MODIFICATIONS = True,
+        UPLOAD_FOLDER = env.str('UPLOAD_FOLDER', 'static/'),
+        ALLOWED_EXTENSIONS = env.list('ALLOWED_EXTENSIONS', default=['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif']),
+        CURRENCY_API_KEY = env.str('CURRENCY_API_KEY', default='True'),
+    )
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -37,7 +51,7 @@ def create_app(test_config=None, config_objects='ecommerce.settings'):
     # Media
     @app.route('/media/<filename>')
     def media(filename):
-        return send_from_directory('/home/diana/Documents/my_projects/ecommerce/ecommerce/media', filename)
+        return send_from_directory('/home/diana/Documents/my_projects///media', filename)
 
     # @app.route('/admin')
     # def admin_index_view():

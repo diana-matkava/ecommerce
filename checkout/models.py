@@ -5,8 +5,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime, Boo
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from flask import flash
-from ecommerce.extentions import db
-from ecommerce.products.models import Product, Currency
+from ..extentions import db
+from ..products.models import Product, Currency
 
 
 products = Table('products', db.Model.metadata,

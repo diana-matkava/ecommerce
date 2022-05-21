@@ -3,18 +3,18 @@ import sys
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from ecommerce.auth.models import Seller, Customer
+from .auth.models import Seller, Customer
 from app import create_app
 from extentions import db
 from flask import session
-from ecommerce.auth.views import create_superuser, load_user
+from .auth.views import create_superuser, load_user
 
 app = create_app()
 app.app_context().push()
 
 def createsuperuser():
     with app.app_context():
-        from ecommerce.auth.views import create_superuser
+        from .auth.views import create_superuser
         x = 1
         while x:
             seller = 1

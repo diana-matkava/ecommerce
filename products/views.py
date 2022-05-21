@@ -7,11 +7,11 @@ from .models import Product
 from flask import Blueprint, flash, render_template, redirect, session, url_for, request
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
-from ecommerce.extentions import db
-from ecommerce.settings import UPLOAD_FOLDER
-from ecommerce.utils import allowed_extension
-from ecommerce.products.forms import CreateProductForm
-from ecommerce.products.models import Product, ProductCategory, Image, Card, Order
+from ..extentions import db
+from ..settings import UPLOAD_FOLDER
+from ..utils import allowed_extension
+from ..products.forms import CreateProductForm
+from ..products.models import Product, ProductCategory, Image, Card, Order
 
 
 pr = Blueprint('', __name__, url_prefix='/')
