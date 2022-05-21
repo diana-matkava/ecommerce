@@ -1,6 +1,6 @@
 import os
 import sys
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, render_template
 from ecommerce.admin import BusinessTypeAdminView, CustomerAdminView, ProductAdminView, SellerAdminView
 from ecommerce.auth.views import bp, login_manager
 from ecommerce.products.views import pr
@@ -10,7 +10,6 @@ from ecommerce.auth.models import *
 from ecommerce.products.models import *
 from ecommerce.checkout.models import *
 from flask_admin.contrib.sqla import ModelView
-from ecommerce.admin import AdminIndex
 
 def create_app(test_config=None, config_objects='ecommerce.settings'):
     # create and configure the app
@@ -40,6 +39,11 @@ def create_app(test_config=None, config_objects='ecommerce.settings'):
     def media(filename):
         return send_from_directory('/home/diana/Documents/my_projects/ecommerce/ecommerce/media', filename)
 
+    # @app.route('/admin')
+    # def admin_index_view():
+    #     return render_template('admin/index.html')
+
+
     # Registered BluePrints
     app.register_blueprint(bp)
     app.register_blueprint(pr)
@@ -53,7 +57,7 @@ def create_app(test_config=None, config_objects='ecommerce.settings'):
     login_manager.init_app(app)
     humanize.init_app(app)
 
-    admin.init_app(app, index_view=AdminIndex)
+    admin.init_app(app,)        # index_view=admin_index_view
 
     admin.add_view(SellerAdminView(db.session, category='Users', endpoint='admin_sellers'))
     admin.add_view(CustomerAdminView(db.session, category='Users'))

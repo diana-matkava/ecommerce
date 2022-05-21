@@ -1,4 +1,3 @@
-from crypt import methods
 import os
 import sys
 import pycountry

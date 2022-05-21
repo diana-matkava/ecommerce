@@ -1,8 +1,8 @@
 from flask_admin.contrib.sqla import ModelView
-from flask_login import current_user
 from ecommerce.products.models import Product
 from ecommerce.auth.models import Seller, Customer, Type
 from ecommerce.checkout.models import Promotion
+
 
 class CustomerAdminView(ModelView):
     can_view_details = True

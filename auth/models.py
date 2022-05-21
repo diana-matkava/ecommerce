@@ -1,6 +1,6 @@
 from xmlrpc.client import Boolean
 from flask_login import UserMixin
-from sqlalchemy_utils import PhoneNumberType
+# from sqlalchemy_utils.types.phone_number import PhoneNumber
 
 import sqlalchemy.types as types
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Boolean
@@ -101,7 +101,7 @@ class Seller(User, db.Model):
         backref=db.backref('seller', lazy=True)
         )
     busines_type = relationship("Type", backref="busines_type", lazy=True)
-    phone = Column(PhoneNumberType(), nullable=True)
+    phone = Column(String(), nullable=True)
     logo = Column(Integer, ForeignKey('company_logo.id'), nullable=True)
     liked_products = relationship('Product', secondary=seller_likes, 
         backref=db.backref('seller', lazy=True))
