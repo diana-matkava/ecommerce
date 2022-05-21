@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'ECM-dm'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_15E8249AC48447A5B46287C0803CB045 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CCC64C0FE0224CBAAC52730ECFFCDB88 }}
