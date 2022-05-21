@@ -16,6 +16,11 @@ from ..products.models import Product, ProductCategory, Image, Card, Order
 
 pr = Blueprint('', __name__, url_prefix='/')
 
+@pr.route('/api/health', methods=['GET', 'POST', 'PUT'])
+def az_webhook():
+    return ('', 200)
+
+
 @pr.route('/', methods=['GET', 'POST', 'PUT'])
 @pr.route('/<id>', methods=['GET', 'POST', 'PUT'])
 def home(id=None):

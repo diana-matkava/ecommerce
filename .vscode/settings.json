@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/91715c06-086b-4e3f-92a5-2924417b5333/resourceGroups/ecommerce_project/providers/Microsoft.Web/sites/ECM-dm",
+    "appService.deploySubpath": "."
+}
