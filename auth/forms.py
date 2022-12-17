@@ -58,15 +58,16 @@ class SellerRegistrationForm(FlaskForm):
     busines_type = SelectField('Business type:', validate_choice=False)
     category = SelectMultipleField('Products category:', validate_choice=False)
     logo = StringField('Company Logo')
-    phone = PhoneNumberField('Phone', validators=[InputRequired()])
+    # phone = PhoneNumberField('Phone', validators=[InputRequired()])
+    phone = StringField('Phone', validators=[InputRequired()])
     email = StringField('Email', validators=[InputRequired(), Email()])
     pwd = PasswordField('Password', validators=[
-        InputRequired(), 
-        Length(8, 50, 
+        InputRequired(),
+        Length(8, 50,
         message='Password should be 8 or more characters')
     ])
     cpwd = PasswordField('Confirm password', validators=[
-        InputRequired(), 
+        InputRequired(),
         EqualTo('pwd', message='Password should match')
     ])
 

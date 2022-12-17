@@ -1,3 +1,11 @@
-*.db
-*.psql
-*.env
+*/*.db
+*/*.psql
+*/*.sqlite3
+*/.env
+.vscode
+
+venv
+notes.txt
+__pycache__
+*/__pycache__
+static/img/user_inputs

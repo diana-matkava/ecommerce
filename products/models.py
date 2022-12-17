@@ -8,8 +8,8 @@ from flask import session
 from ..extentions import db
 from ..settings import CURRENCY_API_KEY
 
-images = db.Table('product_images', db.Model.metadata, 
-    Column('image_id', Integer, ForeignKey('image.id'), primary_key=True), 
+images = db.Table('product_images', db.Model.metadata,
+    Column('image_id', Integer, ForeignKey('image.id'), primary_key=True),
     Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
 )
 
@@ -18,7 +18,7 @@ product_categories = db.Table('product_categories', db.Model.metadata,
     Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
 )
 
-orders = db.Table('orders', db.Model.metadata, 
+orders = db.Table('orders', db.Model.metadata,
     Column('card_id', Integer, ForeignKey('card.id'), primary_key=True),
     Column('order_id', Integer, ForeignKey('order.id'), primary_key=True))
 
@@ -98,7 +98,7 @@ class Card(db.Model):
             db.session.rollback()
         finally:
             db.session.close
-    
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -120,13 +120,13 @@ class Card(db.Model):
                 price += order.product_obj.price * order.quantity * rate
 
         return float(round(price, 2))
-    
+
     def price_with_discount(self):
         price, total_price = 0, 0
         for order in self.product_order:
             cur_pair = ' '.join(['RATE', order.product_obj.currency.abr, current_user.currency.abr])
             if current_user and current_user.active_discount:
-                discount_type = current_user.coupons[-1].promotion.discount_type.name 
+                discount_type = current_user.coupons[-1].promotion.discount_type.name
                 discount_value = current_user.coupons[-1].promotion.discount_value
                 discount_products = current_user.coupons[-1].promotion.products
 
@@ -140,15 +140,15 @@ class Card(db.Model):
                         price += order.product_obj.price * (1-(discount_value / 100)) * order.quantity
                 else:
                     price += order.product_obj.price * order.quantity
-                
+
                 total_price += price
-                
+
 
                 if current_user.display_currency_id != order.product_obj.currency_id:
                     rate = session[cur_pair]
                     total_price -= price
                     total_price = price * rate
-                
+
                 price = 0
         return float(round(total_price, 2))
 
@@ -185,20 +185,20 @@ class Order(db.Model):
                 session[cur_pair] = rate
             else:
                 rate = session[cur_pair]
-            
-            price = self.product_obj.price * rate
 
-        discount_products = current_user.coupons[-1].promotion.products
-        if self.product_obj in discount_products and disc:
-            discount_type = current_user.coupons[-1].promotion.discount_type.name 
-            discount_value = current_user.coupons[-1].promotion.discount_value
-            if discount_type == 'fixed':
-                if self.product_obj.price >= discount_value:
-                    price = price - discount_value
-                else:
-                    price = price
-            elif discount_type == 'persent':
-                price = price * (1-(discount_value / 100))
+            price = self.product_obj.price * rate
+        if current_user.coupons:
+            discount_products = current_user.coupons[-1].promotion.products
+            if self.product_obj in discount_products and disc:
+                discount_type = current_user.coupons[-1].promotion.discount_type.name
+                discount_value = current_user.coupons[-1].promotion.discount_value
+                if discount_type == 'fixed':
+                    if self.product_obj.price >= discount_value:
+                        price = price - discount_value
+                    else:
+                        price = price
+                elif discount_type == 'persent':
+                    price = price * (1-(discount_value / 100))
 
         return float(round(price, 2)) if price else None
 

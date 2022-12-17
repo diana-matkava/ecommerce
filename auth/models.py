@@ -16,29 +16,29 @@ categories = db.Table('categories', db.Model.metadata,
     Column('seller_id', Integer, ForeignKey('seller.id'), primary_key=True)
 )
 
-seller_likes = db.Table('seller_likes', db.Model.metadata, 
+seller_likes = db.Table('seller_likes', db.Model.metadata,
     Column('product_id', Integer, ForeignKey('product.id'), primary_key=True),
     Column('seller_id', Integer, ForeignKey('seller.id'), primary_key=True)
 )
 
-customer_likes = db.Table('customer_likes', db.Model.metadata, 
+customer_likes = db.Table('customer_likes', db.Model.metadata,
     Column('product_id', Integer, ForeignKey('product.id'), primary_key=True),
     Column('customer_id', Integer, ForeignKey('customer.id'), primary_key=True)
 )
 
-promotions = db.Table('promotions', db.Model.metadata, 
+promotions = db.Table('promotions', db.Model.metadata,
     Column('promotion_id', Integer, ForeignKey('promotion.id'), primary_key=True),
     Column('seller_id', Integer, ForeignKey('seller.id'), primary_key=True)
 )
 
-active_codes_for_custmr = db.Table('active_codes_for_custmr', db.Model.metadata, 
+active_codes_for_custmr = db.Table('active_codes_for_custmr', db.Model.metadata,
     Column('coupon_id', Integer, ForeignKey('coupon.id'), primary_key=True),
-    Column('customer_id', Integer, ForeignKey('customer.id'), primary_key=True)    
+    Column('customer_id', Integer, ForeignKey('customer.id'), primary_key=True)
 )
 
-active_codes_for_sel = db.Table('active_codes_for_sel', db.Model.metadata, 
+active_codes_for_sel = db.Table('active_codes_for_sel', db.Model.metadata,
     Column('coupon_id', Integer, ForeignKey('coupon.id'), primary_key=True),
-    Column('seller_id', Integer, ForeignKey('seller.id'), primary_key=True)    
+    Column('seller_id', Integer, ForeignKey('seller.id'), primary_key=True)
 )
 
 
@@ -81,15 +81,15 @@ class User(UserMixin):
 class Customer(User, db.Model):
     username = Column(String(50), nullable=False)
     avatar = Column(Integer, ForeignKey('customer_avatar.id'))
-    liked_products = relationship('Product', secondary=customer_likes, 
+    liked_products = relationship('Product', secondary=customer_likes,
         backref=db.backref('customer', lazy=True))
-    coupons = relationship(Coupon, secondary=active_codes_for_custmr, lazy='subquery', 
+    coupons = relationship(Coupon, secondary=active_codes_for_custmr, lazy='subquery',
                 backref=db.backref('customer', lazy=True))
     currency = relationship(Currency, backref=db.backref('customer_currency', uselist=False))
 
     def __repr__(self):
         return f'{self.username}'
-    
+
 
 class Seller(User, db.Model):
     first_name = Column(String(50), nullable=True)
@@ -103,16 +103,16 @@ class Seller(User, db.Model):
     busines_type = relationship("Type", backref="busines_type", lazy=True)
     phone = Column(String(), nullable=True)
     logo = Column(Integer, ForeignKey('company_logo.id'), nullable=True)
-    liked_products = relationship('Product', secondary=seller_likes, 
+    liked_products = relationship('Product', secondary=seller_likes,
         backref=db.backref('seller', lazy=True))
     promotion = relationship(
         Promotion, secondary=promotions, lazy='subquery',
         backref=db.backref('seller', lazy=True))
-    coupons = relationship(Coupon, secondary=active_codes_for_sel, lazy='subquery', 
+    coupons = relationship(Coupon, secondary=active_codes_for_sel, lazy='subquery',
                 backref=db.backref('seller', lazy=True))
     currency = relationship(Currency, backref=db.backref('seller_currency', uselist=False))
-    
-    
+
+
     def __repr__(self):
         return f'{self.company_name}'
 
