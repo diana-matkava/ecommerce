@@ -8,16 +8,16 @@
 {%block content%}
 <div class="container">
     <div class="main-body">
-    
+
           <!-- Breadcrumb -->
           <nav aria-label="breadcrumb" class="main-breadcrumb">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="{{url_for('home')}}">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">USeller Profile</li>
+              <li class="breadcrumb-item active" aria-current="page">Seller Profile</li>
             </ol>
           </nav>
           <!-- /Breadcrumb -->
-    
+
         <div class="row">
             <div class="col-md-4 mb-3">
               <div class="card">
@@ -102,7 +102,7 @@
                 </div>
                 <div class="col-sm-9 text-secondary">
                   {% for category in user.category %}
-                    {{category}} | 
+                    {{category}} |
                   {% endfor %}
                 </div>
               </div>
@@ -115,7 +115,7 @@
             </div>
           </div>
         </div>
-          
+
 
 
     <div class="container">

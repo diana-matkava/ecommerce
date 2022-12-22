@@ -32,13 +32,13 @@
 }
 </style>
 {%endblock%}
-{% block content%}
+{% block login%}
 <div class="container">
     <div class="row mt-4">
         <div class="col-lg-9 col-md-6 m-auto card p-4">
             <div class="text-center">
                 <h1>{{title}}</h1>
-            </div>  
+            </div>
 
             <form action="{{ request.path }}" method="POST" enctype="multipart/form-data" class="card-body" novalidate>
                 {{ form.csrf_token }}
@@ -52,7 +52,7 @@
                     {% endfor %}
                 {% endif %}
                 {% endwith %}
-                
+
                 <div class="form_container">
                     <div class="content-block">
                         <div class="form-group">
@@ -114,7 +114,7 @@
                             {{ error }}
                         </div>
                         {% endfor%}
-                        
+
                         <div class="form-group mb-3">
                             {{ form.logo.label(class="text", style='color: grey; margin-left: 20px;') }}
                             {{ form.logo(class_="form-control",placeholder="Company Logo", type='file', id="formFile")}}
@@ -145,7 +145,7 @@
                             {{ error }}
                         </div>
                         {% endfor%}
-        
+
                         <div class="form-group">
                             {{ form.pwd.label(class="sr-only") }}
                             {{ form.pwd(class_="form-control",placeholder="Password")}}
@@ -154,8 +154,8 @@
                         <div class="alert" role="alert">
                             {{ error }}
                         </div> {% endfor%}
-        
-        
+
+
                         <div class="form-group">
                             {{ form.cpwd(class_="form-control",placeholder="Confirm Password")}}
                         </div>

@@ -20,7 +20,12 @@
 
 
 <main class="mt-5 pt-4 content_">
-{%block content%}{%endblock%}
+{% if current_user.email %}
+    {%block content%}{%endblock%}
+{% else %}
+    {%block login%}{%endblock%}
+{% endif %}
+
 </main>
 
 {% include 'inclusion/login_modal.html' %}
