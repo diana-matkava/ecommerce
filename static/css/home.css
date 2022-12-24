@@ -69,5 +69,9 @@ img {
     color: rgb(126, 126, 126);
 }
 .like:focus {
-    color:red;    
+    color:red;
+}
+
+.bg-light-o-50 {
+    background-color: #e0e0e0a7;
 }

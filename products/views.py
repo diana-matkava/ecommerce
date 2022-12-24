@@ -37,14 +37,14 @@ def home(id=None):
     if request.method == 'POST':
         search = request.form['search']
         data['products'] = Product.query.filter(Product.name.contains(search)).all()
-    return render_template('products/home-page.html', **data)
+    return render_template('home/home.html', **data)
 
 
 @pr.route('/product/<id>', methods=['GET', 'POST'])
 def product_page(id):
     session.pop('_flashes', None)
     product = Product.query.get(id)
-    
+
     if request.method == 'POST':
         user = current_user
         def create_order(quantity):
@@ -68,7 +68,7 @@ def product_page(id):
                 user.card_id = card.id
                 db.session.add(user)
                 db.session.commit()
-                
+
             else:
                 card = Card.query.filter_by(customer=user.email)[0]
                 if card.product_order:
@@ -86,7 +86,7 @@ def product_page(id):
                 else:
                     order = create_order(request.form.get('quantity'))
                     card.product_order.extend([order])
-                    
+
                 card.save()
 
             flash(f"Product {product.name} was added to card")
@@ -113,7 +113,7 @@ def create_product():
             product.product_category.extend([ProductCategory.query.get(category) for category in form.category.data])
 
             images = request.files.getlist('image')
-            
+
             if images:
                 for image in images:
                     if allowed_extension(image.filename):
@@ -126,7 +126,7 @@ def create_product():
                         flash(f'You can appload only png, jpg or jpeg extensions. The file {image} is not available')
             else:
                 flash('You have not choose any images')
-            
+
             db.session.add(product)
             db.session.commit()
             flash(f'Product {product} created successfully')
@@ -165,13 +165,13 @@ def edit_product(id):
             if image.filename != '':
                 if allowed_extension(image.filename):
                     path = os.path.join(
-                        UPLOAD_FOLDER, 
-                        'img/user_inputs/products/', 
+                        UPLOAD_FOLDER,
+                        'img/user_inputs/products/',
                         secure_filename(image.filename)
-                        ) 
+                        )
                     image.save(os.path.join(path))
                     product_image = Image(
-                        path=os.path.join('img/user_inputs/products/', 
+                        path=os.path.join('img/user_inputs/products/',
                         secure_filename(image.filename))
                         )
                     db.session.add(product_image)
@@ -210,7 +210,7 @@ def card(id=None):
                 if order.product_obj in current_user.coupons[-1].promotion.products:
                     data['products_with_disc'] = True
                     break
-        
+
     return render_template('products/card.html', **data)
 
 
