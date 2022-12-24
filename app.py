@@ -1,5 +1,6 @@
 import os
-from flask import Flask, send_from_directory, render_template
+import json
+from flask import Flask, Markup, send_from_directory, render_template
 from .admin import BusinessTypeAdminView, CustomerAdminView, ProductAdminView, SellerAdminView
 from .auth.views import bp, login_manager
 from .products.views import pr
@@ -10,7 +11,8 @@ from .products.models import *
 from .checkout.models import *
 from flask_admin.contrib.sqla import ModelView
 
-
+app = Flask(__name__)
+app.jinja_env.filters['json'] = lambda v: Markup(json.dumps(v))
 
 from email.policy import default
 from environs import Env
@@ -47,7 +49,7 @@ def create_app(test_config=None, config_objects='.settings.py'):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-    
+
     # Media
     @app.route('/media/<filename>')
     def media(filename):
@@ -63,7 +65,7 @@ def create_app(test_config=None, config_objects='.settings.py'):
     app.register_blueprint(pr)
     app.register_blueprint(checkout)
     app.register_blueprint(promotion)
-    
+
     # Registered extentions
     db.init_app(app)
     migrate.init_app(app, db, render_as_batch=True)
@@ -87,10 +89,10 @@ def create_app(test_config=None, config_objects='.settings.py'):
     admin.add_view(ModelView(Coupon, db.session, category='Checkout'))
     admin.add_view(ModelView(Currency, db.session, category='Checkout'))
 
-    
+
 
     # Register custom command
-    # app.cli.add_command(createsuperuser)    
+    # app.cli.add_command(createsuperuser)
 
     # @humanize.localeselector
     # def get_locale():

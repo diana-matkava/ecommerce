@@ -21,7 +21,9 @@
             <div class="w-75 mx-auto get-started">
                 <h2>Start sell online</h2>
                 <p class="p-2">Register as a Seller to start your Business.</p>
-                {% include 'components/get-started-btn.html' %}
+                {% with id='get-started-seller' %}
+                    {% include 'components/get-started-btn.html' %}
+                {% endwith %}
             </div>
 
         </div>
@@ -34,7 +36,9 @@
             <div class="w-75 mx-auto get-started">
                 <h2>Start your shopping journey as a Buyer </h2>
                 <p class="p-2">Register as a buyer to start shopping</p>
-                {% include 'components/get-started-btn.html' %}
+                {% with id='get-started-customer' %}
+                    {% include 'components/get-started-btn.html' %}
+                {% endwith %}
             </div>
         </div>
     </div>
@@ -43,6 +47,11 @@
   </div>
 
 {% include 'home/modal-default-user.html' %}
-<script>
+<!-- <script>
+    setTimeout(function() {
+        $('#modalDefaultUser').modal();
+    }, 2000);
 
-</script>
+
+
+</script> -->

@@ -3,6 +3,7 @@
 */*.sqlite3
 */.env
 .vscode
+*/*.pyc
 
 venv
 notes.txt

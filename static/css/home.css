@@ -52,6 +52,8 @@ li.nav-item {
 }
 img {
     object-fit: cover;
+    max-width: 100%;
+    height: auto;
 }
 .alert {
     margin-top: -15px;

@@ -102,12 +102,12 @@
                     {% if request.path != '/auth/registration_customer' %}
                         <p>
                         New here?
-                        <a href="{{url_for('auth.registrate_customer')}}">Create account</a>
+                        <a href="{{url_for('auth.register_customer')}}">Create account</a>
                         {% else %}
                         Already have an account?
                         <a href="{{url_for('auth.login')}}">Login</a>
                          </p>
-                         <p><small>Want to registered as a Seller? Press <a href="{{ url_for('auth.registrate_seller') }}">here</a></small></p>
+                         <p><small>Want to registered as a Seller? Press <a href="{{ url_for('auth.register_seller') }}">here</a></small></p>
                    {% endif %}
                 </div>
             </form>

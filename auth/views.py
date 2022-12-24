@@ -31,14 +31,20 @@ def load_user(id):
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
+@bp.route('/login_default/<user>', methods=(['GET']))
+def login_default(user):
+    
+    return redirect(url_for('home'))
+
+
 @bp.route('/registration_customer', methods=('GET', 'POST'), strict_slashes=False)
-def registrate_customer():
+def register_customer():
     session.pop('_flashes', None)
     form = CustomerRegistrationForm()
     if form.validate_on_submit():
         try:
             customer = Customer(
-                username=form.username.data, 
+                username=form.username.data,
                 email=form.email.data,
                 password=generate_password_hash(form.pwd.data),
                 role=0
@@ -62,7 +68,7 @@ def registrate_customer():
 
 
 @bp.route('/registration_seller', methods=('GET', 'POST'))
-def registrate_seller():
+def register_seller():
     session.pop('_flashes', None)
     form = SellerRegistrationForm()
     if form.validate_on_submit():
@@ -85,7 +91,7 @@ def registrate_seller():
                 path = os.path.join(UPLOAD_FOLDER, 'img/user_inputs/seller_logo/', secure_filename(logo.filename))
                 logo.save(path)
                 seller.logo =  os.path.join('img/user_inputs/seller_logo/', secure_filename(logo.filename))
-                
+
             db.session.add(seller)
             db.session.commit()
             session['role'] = 1
@@ -93,8 +99,8 @@ def registrate_seller():
             flash(f'Seller {seller} was created successfully')
             return redirect(url_for('home'))
         except Exception as _ex:
-            
-            flash(_ex, 'denger')
+
+            flash(_ex, 'danger')
     return render_template('auth/registration_seller.html', form=form, title='Register as Seller')
 
 @login_required
@@ -111,7 +117,7 @@ def edit_customer_profile():
     session.pop('_flashes', None)
     if request.method == 'POST':
         user = Customer.query.get(current_user.id)
-        user.username = request.form.get('username') 
+        user.username = request.form.get('username')
 
         email = request.form.get('email')
         if not Seller.query.filter_by(email=email).first() and \
@@ -147,7 +153,7 @@ def edit_customer_profile():
             else:
                 flash(f'Current password is incorrect')
                 return redirect(url_for('auth.edit_seller_profile'))
-            
+
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('auth.profile'))
@@ -173,7 +179,7 @@ def edit_seller_profile():
         user.country = pycountry.countries.get(alpha_2=request.form.get('country')).name
         user.busines_type = [Type.query.filter_by(name=request.form.get('type')).first()]
         user.category = [Category.query.filter_by(name=category).first() for category in request.form.getlist('category')]
-        
+
         email = request.form.get('email')
         if not Seller.query.filter_by(email=email).first() and \
             not Customer.query.filter_by(email=email).first() and \
@@ -209,7 +215,7 @@ def edit_seller_profile():
             else:
                 flash(f'Current password is incorrect')
                 return redirect(url_for('auth.edit_seller_profile'))
-        
+
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('auth.profile'))

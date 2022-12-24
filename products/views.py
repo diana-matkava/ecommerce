@@ -24,8 +24,6 @@ def az_webhook():
 @pr.route('/', methods=['GET', 'POST', 'PUT'])
 @pr.route('/<id>', methods=['GET', 'POST', 'PUT'])
 def home(id=None):
-
-    print(session)
     data = {
         'ad_products':  Product.query.all()[::4],
         'products': Product.query.all() if not id \
