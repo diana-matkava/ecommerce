@@ -1,15 +1,13 @@
 import os
-import sys
 import pycountry
 from flask import Blueprint, flash, render_template, request, session, url_for, redirect
 from flask_login import login_user, login_required, logout_user, LoginManager, current_user
-from urllib3 import HTTPResponse
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 from ..products.models import Currency
 from .forms import CustomerRegistrationForm, SellerRegistrationForm, LoginForm
-from .models import User, Customer, Seller, Type, Category
+from .models import Customer, Seller
 from ..extentions import db
 from ..settings import UPLOAD_FOLDER
 from ..utils import allowed_extension
@@ -33,7 +31,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/login_default/<user>', methods=(['GET']))
 def login_default(user):
-    
+
     return redirect(url_for('home'))
 
 
@@ -63,8 +61,8 @@ def register_customer():
             flash(f'User {customer} was created successfully!')
             return redirect(url_for('home'))
         except Exception as _ex:
-            flash(_ex, 'denger')
-    return render_template('auth/registration.html', form=form, title='Sing Up')
+            flash(_ex, 'danger')
+    return render_template('auth/register.html', form=form, title='Sing Up')
 
 
 @bp.route('/registration_seller', methods=('GET', 'POST'))
@@ -101,7 +99,7 @@ def register_seller():
         except Exception as _ex:
 
             flash(_ex, 'danger')
-    return render_template('auth/registration_seller.html', form=form, title='Register as Seller')
+    return render_template('auth/register_seller.html', form=form, title='Register as Seller')
 
 @login_required
 @bp.route('/profile', methods=('GET', ))

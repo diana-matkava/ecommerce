@@ -1,7 +1,6 @@
 import os
-import json
-from flask import Flask, Markup, send_from_directory, render_template
-from .admin import BusinessTypeAdminView, CustomerAdminView, ProductAdminView, SellerAdminView
+from flask import Flask, send_from_directory
+from .admin import CustomerAdminView, ProductAdminView, SellerAdminView
 from .auth.views import bp, login_manager
 from .products.views import pr
 from .checkout.views import checkout, promotion
@@ -11,10 +10,7 @@ from .products.models import *
 from .checkout.models import *
 from flask_admin.contrib.sqla import ModelView
 
-app = Flask(__name__)
-app.jinja_env.filters['json'] = lambda v: Markup(json.dumps(v))
 
-from email.policy import default
 from environs import Env
 
 env = Env()
@@ -77,8 +73,6 @@ def create_app(test_config=None, config_objects='.settings.py'):
 
     admin.add_view(SellerAdminView(db.session, category='Users', endpoint='admin_sellers'))
     admin.add_view(CustomerAdminView(db.session, category='Users'))
-    admin.add_view(BusinessTypeAdminView(db.session, category='Users', name='Business Type'))
-    admin.add_view(ModelView(Category, db.session, category='Users', name='Business Category'))
 
     admin.add_view(ProductAdminView(db.session, category='Products'))
     admin.add_view(ModelView(Order, db.session, category='Products'))

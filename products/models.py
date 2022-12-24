@@ -19,7 +19,7 @@ product_categories = db.Table('product_categories', db.Model.metadata,
 )
 
 orders = db.Table('orders', db.Model.metadata,
-    Column('card_id', Integer, ForeignKey('card.id'), primary_key=True),
+    Column('cart_id', Integer, ForeignKey('card.id'), primary_key=True),
     Column('order_id', Integer, ForeignKey('order.id'), primary_key=True))
 
 

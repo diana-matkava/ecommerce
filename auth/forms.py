@@ -1,9 +1,8 @@
 import pycountry
 from flask_wtf import FlaskForm
-from wtforms_alchemy import PhoneNumberField
-from wtforms import StringField, PasswordField, validators, SelectMultipleField, SelectField
+from wtforms import StringField, PasswordField, SelectMultipleField, SelectField
 from wtforms.validators import Email, InputRequired, Length, Regexp, EqualTo, ValidationError
-from .models import Category, Customer, Seller, Type
+from .models import Customer, Seller
 
 
 
@@ -78,8 +77,6 @@ class SellerRegistrationForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(SellerRegistrationForm, self).__init__(*args, **kwargs)
-        self.busines_type.choices = [(a.id, a.name) for a in Type.query.order_by(Type.name)]
-        self.category.choices = [(a.id, a.name) for a in Category.query.order_by(Category.name)]
         self.country.choices = [(a.alpha_2, a.name) for a in pycountry.countries]
 
 

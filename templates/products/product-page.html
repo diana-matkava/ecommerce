@@ -34,19 +34,19 @@
 
 <div class="container dark-grey-text mt-5">
   <div class="row wow fadeIn">
-    
+
     <div class="col-md-6 mb-4">
-  
+
       <div id="carouselExampleControls"  class="carousel slide " data-ride="carousel" style="margin-bottom: 18px;"
           data-interval="2000">
 
           <div class="carousel-inner" style="height: 350px;">
               {%for image in product.images %}
-              
+
               <div class="carousel-item {% if loop.first %}active{% endif %}"  style="max-height: 350px; background-size: contain;">
                   <img class="d-block w-100" style="height: 350px;" src="{{url_for('static', filename=image.path)}}" alt="Second slide">
               </div>
-                            
+
               {%endfor%}
           </div>
 
@@ -67,7 +67,7 @@
         <div class="mb-3">
           {% for category in product.product_category %}
           <a href="{{url_for('home', id=category.id)}}">
-            <span class="badge badge-pill badge-info mr-3">{{category.name}}</span> 
+            <span class="badge badge-pill badge-info mr-3">{{category.name}}</span>
           </a>
           {% endfor %}
         </div>
@@ -82,15 +82,15 @@
         <div>
           <p style="color:rgb(242, 74, 74)" class="mb-0">
             <button class="btn btn-link p-0" {% if current_user.is_authenticated %} onclick="likeProduct({{product.id}})"{% else %} data-toggle="modal" data-target="#exampleModal"{%endif%}>
-              <i class="fa fa-heart"  id="like{{product.id}}"  style="color: {%if product in current_user.liked_products%} red {%else%} grey {%endif%};"></i>
+              <i class="fa fa-heart"  id="like{{product.id}}"  style="color: {%if product in current_user.saved%} red {%else%} grey {%endif%};"></i>
             </button>
-            <span style="font-size: smaller;"  id="like_num{{product.id}}">{{product.like}}</span><span style="font-size: smaller;"> likes</span> 
+            <span style="font-size: smaller;"  id="like_num{{product.id}}">{{product.like}}</span><span style="font-size: smaller;"> likes</span>
           </p>
         </div>
-        
+
         <p class="lead font-weight-bold">Description</p>
         <p>{{product.description|truncate(200, True)}}</p>
-        
+
         <span id="myDIV" style="display: none;">{{product.description[product.description|truncate(197, True)|length::]}}</span>
         <button onclick="myFunction()" class="btn btn-link mb-4 p-0" style="color:blue">Show</button>
 

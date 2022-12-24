@@ -1,13 +1,13 @@
 from flask_admin.contrib.sqla import ModelView
 from .products.models import Product
-from .auth.models import Seller, Customer, Type
+from .auth.models import Seller, Customer
 from .checkout.models import Promotion
 
 
 class CustomerAdminView(ModelView):
     can_view_details = True
-    column_list = ['id', 'email', 'username', 'role', 'card_id', 'currency', 'active_discount']
-    
+    column_list = ['id', 'email', 'username', 'role', 'cart_id', 'currency', 'active_discount']
+
     def __init__(self, session, **kwargs):
         super(CustomerAdminView, self).__init__(Customer, session, **kwargs)
 
@@ -27,13 +27,6 @@ class ProductAdminView(ModelView):
     def __init__(self, session, **kwargs):
         super(ProductAdminView, self).__init__(Product, session, **kwargs)
 
-
-class BusinessTypeAdminView(ModelView):
-    can_view_details = True
-    # column_exclude_list = ('busines_type')
-
-    def __init__(self, session, **kwargs):
-        super(BusinessTypeAdminView, self).__init__(Type, session, **kwargs)
 
 
 class PromotionAdminView(ModelView):

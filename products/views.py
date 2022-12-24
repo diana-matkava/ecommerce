@@ -55,7 +55,7 @@ def product_page(id):
             return order
 
         try:
-            if not user.card_id:
+            if not user.cart_id:
                 order = create_order(request.form.get('quantity'))
                 order.save()
 
@@ -63,7 +63,7 @@ def product_page(id):
                 card.product_order.extend([order])
                 card.save()
 
-                user.card_id = card.id
+                user.cart_id = card.id
                 db.session.add(user)
                 db.session.commit()
 
@@ -198,8 +198,8 @@ def card(id=None):
         'card': None,
         'products_with_disc': None
     }
-    if current_user.card_id:
-        card = Card.query.get(current_user.card_id)
+    if current_user.cart_id:
+        card = Card.query.get(current_user.cart_id)
         data = {
             'card': card,
         }
@@ -221,10 +221,10 @@ def checkout(cart_id):
     return render_template('products/checkout-page.html', **data)
 
 
-@pr.route('/like_product', methods=['GET', 'PUT'])
-def like_product():
+@pr.route('/save_product', methods=['GET', 'PUT'])
+def save_product():
     if request.method == 'PUT':
-        current_user.like_product(request.form.get('id'))
+        current_user.save_product(request.form.get('id'))
         return ('', 204)
 
 
@@ -267,7 +267,7 @@ def delete_cart(cart_id=None):
         product.product_obj.quantity += product.quantity
         db.session.add(product)
     db.session.commit()
-    current_user.card_id = 0
+    current_user.cart_id = 0
     db.session.add(current_user)
     cart.delete()
     return redirect(url_for('card'))

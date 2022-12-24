@@ -159,7 +159,7 @@ data-interval="2000">
       <div>
         <p style="color:rgb(242, 74, 74)" class="mb-0">
           <button class="btn btn-link p-0" {% if current_user.is_authenticated %} onclick="likeProduct({{product.id}})"{% else %} data-toggle="modal" data-target="#exampleModal"{%endif%}>
-            <i class="fa fa-heart"  id="like{{product.id}}"  style="color: {%if product in current_user.liked_products%} red {%else%} grey {%endif%};"></i>
+            <i class="fa fa-heart"  id="like{{product.id}}"  style="color: {%if product in current_user.saved%} red {%else%} grey {%endif%};"></i>
           </button>
           <span style="font-size: smaller;"  id="like_num{{product.id}}">{{product.like}}</span><span style="font-size: smaller;"> likes</span>
           <span style="font-size: smaller; color: grey; margin-left: 10px;">{{product.created|humanize}}</span>

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title%} {{ title }} {% endblock %}
+{%block extrastyle%}
+<style>
+    .alert {
+        margin-top: -15px;
+        color: rgb(214, 12, 12);
+        font-size: 14px;
+    }
+    .alert::before{
+        content: '*';
+    }
+</style>
+{%endblock%}
+{% block login%}
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-lg-5 col-md-6 m-auto card p-4">
+            <div class="text-center" style="margin: 0 20px;">
+                <h1>{{title}}</h1>
+            </div>
+            <form method="POST" class="card-body" enctype="multipart/form-data" novalidate>
+                {{ form.csrf_token }}
+
+                <img src="{{ url_for( 'static', filename='img/app/default-user.png')}}" alt="">
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-block btn-primary mb-3">Submit</button>
+                 </div>
+
+                <div class="text-center">
+                    {% if request.path != '/auth/registration_customer' %}
+                        <p>
+                        New here?
+                        <a href="{{url_for('auth.register_customer')}}">Create account</a>
+                        {% else %}
+                        Already have an account?
+                        <a href="{{url_for('auth.login')}}">Login</a>
+                         </p>
+                         <p><small>Want to registered as a Seller? Press <a href="{{ url_for('auth.register_seller') }}">here</a></small></p>
+                   {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

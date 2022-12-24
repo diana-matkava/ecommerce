@@ -44,72 +44,23 @@
                 {{ form.csrf_token }}
 
                 {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert" role="alert">
-                        {{ message }}
-                    </div>
-                    {% endfor %}
-                {% endif %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert" role="alert">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
                 {% endwith %}
 
                 <div class="form_container">
                     <div class="content-block">
-                        <div class="form-group">
-                            {{ form.first_name.label(class="sr-only") }}
-                            {{ form.first_name(class_="form-control",placeholder="First Name")}}
-                        </div>
-                        {% for error in form.first_name.errors %}
-                        <div class="alert" role="alert">
-                            {{ error }}
-                        </div>
-                        {% endfor%}
-
-                        <div class="form-group">
-                            {{ form.last_name.label(class="sr-only") }}
-                            {{ form.last_name(class_="form-control",placeholder="last Name")}}
-                        </div>
-                        {% for error in form.last_name.errors %}
-                        <div class="alert" role="alert">
-                            {{ error }}
-                        </div>
-                        {% endfor%}
 
                         <div class="form-group">
                             {{ form.company_name.label(class="sr-only") }}
                             {{ form.company_name(class_="form-control",placeholder="Company Name")}}
                         </div>
                         {% for error in form.company_name.errors %}
-                        <div class="alert" role="alert">
-                            {{ error }}
-                        </div>
-                        {% endfor%}
-
-                        <div class="form-group">
-                            {{ form.country.label(class="sr-only") }}
-                            {{ form.country(class_="form-control",placeholder="Country")}}
-                        </div>
-                        {% for error in form.country.errors %}
-                        <div class="alert" role="alert">
-                            {{ error }}
-                        </div>
-                        {% endfor%}
-
-                        <div class="form-group">
-                            {{ form.busines_type.label(class="text", style='color: grey; margin-left: 20px;') }}
-                            {{ form.busines_type(class_="form-control",placeholder="Business type")}}
-                        </div>
-                        {% for error in form.busines_type.errors %}
-                        <div class="alert" role="alert">
-                            {{ error }}
-                        </div>
-                        {% endfor%}
-
-                        <div class="form-group">
-                            {{ form.category.label(class="text", style='color: grey; margin-left: 20px;') }}
-                            {{ form.category(class_="form-control",placeholder="Products category")}}
-                        </div>
-                        {% for error in form.category.errors %}
                         <div class="alert" role="alert">
                             {{ error }}
                         </div>
@@ -132,18 +83,9 @@
                             {{ form.email(class_="form-control",placeholder="Email")}}
                         </div>
                         {% for error in form.email.errors %}
-                        <div class="alert" role="alert">
-                            {{ error }}
-                        </div>
-                        {% endfor%}
-                        <div class="form-group">
-                            {{ form.phone.label(class="sr-only") }}
-                            {{ form.phone(class_="form-control",placeholder="+123")}}
-                        </div>
-                        {% for error in form.phone.errors %}
-                        <div class="alert" role="alert">
-                            {{ error }}
-                        </div>
+                            <div class="alert" role="alert">
+                                {{ error }}
+                            </div>
                         {% endfor%}
 
                         <div class="form-group">
@@ -151,9 +93,10 @@
                             {{ form.pwd(class_="form-control",placeholder="Password")}}
                         </div>
                         {% for error in form.pwd.errors %}
-                        <div class="alert" role="alert">
-                            {{ error }}
-                        </div> {% endfor%}
+                            <div class="alert" role="alert">
+                                {{ error }}
+                            </div>
+                        {% endfor%}
 
 
                         <div class="form-group">

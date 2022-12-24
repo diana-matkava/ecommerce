@@ -10,7 +10,7 @@ function likeProduct(id) {
   }
     $.ajax({
         type: 'PUT',
-        url: '/like_product',
+        url: '/save_product',
         data: {
             'id': id
         }
