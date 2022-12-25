@@ -10,38 +10,93 @@
     .alert::before{
         content: '*';
     }
+    #name::placeholder, #name[type="text"] {
+        font-size: 34px;
+    }
+    #user-img:hover {
+        opacity: 0.5;
+    }
+    input[type="text"], textarea[type="textarea"] {
+        font-size: 14px;
+    }
 </style>
 {%endblock%}
+
+
 {% block login%}
 <div class="container">
     <div class="row mt-4">
-        <div class="col-lg-5 col-md-6 m-auto card p-4">
-            <div class="text-center" style="margin: 0 20px;">
-                <h1>{{title}}</h1>
-            </div>
-            <form method="POST" class="card-body" enctype="multipart/form-data" novalidate>
+        <div class="col-lg-6 col-md-9 m-auto card p-4">
+            <form method="POST" enctype="multipart/form-data" novalidate>
                 {{ form.csrf_token }}
-
-                <img src="{{ url_for( 'static', filename='img/app/default-user.png')}}" alt="">
-
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-block btn-primary mb-3">Submit</button>
-                 </div>
-
-                <div class="text-center">
-                    {% if request.path != '/auth/registration_customer' %}
-                        <p>
-                        New here?
-                        <a href="{{url_for('auth.register_customer')}}">Create account</a>
-                        {% else %}
-                        Already have an account?
-                        <a href="{{url_for('auth.login')}}">Login</a>
-                         </p>
-                         <p><small>Want to registered as a Seller? Press <a href="{{ url_for('auth.register_seller') }}">here</a></small></p>
-                   {% endif %}
+                <div class="form-group mx-auto text-center">
+                    <label for="logo"></label>
+                    <img style="min-height: 200px; object-fit: contain; border-radius: 100px"
+                        id="user-img" src="{{ url_for( 'static', filename='img/app/default-user.jpg')}}"
+                        alt="your image" width="200" height="200" onclick="document.getElementById('logo').click();" />
+                    <input type='file' id='logo' hidden onchange=readURL(this); />
                 </div>
+
+                <div class="form-group col-md-9 mx-auto" style="margin-top: -40px;">
+                    <label for="name"></label>
+                    <input
+                        class="form-control shadow-none border-0" type="text" id="name"
+                        placeholder="Company Name*" autofocus="autofocus" required
+                    >
+                </div>
+                <div class="form-group col-md-9 mx-auto">
+                    <label for="description"><small>Description</small></label>
+                    <textarea
+                        class="form-control shadow-none border-dark" type="textarea" id="description"
+                        placeholder="Describe your company in a couple of sentences"
+                    ></textarea>
+                </div>
+
+                <div class="form-group col-md-9 mx-auto">
+                    <label for="email"><small>Email*</small></label>
+                    <input
+                        class="form-control shadow-none border-dark" type="text" id="email"
+                        placeholder="example@gmail.com"
+                    />
+                </div>
+                <div class="form-group col-md-9 mx-auto">
+                    <label for="pwd"><small>Password*</small></label>
+                    <input
+                        class="form-control shadow-none border-dark" type="text" id="pwd"
+                        placeholder="********"
+                    />
+                </div>
+                <div class="form-group col-md-9 mx-auto">
+                    <label for="rpwd"><small>Repeat password*</small></label>
+                    <input
+                        class="form-control shadow-none border-dark" type="text" id="rpwd"
+                        placeholder="********"
+                    />
+                </div>
+                <button type="submit" class="nav-link border border-dark btn-dark rounded waves-effect m-2 col-md-3 mx-auto">Submit</button>
+                <p class="text-center">
+                    <small class="text-muted">Already have an account?
+                        <a href="#">Login</a>
+                    </small>
+                </p>
             </form>
         </div>
     </div>
 </div>
+
+
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#user-img')
+                    .attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 {% endblock %}
