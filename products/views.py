@@ -32,9 +32,9 @@ def home(id=None):
         'time': datetime.datetime.now(),
         'categories': ProductCategory.query.all(),
     }
-    if request.method == 'POST':
-        search = request.form['search']
-        data['products'] = Product.query.filter(Product.name.contains(search)).all()
+    # if request.method == 'POST':
+        # search = request.form['search']
+        # data['products'] = Product.query.filter(Product.name.contains(search)).all()
     return render_template('home/home.html', **data)
 
 

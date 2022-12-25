@@ -10,7 +10,8 @@
     .alert::before{
         content: '*';
     }
-    #name::placeholder, #name[type="text"] {
+    #username::placeholder, #username[type="text"],
+    #company_name::placeholder, #company_name[type="text"] {
         font-size: 34px;
     }
     #user-img:hover {
@@ -18,6 +19,13 @@
     }
     input[type="text"], textarea[type="textarea"] {
         font-size: 14px;
+    }
+    .name-required::placeholder {
+        color: red;
+    }
+    .label {
+        font-size: 12px;
+        color: grey;
     }
 </style>
 {%endblock%}
@@ -27,59 +35,96 @@
 <div class="container">
     <div class="row mt-4">
         <div class="col-lg-6 col-md-9 m-auto card p-4">
-            <form method="POST" enctype="multipart/form-data" novalidate>
+
+            <form enctype="multipart/form-data"> <!-- -->
                 {{ form.csrf_token }}
-                <div class="form-group mx-auto text-center">
-                    <label for="logo"></label>
-                    <img style="min-height: 200px; object-fit: contain; border-radius: 100px"
-                        id="user-img" src="{{ url_for( 'static', filename='img/app/default-user.jpg')}}"
-                        alt="your image" width="200" height="200" onclick="document.getElementById('logo').click();" />
-                    <input type='file' id='logo' hidden onchange=readURL(this); />
-                </div>
+                {% if form['img'] %}
+                    <div class="form-group mx-auto text-center">
+                        <label for="img"></label>
+                        <img style="min-height: 200px; object-fit: contain; border-radius: 100px"
+                            id="user-img" src="{{ url_for( 'static', filename='img/app/default-user.jpg')}}"
+                            alt="your image" width="200" height="200" onclick="document.getElementById('img').click();" />
+                        <input type='file' id='img' hidden onchange=readURL(this); />
+                    </div>
+                {% endif %}
 
-                <div class="form-group col-md-9 mx-auto" style="margin-top: -40px;">
-                    <label for="name"></label>
-                    <input
-                        class="form-control shadow-none border-0" type="text" id="name"
-                        placeholder="Company Name*" autofocus="autofocus" required
-                    >
-                </div>
-                <div class="form-group col-md-9 mx-auto">
-                    <label for="description"><small>Description</small></label>
-                    <textarea
-                        class="form-control shadow-none border-dark" type="textarea" id="description"
-                        placeholder="Describe your company in a couple of sentences"
-                    ></textarea>
-                </div>
+                {% if form['username'] %}
+                    <div class="form-group col-md-9 mx-auto" style="margin-top: -40px;">
+                        <label for="username"></label>
+                        <input
+                            class="form-control shadow-none border-0" type="text" id="username"
+                            placeholder="User Name*" autofocus="autofocus" required
+                        >
+                    </div>
+                {% endif %}
 
-                <div class="form-group col-md-9 mx-auto">
-                    <label for="email"><small>Email*</small></label>
-                    <input
-                        class="form-control shadow-none border-dark" type="text" id="email"
-                        placeholder="example@gmail.com"
-                    />
-                </div>
-                <div class="form-group col-md-9 mx-auto">
-                    <label for="pwd"><small>Password*</small></label>
-                    <input
-                        class="form-control shadow-none border-dark" type="text" id="pwd"
-                        placeholder="********"
-                    />
-                </div>
-                <div class="form-group col-md-9 mx-auto">
-                    <label for="rpwd"><small>Repeat password*</small></label>
-                    <input
-                        class="form-control shadow-none border-dark" type="text" id="rpwd"
-                        placeholder="********"
-                    />
-                </div>
-                <button type="submit" class="nav-link border border-dark btn-dark rounded waves-effect m-2 col-md-3 mx-auto">Submit</button>
+                {% if form['company_name'] %}
+                    <div class="form-group col-md-9 mx-auto" style="margin-top: -40px;">
+                        <label for="company_name"></label>
+                        <input
+                            class="form-control shadow-none border-0" type="text" id="company_name"
+                            placeholder="Company Name*" autofocus="autofocus" required
+                        >
+                    </div>
+                {% endif %}
+
+                {% if form['description'] %}
+                    <div class="form-group col-md-9 mx-auto">
+                        <label class="label" for="description">Description<span class="error-msg"></span></label>
+                        <textarea
+                            class="form-control shadow-none border-dark" type="textarea" id="description"
+                            placeholder="Describe your company in a couple of sentences"
+                        ></textarea>
+                    </div>
+                {% endif %}
+
+                {% if form['email'] %}
+                    <div class="form-group col-md-9 mx-auto">
+                        <label class="label" for="email">Email*<span class="error-msg"></span></label>
+                        <input
+                            class="form-control shadow-none border-dark" type="text" id="email"
+                            placeholder="example@gmail.com"
+                        />
+                    </div>
+                {% endif %}
+
+                {% if form['pwd'] %}
+                    <div class="form-group col-md-9 mx-auto">
+                        <label class="label" for="pwd">Password*<span class="error-msg"></span></label>
+                        <input
+                            class="form-control shadow-none border-dark" type="password" id="pwd"
+                            placeholder="********"
+                        />
+                    </div>
+                {% endif %}
+
+                {% if form['cpwd'] %}
+                    <div class="form-group col-md-9 mx-auto">
+                        <label class="label" for="cpwd" >Repeat password*<span class="error-msg"></span></label>
+                        <input
+                            class="form-control shadow-none border-dark" type="password" id="cpwd"
+                            placeholder="********"
+                        />
+                    </div>
+                {% endif %}
+
+                {% for field, errors in form.errors.items() %}
+                    <small class="form-text text-muted ">
+                        {{ ', '.join(errors) }}
+                    </small>
+                {% endfor %}
+            </form>
+                <a
+                    class="nav-link border border-dark btn-dark rounded waves-effect m-2 col-md-3 mx-auto text-center"
+                    onclick="validateForm()" style="color: #fff"
+                >Submit</a>
                 <p class="text-center">
                     <small class="text-muted">Already have an account?
                         <a href="#">Login</a>
                     </small>
                 </p>
-            </form>
+
+
         </div>
     </div>
 </div>
@@ -89,14 +134,46 @@
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-
             reader.onload = function (e) {
                 $('#user-img')
                     .attr('src', e.target.result);
             };
-
             reader.readAsDataURL(input.files[0]);
         }
+    }
+
+    function validateForm() {
+        URL = document.URL.split('/').pop()
+        var $elements = $('form :input');
+        let formData = {};
+        let data = {};
+        for (el of $elements) {
+            if (el.value !== '') {
+                formData[el.id] = el.value;
+            }
+        }
+
+        $.ajax ({
+            type: 'POST',
+            url: `/auth/${URL}`,
+            data: formData,
+            success: function (data) {
+                var x = JSON.stringify(data);
+                for ([id, value] of Object.entries(data)) {
+                    field = $(`label[for=${id}]`)[0]
+                    if (field !== undefined) {
+                        field.style.color = value == ''? 'grey': 'red'
+                        label = field.getElementsByTagName('span')[0]
+                        if (label !== undefined) {
+                            label.innerHTML = ` ${value}`
+                        } else {
+                            $(`#${id}`)[0].classList.add('name-required')
+                        }
+                    }
+                }
+            }
+        })
+
     }
 </script>
 {% endblock %}

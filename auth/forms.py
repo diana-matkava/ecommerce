@@ -7,13 +7,14 @@ from .models import Customer, Seller
 
 
 class CustomerRegistrationForm(FlaskForm):
+    img = StringField('Avatar')
     username = StringField('username', validators=[
         InputRequired(),
         Length(5, 20, message='Please provide a valid usename'),
         Regexp(
             "^[A-Za-z][A-Za-z0-9_.]*$",
             0,
-            "Username must have only letters, " "numbers, dots or underscores",
+            "Username must start from letter" ,
         )
     ])
     email = StringField('email', validators=[InputRequired(), Email(), Length(5, 20)])
@@ -26,39 +27,22 @@ class CustomerRegistrationForm(FlaskForm):
         Length(8, 20),
         EqualTo('pwd', message='Password must match')
     ])
-    avatar = StringField('Avatar')
-
 
     def validate_email(self, email):
-        if Customer.query.filter_by(email=email.data).first() or \
-            Seller.query.filter_by(email=email.data).first():
+        print(email.data)
+        print(Customer.query.filter_by(email=email.data))
+        print(Seller.query.filter_by(email=email.data))
+        if Customer.query.filter_by(email=email.data) or \
+            Seller.query.filter_by(email=email.data):
             raise ValidationError('Email already taken')
 
 
 class SellerRegistrationForm(FlaskForm):
-    first_name = StringField('First Name', validators=[
-        InputRequired(), Length(0, 20), Regexp(
-            "^[A-Za-z][A-Za-z0-9_.]*$",
-            0,
-            "First name must have only letters, " "numbers, dots or underscores"
-        )
-    ])
-    last_name = StringField('First Name', validators=[
-        InputRequired(), Length(0, 20), Regexp(
-            "^[A-Za-z][A-Za-z0-9_.]*$",
-            0,
-            "First name must have only letters, " "numbers, dots or underscores"
-        )
-    ])
+    img = StringField('Company Logo')
     company_name = StringField(validators=[
         InputRequired(), Length(0, 50)
     ])
-    country = SelectField('Country', validate_choice=False)
-    busines_type = SelectField('Business type:', validate_choice=False)
-    category = SelectMultipleField('Products category:', validate_choice=False)
-    logo = StringField('Company Logo')
-    # phone = PhoneNumberField('Phone', validators=[InputRequired()])
-    phone = StringField('Phone', validators=[InputRequired()])
+    description = StringField(validators=[Length(0, 1000)])
     email = StringField('Email', validators=[InputRequired(), Email()])
     pwd = PasswordField('Password', validators=[
         InputRequired(),
@@ -71,13 +55,10 @@ class SellerRegistrationForm(FlaskForm):
     ])
 
     def validate_email(self, email):
-        if Seller.query.filter_by(email=email.data).first() or \
-        Customer.query.filter_by(email=email.data).first():
+        if Seller.query.filter_by(email=email.data) or \
+        Customer.query.filter_by(email=email.data):
             raise ValidationError('Email already taken')
 
-    def __init__(self, *args, **kwargs):
-        super(SellerRegistrationForm, self).__init__(*args, **kwargs)
-        self.country.choices = [(a.alpha_2, a.name) for a in pycountry.countries]
 
 
 class LoginForm(FlaskForm):

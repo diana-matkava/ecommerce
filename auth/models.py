@@ -53,6 +53,7 @@ class User(UserMixin):
 
 class Customer(User, db.Model):
     username = Column(String(50), nullable=False)
+    description = Column(String(1000), nullable=True)
     avatar = Column(Integer, ForeignKey('customer_avatar.id'))
     cart_id = Column(Integer, nullable=True)
     saved = relationship(

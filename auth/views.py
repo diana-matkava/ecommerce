@@ -1,4 +1,5 @@
 import os
+from flask.json import jsonify
 import pycountry
 from flask import Blueprint, flash, render_template, request, session, url_for, redirect
 from flask_login import login_user, login_required, logout_user, LoginManager, current_user
@@ -11,6 +12,7 @@ from .models import Customer, Seller
 from ..extentions import db
 from ..settings import UPLOAD_FOLDER
 from ..utils import allowed_extension
+from werkzeug.datastructures import ImmutableMultiDict
 
 login_manager = LoginManager()
 login_manager.session_protection = "strong"
@@ -35,71 +37,85 @@ def login_default(user):
     return redirect(url_for('home'))
 
 
-@bp.route('/registration_customer', methods=('GET', 'POST'), strict_slashes=False)
+@bp.route('/register_customer', methods=(['GET', 'POST']))
 def register_customer():
     session.pop('_flashes', None)
-    form = CustomerRegistrationForm()
-    if form.validate_on_submit():
-        try:
-            customer = Customer(
-                username=form.username.data,
-                email=form.email.data,
-                password=generate_password_hash(form.pwd.data),
-                role=0
+
+    if request.method == "POST":
+        data = ImmutableMultiDict(request.form)
+        form_data = data.to_dict(flat=True)
+        form = CustomerRegistrationForm(**form_data)
+        if form.validate_on_submit():
+            try:
+                customer = Customer(
+                    username=form.username.data,
+                    email=form.email.data,
+                    password=generate_password_hash(form.pwd.data),
+                    role=0
                 )
 
-            avatar = request.files['avatar']
-            if avatar and allowed_extension(avatar.filename):
-                path = os.path.join(UPLOAD_FOLDER, 'img/user_inputs/customer_avatar/', secure_filename(avatar.filename))
-                avatar.save(os.path.join(path))
-                customer.avatar = os.path.join('img/user_inputs/customer_avatar/', secure_filename(avatar.filename))
+                avatar = request.files['avatar']
+                if avatar and allowed_extension(avatar.filename):
+                    path = os.path.join(UPLOAD_FOLDER, 'img/user_inputs/customer_avatar/', secure_filename(avatar.filename))
+                    avatar.save(os.path.join(path))
+                    customer.avatar = os.path.join('img/user_inputs/customer_avatar/', secure_filename(avatar.filename))
 
-            db.session.add(customer)
-            db.session.commit()
-            session['role'] = 0
-            login_user(customer)
-            flash(f'User {customer} was created successfully!')
-            return redirect(url_for('home'))
-        except Exception as _ex:
-            flash(_ex, 'danger')
+                db.session.add(customer)
+                db.session.commit()
+                session['role'] = 0
+                login_user(customer)
+                flash(f'User {customer} was created successfully!')
+                return redirect(url_for('home'))
+            except Exception as _ex:
+                flash(_ex, 'danger')
+        else:
+            valid_field = set(set(form_data.keys())).difference(form.errors.keys())
+            print(valid_field)
+            data = form.errors
+            data.update(dict.fromkeys(valid_field, ''))
+            print(data)
+            return jsonify(data)
+    else:
+        form = CustomerRegistrationForm()
     return render_template('auth/register.html', form=form, title='Sing Up')
 
 
-@bp.route('/registration_seller', methods=('GET', 'POST'))
+@bp.route('/register_seller', methods=('GET', 'POST'))
 def register_seller():
     session.pop('_flashes', None)
-    form = SellerRegistrationForm()
-    if form.validate_on_submit():
-        try:
-            seller = Seller(
-                email=form.email.data,
-                password=generate_password_hash(form.pwd.data),
-                role=1,
-                first_name=form.first_name.data,
-                last_name=form.last_name.data,
-                company_name=form.company_name.data,
-                country=pycountry.countries.get(alpha_2=form.country.data).name,
-                busines_type=[Type.query.get(form.busines_type.data)],
-                phone=form.phone.data
-                )
-            seller.category.extend([Category.query.get(category) for category in form.category.data])
 
-            logo = request.files['logo']
-            if logo and allowed_extension(logo.filename):
-                path = os.path.join(UPLOAD_FOLDER, 'img/user_inputs/seller_logo/', secure_filename(logo.filename))
-                logo.save(path)
-                seller.logo =  os.path.join('img/user_inputs/seller_logo/', secure_filename(logo.filename))
+    if request.method == "POST":
+        data = ImmutableMultiDict(request.form)
+        form_data = data.to_dict(flat=True)
+        form = SellerRegistrationForm(**form_data)
+        if form.validate_on_submit():
+            try:
+                seller = Seller(
+                    company_name=form.company_name.data,
+                    email=form.email.data,
+                    password=generate_password_hash(form.pwd.data),
+                    role=1,
+                    )
 
-            db.session.add(seller)
-            db.session.commit()
-            session['role'] = 1
-            login_user(seller)
-            flash(f'Seller {seller} was created successfully')
-            return redirect(url_for('home'))
-        except Exception as _ex:
+                logo = request.files['logo']
+                if logo and allowed_extension(logo.filename):
+                    path = os.path.join(UPLOAD_FOLDER, 'img/user_inputs/seller_logo/', secure_filename(logo.filename))
+                    logo.save(path)
+                    seller.logo =  os.path.join('img/user_inputs/seller_logo/', secure_filename(logo.filename))
 
-            flash(_ex, 'danger')
-    return render_template('auth/register_seller.html', form=form, title='Register as Seller')
+                db.session.add(seller)
+                db.session.commit()
+                session['role'] = 1
+                login_user(seller)
+                flash(f'Seller {seller} was created successfully')
+                return redirect(url_for('home'))
+            except Exception as _ex:
+                flash(_ex, 'danger')
+        else:
+            return jsonify(form.errors)
+    else:
+        form = SellerRegistrationForm()
+    return render_template('auth/register.html', form=form, title='Register as Seller')
 
 @login_required
 @bp.route('/profile', methods=('GET', ))
