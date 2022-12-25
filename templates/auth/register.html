@@ -49,7 +49,7 @@
                 {% endif %}
 
                 {% if form['username'] %}
-                    <div class="form-group col-md-9 mx-auto" style="margin-top: -40px;">
+                    <div class="form-group col-sm-9 col-md-9 mx-auto" style="margin-top: -40px;">
                         <label for="username"></label>
                         <input
                             class="form-control shadow-none border-0" type="text" id="username"
@@ -59,7 +59,7 @@
                 {% endif %}
 
                 {% if form['company_name'] %}
-                    <div class="form-group col-md-9 mx-auto" style="margin-top: -40px;">
+                    <div class="form-group col-sm-9 col-md-9 mx-auto" style="margin-top: -40px;">
                         <label for="company_name"></label>
                         <input
                             class="form-control shadow-none border-0" type="text" id="company_name"
@@ -69,7 +69,7 @@
                 {% endif %}
 
                 {% if form['description'] %}
-                    <div class="form-group col-md-9 mx-auto">
+                    <div class="form-group col-sm-9 col-md-9 mx-auto">
                         <label class="label" for="description">Description<span class="error-msg"></span></label>
                         <textarea
                             class="form-control shadow-none border-dark" type="textarea" id="description"
@@ -79,7 +79,7 @@
                 {% endif %}
 
                 {% if form['email'] %}
-                    <div class="form-group col-md-9 mx-auto">
+                    <div class="form-group col-sm-9 col-md-9 mx-auto">
                         <label class="label" for="email">Email*<span class="error-msg"></span></label>
                         <input
                             class="form-control shadow-none border-dark" type="text" id="email"
@@ -89,7 +89,7 @@
                 {% endif %}
 
                 {% if form['pwd'] %}
-                    <div class="form-group col-md-9 mx-auto">
+                    <div class="form-group col-sm-9 col-md-9 mx-auto">
                         <label class="label" for="pwd">Password*<span class="error-msg"></span></label>
                         <input
                             class="form-control shadow-none border-dark" type="password" id="pwd"
@@ -99,7 +99,7 @@
                 {% endif %}
 
                 {% if form['cpwd'] %}
-                    <div class="form-group col-md-9 mx-auto">
+                    <div class="form-group col-sm-9 col-md-9 mx-auto">
                         <label class="label" for="cpwd" >Repeat password*<span class="error-msg"></span></label>
                         <input
                             class="form-control shadow-none border-dark" type="password" id="cpwd"
@@ -115,7 +115,7 @@
                 {% endfor %}
             </form>
                 <a
-                    class="nav-link border border-dark btn-dark rounded waves-effect m-2 col-md-3 mx-auto text-center"
+                    class="nav-link border border-dark btn-dark rounded waves-effect m-2 mx-auto text-center"
                     onclick="validateForm()" style="color: #fff"
                 >Submit</a>
                 <p class="text-center">

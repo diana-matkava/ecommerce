@@ -1,6 +1,5 @@
-import pycountry
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectMultipleField, SelectField
+from wtforms import StringField, PasswordField
 from wtforms.validators import Email, InputRequired, Length, Regexp, EqualTo, ValidationError
 from .models import Customer, Seller
 
@@ -10,11 +9,10 @@ class CustomerRegistrationForm(FlaskForm):
     img = StringField('Avatar')
     username = StringField('username', validators=[
         InputRequired(),
-        Length(5, 20, message='Please provide a valid usename'),
+        Length(5, 20, message='Please provide a valid username'),
         Regexp(
-            "^[A-Za-z][A-Za-z0-9_.]*$",
-            0,
-            "Username must start from letter" ,
+            regex="^\w+$",
+            message="Username must start with letter, cant not contain spaces, and other special characters, except underscores",
         )
     ])
     email = StringField('email', validators=[InputRequired(), Email(), Length(5, 20)])
@@ -29,11 +27,8 @@ class CustomerRegistrationForm(FlaskForm):
     ])
 
     def validate_email(self, email):
-        print(email.data)
-        print(Customer.query.filter_by(email=email.data))
-        print(Seller.query.filter_by(email=email.data))
-        if Customer.query.filter_by(email=email.data) or \
-            Seller.query.filter_by(email=email.data):
+        if Customer.query.filter_by(email=email.data).first() or \
+            Seller.query.filter_by(email=email.data).first():
             raise ValidationError('Email already taken')
 
 
@@ -55,8 +50,8 @@ class SellerRegistrationForm(FlaskForm):
     ])
 
     def validate_email(self, email):
-        if Seller.query.filter_by(email=email.data) or \
-        Customer.query.filter_by(email=email.data):
+        if Seller.query.filter_by(email=email.data).first() or \
+        Customer.query.filter_by(email=email.data).first():
             raise ValidationError('Email already taken')
 
 

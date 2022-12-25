@@ -44,9 +44,18 @@
             <ul class="navbar-nav nav-flex-icons">
 
                 <li class="nav-item">
-                    <a class="nav-link waves-effect" {% if not current_user.is_authenticated %} data-toggle="modal" data-target="#exampleModal"{%endif%} href="{% if current_user.is_authenticated %}{{url_for('card')}}{% endif %}">
+                    <a
+                        class="nav-link waves-effect"
+                        {% if not current_user.is_authenticated %}
+                            data-toggle="modal" data-target="#exampleModal"
+                        {%endif%}
+                        href="{% if current_user.is_authenticated %}{{url_for('card')}}{% endif %}"
+                    >
                         {%if current_user.cart_id%}
-                        <span id="cart_badge" class="badge badge-pill danger-color" style="display: inline-block; padding: 5px; margin: 0 0 5px -5px;"></span>
+                            <span
+                                id="cart_badge" class="badge badge-pill danger-color"
+                                style="display: inline-block; padding: 5px; margin: 0 0 5px -5px;"
+                            ></span>
                         {%endif%}
                         <i class="fas fa-shopping-cart"></i>
                         <span class="clearfix d-none d-sm-inline-block"> Cart </span>
@@ -74,17 +83,17 @@
                         </div>
                     </div>
                         {% if current_user.logo %}
-                        <li class="nav-item">
-                            <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename=current_user.logo)}}" alt="" class="logo"></a>
-                        </li>
+                            <li class="nav-item">
+                                <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename=current_user.logo)}}" alt="" class="logo"></a>
+                            </li>
                         {% elif current_user.avatar %}
-                        <li class="nav-item">
-                            <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename=current_user.avatar)}}" alt="" class="logo"></a>
-                        </li>
+                            <li class="nav-item">
+                                <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename=current_user.avatar)}}" alt="" class="logo"></a>
+                            </li>
                         {% else %}
-                        <li class="nav-item">
-                            <a href="{{url_for('auth.profile')}}"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="" class="logo" style='width: 32px;'></a>
-                        </li>
+                            <li class="nav-item">
+                                <a href="{{url_for('auth.profile')}}"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="" class="logo" style='width: 32px;'></a>
+                            </li>
                         {% endif %}
                 {%else%}
                     <li class="nav-item">
@@ -97,16 +106,17 @@
                 {% if current_user.is_authenticated %}
                 <div class="dropdown">
                     <li class="nav-item">
-                        <a href="#" class="nav-link rounded waves-effect mr-2" style="color: rgb(43, 172, 220); font-size: smaller; margin: 3px 0 0 5px; font-weight: 400;">{{current_user.currency}}</a>
+                        <a
+                            href="#" class="nav-link rounded waves-effect mr-2"
+                            style="color: rgb(43, 172, 220); font-size: smaller; margin: 3px 0 0 5px; font-weight: 400;"
+                        >TEST</a>
                     </li>
                     <div class="dropdown-currency">
                         {% set currencies = ['USD', 'EUR', 'UAH', 'RUB', 'CNY', 'GBP'] %}
                         {% for currency in currencies %}
-                            {% if not currency == current_user.currency.abr %}
                                 <li class="nav-item">
                                     <a onClick="changeCurrency('{{currency}}')" class="mr-2 waves-effect li-currency">{{currency}}</a>
                                 </li>
-                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>

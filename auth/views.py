@@ -1,11 +1,13 @@
 import os
-from flask.json import jsonify
+import json
+import requests
 import pycountry
+from pycountry import Currencies
+from flask.json import jsonify
 from flask import Blueprint, flash, render_template, request, session, url_for, redirect
 from flask_login import login_user, login_required, logout_user, LoginManager, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-
 from ..products.models import Currency
 from .forms import CustomerRegistrationForm, SellerRegistrationForm, LoginForm
 from .models import Customer, Seller
@@ -14,11 +16,11 @@ from ..settings import UPLOAD_FOLDER
 from ..utils import allowed_extension
 from werkzeug.datastructures import ImmutableMultiDict
 
+
 login_manager = LoginManager()
 login_manager.session_protection = "strong"
 login_manager.login_view = "login"
 login_manager.login_message_category = "info"
-
 
 @login_manager.user_loader
 def load_user(id):
@@ -30,7 +32,6 @@ def load_user(id):
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-
 @bp.route('/login_default/<user>', methods=(['GET']))
 def login_default(user):
 
@@ -39,7 +40,17 @@ def login_default(user):
 
 @bp.route('/register_customer', methods=(['GET', 'POST']))
 def register_customer():
-    session.pop('_flashes', None)
+    country = pycountry.countries.get(alpha_2='DE')
+    c = Currencies.get(number=country.)
+
+    if not session.get('country_code', False):
+        ip = request.headers.get('X-Forwarded-For', False)
+        if ip:
+            URL = f'https://ipapi.co/{ip}/json'
+            res = requests.get(URL)
+            session['country_code'] = json.loads(res.text)['country_code']
+        else:
+            session['country_code'] = 'DE'
 
     if request.method == "POST":
         data = ImmutableMultiDict(request.form)
@@ -53,13 +64,18 @@ def register_customer():
                     password=generate_password_hash(form.pwd.data),
                     role=0
                 )
-
-                avatar = request.files['avatar']
+                avatar = form.img.data
                 if avatar and allowed_extension(avatar.filename):
-                    path = os.path.join(UPLOAD_FOLDER, 'img/user_inputs/customer_avatar/', secure_filename(avatar.filename))
+                    path = os.path.join(
+                        UPLOAD_FOLDER,
+                        'img/user_inputs/customer_avatar/',
+                        secure_filename(avatar.filename)
+                    )
                     avatar.save(os.path.join(path))
-                    customer.avatar = os.path.join('img/user_inputs/customer_avatar/', secure_filename(avatar.filename))
-
+                    customer.avatar = os.path.join(
+                        'img/user_inputs/customer_avatar/',
+                        secure_filename(avatar.filename)
+                    )
                 db.session.add(customer)
                 db.session.commit()
                 session['role'] = 0
@@ -70,10 +86,8 @@ def register_customer():
                 flash(_ex, 'danger')
         else:
             valid_field = set(set(form_data.keys())).difference(form.errors.keys())
-            print(valid_field)
             data = form.errors
             data.update(dict.fromkeys(valid_field, ''))
-            print(data)
             return jsonify(data)
     else:
         form = CustomerRegistrationForm()
@@ -82,8 +96,6 @@ def register_customer():
 
 @bp.route('/register_seller', methods=('GET', 'POST'))
 def register_seller():
-    session.pop('_flashes', None)
-
     if request.method == "POST":
         data = ImmutableMultiDict(request.form)
         form_data = data.to_dict(flat=True)
@@ -112,7 +124,10 @@ def register_seller():
             except Exception as _ex:
                 flash(_ex, 'danger')
         else:
-            return jsonify(form.errors)
+            valid_field = set(set(form_data.keys())).difference(form.errors.keys())
+            data = form.errors
+            data.update(dict.fromkeys(valid_field, ''))
+            return jsonify(data)
     else:
         form = SellerRegistrationForm()
     return render_template('auth/register.html', form=form, title='Register as Seller')
@@ -181,19 +196,9 @@ def edit_seller_profile():
     user = current_user
     data = {
         'user': current_user,
-        'countries': pycountry.countries,
-        'business_types': Type.query.all(),
-        'categories': Category.query.all()
     }
     if request.method == 'POST':
-        user.first_name = request.form.get('first_name')
-        user.last_name = request.form.get('last_name')
         user.company_name = request.form.get('company_name')
-        user.phone = request.form.get('phone')
-        user.country = pycountry.countries.get(alpha_2=request.form.get('country')).name
-        user.busines_type = [Type.query.filter_by(name=request.form.get('type')).first()]
-        user.category = [Category.query.filter_by(name=category).first() for category in request.form.getlist('category')]
-
         email = request.form.get('email')
         if not Seller.query.filter_by(email=email).first() and \
             not Customer.query.filter_by(email=email).first() and \
