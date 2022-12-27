@@ -97,7 +97,7 @@
                         {% endif %}
                 {%else%}
                     <li class="nav-item">
-                        <a href="{{url_for('auth.register_customer')}}" class="nav-link border border-light rounded waves-effect mr-2">Sing Up</a>
+                        <a href="{{url_for('auth.register', user='customer')}}" class="nav-link border border-light rounded waves-effect mr-2">Sing Up</a>
                     </li>
                     <li class="nav-item">
                         <a href="{{url_for('auth.login')}}" class="nav-link border border-dark btn-dark rounded waves-effect"><span style="color: #fff">Sing In</span></a>

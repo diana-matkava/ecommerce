@@ -1,15 +1,15 @@
 import os
 import json
 import requests
-import pycountry
-from pycountry import Currencies
+from countryinfo import CountryInfo
+from .config import register_conf
 from flask.json import jsonify
 from flask import Blueprint, flash, render_template, request, session, url_for, redirect
 from flask_login import login_user, login_required, logout_user, LoginManager, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from ..products.models import Currency
-from .forms import CustomerRegistrationForm, SellerRegistrationForm, LoginForm
+from .forms import LoginForm
 from .models import Customer, Seller
 from ..extentions import db
 from ..settings import UPLOAD_FOLDER
@@ -38,49 +38,84 @@ def login_default(user):
     return redirect(url_for('home'))
 
 
-@bp.route('/register_customer', methods=(['GET', 'POST']))
-def register_customer():
-    country = pycountry.countries.get(alpha_2='DE')
-    c = Currencies.get(number=country.)
+def register_seller(form):
+    seller = Seller(
+        company_name=form.company_name.data,
+        email=form.email.data,
+        password=generate_password_hash(form.pwd.data),
+        role=1,
+        )
+    logo = request.files['logo']
+    if logo and allowed_extension(logo.filename):
+        path = os.path.join(
+            UPLOAD_FOLDER,
+            'img/user_inputs/seller_logo/',
+            secure_filename(logo.filename)
+        )
+        logo.save(path)
+        seller.logo =  os.path.join(
+            'img/user_inputs/seller_logo/',
+            secure_filename(logo.filename)
+        )
+    return seller, 1
 
-    if not session.get('country_code', False):
+
+def register_customer(form):
+    customer = Customer(
+        username=form.username.data,
+        email=form.email.data,
+        password=generate_password_hash(form.pwd.data),
+        role=0
+    )
+    avatar = form.img.data
+    if avatar and allowed_extension(avatar.filename):
+        path = os.path.join(
+            UPLOAD_FOLDER,
+            'img/user_inputs/customer_avatar/',
+            secure_filename(avatar.filename)
+        )
+        avatar.save(os.path.join(path))
+        customer.avatar = os.path.join(
+            'img/user_inputs/customer_avatar/',
+            secure_filename(avatar.filename)
+        )
+    return customer, 0
+
+
+def create_user(user, form):
+    if user == 'customer':
+        return register_customer(form)
+    else:
+        return register_seller(form)
+
+
+@bp.route('/register/<user>', methods=(['GET', 'POST']))
+def register(user):
+
+    if not session.get('country', False):
         ip = request.headers.get('X-Forwarded-For', False)
         if ip:
             URL = f'https://ipapi.co/{ip}/json'
             res = requests.get(URL)
-            session['country_code'] = json.loads(res.text)['country_code']
+            session['country'] = json.loads(res.text)['country_name']
         else:
-            session['country_code'] = 'DE'
+            session['country'] = 'Georgia'
+
+    session['currency'] = CountryInfo(session['country']).currencies()[0]
 
     if request.method == "POST":
         data = ImmutableMultiDict(request.form)
         form_data = data.to_dict(flat=True)
-        form = CustomerRegistrationForm(**form_data)
+        form = register_conf[user](**form_data)
+
         if form.validate_on_submit():
             try:
-                customer = Customer(
-                    username=form.username.data,
-                    email=form.email.data,
-                    password=generate_password_hash(form.pwd.data),
-                    role=0
-                )
-                avatar = form.img.data
-                if avatar and allowed_extension(avatar.filename):
-                    path = os.path.join(
-                        UPLOAD_FOLDER,
-                        'img/user_inputs/customer_avatar/',
-                        secure_filename(avatar.filename)
-                    )
-                    avatar.save(os.path.join(path))
-                    customer.avatar = os.path.join(
-                        'img/user_inputs/customer_avatar/',
-                        secure_filename(avatar.filename)
-                    )
-                db.session.add(customer)
+                user, role = create_user(user, form)
+                db.session.add(user)
                 db.session.commit()
-                session['role'] = 0
-                login_user(customer)
-                flash(f'User {customer} was created successfully!')
+                session['role'] = role
+                login_user(user)
+                flash(f'User {user} was created successfully!')
                 return redirect(url_for('home'))
             except Exception as _ex:
                 flash(_ex, 'danger')
@@ -90,47 +125,9 @@ def register_customer():
             data.update(dict.fromkeys(valid_field, ''))
             return jsonify(data)
     else:
-        form = CustomerRegistrationForm()
-    return render_template('auth/register.html', form=form, title='Sing Up')
+        form = register_conf[user]()
+    return render_template('auth/register.html', form=form, title=f'{user.capitalize()}')
 
-
-@bp.route('/register_seller', methods=('GET', 'POST'))
-def register_seller():
-    if request.method == "POST":
-        data = ImmutableMultiDict(request.form)
-        form_data = data.to_dict(flat=True)
-        form = SellerRegistrationForm(**form_data)
-        if form.validate_on_submit():
-            try:
-                seller = Seller(
-                    company_name=form.company_name.data,
-                    email=form.email.data,
-                    password=generate_password_hash(form.pwd.data),
-                    role=1,
-                    )
-
-                logo = request.files['logo']
-                if logo and allowed_extension(logo.filename):
-                    path = os.path.join(UPLOAD_FOLDER, 'img/user_inputs/seller_logo/', secure_filename(logo.filename))
-                    logo.save(path)
-                    seller.logo =  os.path.join('img/user_inputs/seller_logo/', secure_filename(logo.filename))
-
-                db.session.add(seller)
-                db.session.commit()
-                session['role'] = 1
-                login_user(seller)
-                flash(f'Seller {seller} was created successfully')
-                return redirect(url_for('home'))
-            except Exception as _ex:
-                flash(_ex, 'danger')
-        else:
-            valid_field = set(set(form_data.keys())).difference(form.errors.keys())
-            data = form.errors
-            data.update(dict.fromkeys(valid_field, ''))
-            return jsonify(data)
-    else:
-        form = SellerRegistrationForm()
-    return render_template('auth/register.html', form=form, title='Register as Seller')
 
 @login_required
 @bp.route('/profile', methods=('GET', ))
@@ -229,7 +226,7 @@ def edit_seller_profile():
                         flash(f'Password should contain more then 8 letters')
                         return redirect(url_for('auth.edit_seller_profile'))
                 else:
-                    flash('Password mismutch')
+                    flash('Password mismatch')
                     return redirect(url_for('auth.edit_seller_profile'))
             else:
                 flash(f'Current password is incorrect')
@@ -254,16 +251,16 @@ def login():
                     session['role'] = customer.role
                     return redirect(url_for('home'))
                 else:
-                    flash('Username (or email) or password is invalid', 'denger')
+                    flash('Username (or email) or password is invalid', 'danger')
             elif seller:
                 if check_password_hash(seller.password, form.pwd.data):
                     login_user(seller)
                     session['role'] = seller.role
                     return redirect(url_for('home'))
                 else:
-                    flash('Username (or email) or password is invalid', 'denger')
+                    flash('Username (or email) or password is invalid', 'danger')
         except Exception as _ex:
-            flash("User with such email or password doesn't exist", 'denger')
+            flash(f"User with such email or password doesn't exist", 'danger')
     return render_template('auth/registration.html', form=form, title='Login')
 
 

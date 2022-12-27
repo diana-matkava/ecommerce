@@ -9,7 +9,7 @@
 
 <div class="col pt-3 pb-1 my-auto mx-auto bg-light-o-50 rounded-lg border-light background-hidden"
         style="width: 265px; z-index: 1">
-    <a href="#" onClick=openModal('{{id}}') class="nav-link border border-dark btn-dark rounded waves-effect">
+    <a href="{{url_for('auth.register', user=id.split('-')[2])}}" onClick=openModal('{{id}}') class="nav-link border border-dark btn-dark rounded waves-effect">
         <span style="color: #fff">Get Started</span>
     </a>
     <p>
@@ -20,6 +20,7 @@
 </div>
 <script>
     function openModal(id) {
+        console.log(id)
         let link = $('#get-started-login')[0];
         link.style.display = 'inline-block';
         let user = id.split('-')[2]
