@@ -126,7 +126,7 @@ def register(user):
             return jsonify(data)
     else:
         form = register_conf[user]()
-    return render_template('auth/register.html', form=form, title=f'{user.capitalize()}')
+    return render_template('auth/register.html', form=form, title='', user=user)
 
 
 @login_required
@@ -239,29 +239,33 @@ def edit_seller_profile():
 
 @bp.route('/login', methods=('GET', 'POST'), strict_slashes=False)
 def login():
-    session.pop('_flashes', None)
-    form = LoginForm()
-    if form.validate_on_submit():
-        try:
-            customer = Customer.query.filter_by(email=form.email.data).first()
-            seller = Seller.query.filter_by(email=form.email.data).first()
-            if customer:
-                if check_password_hash(customer.password, form.pwd.data):
-                    login_user(customer)
-                    session['role'] = customer.role
-                    return redirect(url_for('home'))
-                else:
-                    flash('Username (or email) or password is invalid', 'danger')
-            elif seller:
-                if check_password_hash(seller.password, form.pwd.data):
-                    login_user(seller)
-                    session['role'] = seller.role
-                    return redirect(url_for('home'))
-                else:
-                    flash('Username (or email) or password is invalid', 'danger')
-        except Exception as _ex:
-            flash(f"User with such email or password doesn't exist", 'danger')
-    return render_template('auth/registration.html', form=form, title='Login')
+    if request.method == "POST":
+        data = ImmutableMultiDict(request.form)
+        form_data = data.to_dict(flat=True)
+        form = LoginForm(**form_data)
+        if form.validate_on_submit():
+            try:
+                customer = Customer.query.filter_by(email=form.email.data).first()
+                seller = Seller.query.filter_by(email=form.email.data).first()
+                if customer:
+                    if check_password_hash(customer.password, form.pwd.data):
+                        login_user(customer)
+                        session['role'] = customer.role
+                        return redirect(url_for('home'))
+                    else:
+                        flash('Username (or email) or password is invalid', 'danger')
+                elif seller:
+                    if check_password_hash(seller.password, form.pwd.data):
+                        login_user(seller)
+                        session['role'] = seller.role
+                        return redirect(url_for('home'))
+                    else:
+                        flash('Username (or email) or password is invalid', 'danger')
+            except Exception as _ex:
+                flash(f"User with such email or password doesn't exist", 'danger')
+    else:
+        form = LoginForm()
+    return render_template('auth/register.html', form=form, title='Login')
 
 
 @bp.route('/logout', methods=('GET', ))

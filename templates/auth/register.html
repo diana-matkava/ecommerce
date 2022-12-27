@@ -35,7 +35,7 @@
 <div class="container">
     <div class="row mt-4">
         <div class="col-lg-6 col-md-9 m-auto card p-4">
-
+            <h2 class="text-center m-4">{{title}}</h2>
             <form enctype="multipart/form-data"> <!-- -->
                 {{ form.csrf_token }}
                 {% if form['img'] %}
@@ -118,13 +118,28 @@
                     class="nav-link border border-dark btn-dark rounded waves-effect m-2 mx-auto text-center"
                     onclick="validateForm()" style="color: #fff"
                 >Submit</a>
-                <p class="text-center">
-                    <small class="text-muted">Already have an account?
-                        <a href="#">Login</a>
+
+                {% if request.path.split('/')[-1] != 'login' %}
+                    <p class="text-center m-0">
+                        <small class="text-muted">Already have an account?
+                            <a href="{{url_for('auth.login')}}">Login</a>
+                        </small>
+                    </p>
+                {% endif %}
+                {% if request.path.split('/')[-1] != 'customer' %}
+                <p class="text-center m-0">
+                    <small class="text-muted">Register as a
+                        <a href="{{url_for('auth.register', user='customer')}}">Customer</a>
                     </small>
                 </p>
-
-
+                {% endif %}
+                {% if request.path.split('/')[-1] != 'seller' %}
+                    <p class="text-center m-0">
+                        <small class="text-muted">Register as a
+                            <a href="{{url_for('auth.register', user='seller')}}">Seller</a>
+                        </small>
+                    </p>
+                {% endif %}
         </div>
     </div>
 </div>
@@ -143,7 +158,9 @@
     }
 
     function validateForm() {
-        URL = document.URL.split('/').pop()
+        let path = document.URL.split('/').pop()
+        URL = path == 'login'? path: `register/${path}`
+        console.log(URL)
         var $elements = $('form :input');
         let formData = {};
         let data = {};

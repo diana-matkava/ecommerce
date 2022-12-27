@@ -14,13 +14,12 @@
     </a>
     <p>
         <small class="text-muted">Already have an account?
-            <a href="#">Login</a>
+            <a href="{{url_for('auth.login')}}">Login</a>
         </small>
     </p>
 </div>
 <script>
     function openModal(id) {
-        console.log(id)
         let link = $('#get-started-login')[0];
         link.style.display = 'inline-block';
         let user = id.split('-')[2]
