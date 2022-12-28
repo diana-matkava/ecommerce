@@ -88,7 +88,7 @@ data-interval="2000">
 
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="{{url_for('home')}}">All</a>
+        <a class="nav-link" href="{{url_for('main.home')}}">All</a>
       </li>
       {%if categories%}
       {% for category in categories[:4] %}

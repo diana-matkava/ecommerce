@@ -174,18 +174,22 @@
             url: `/auth/${URL}`,
             data: formData,
             success: function (data) {
-                var x = JSON.stringify(data);
-                for ([id, value] of Object.entries(data)) {
-                    field = $(`label[for=${id}]`)[0]
-                    if (field !== undefined) {
-                        field.style.color = value == ''? 'grey': 'red'
-                        label = field.getElementsByTagName('span')[0]
-                        if (label !== undefined) {
-                            label.innerHTML = ` ${value}`
-                        } else {
-                            $(`#${id}`)[0].classList.add('name-required')
+                console.log(data, typeof(data))
+                if (typeof(data) !== 'string'){
+                    for ([id, value] of Object.entries(data)) {
+                        field = $(`label[for=${id}]`)[0]
+                        if (field !== undefined) {
+                            field.style.color = value == ''? 'grey': 'red'
+                            label = field.getElementsByTagName('span')[0]
+                            if (label !== undefined) {
+                                label.innerHTML = ` ${value}`
+                            } else {
+                                $(`#${id}`)[0].classList.add('name-required')
+                            }
                         }
                     }
+                } else {
+                    window.location = data;
                 }
             }
         })

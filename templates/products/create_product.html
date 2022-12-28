@@ -11,11 +11,11 @@
 
 <div class="container">
     <div class="main-body">
-    
+
           <!-- Breadcrumb -->
           <nav aria-label="breadcrumb" class="main-breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="{{url_for('home')}}">Home</a></li>
+              <li class="breadcrumb-item"><a href="{{url_for('main.home')}}">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">Create Product</li>
             </ol>
           </nav>
@@ -24,7 +24,7 @@
           <div style="margin: -40px 0 40px 0;">
             <h1 style="text-align: center;">Start Sell With Us</h1>
           </div>
-          
+
     <form action="" method="POST" enctype="multipart/form-data" novalidate>
       {{form.csrf_token}}
 
@@ -43,7 +43,7 @@
                         {{ error }}
                     </div>
                 {% endfor%}
-                
+
                 <div class="col">
                   <div class="form-group row">
                     {{ form.description.label}}
@@ -141,7 +141,7 @@
         </div>
 
 
-     
+
     </div>
   </form>
 {% endblock %}

@@ -19,23 +19,6 @@ def az_webhook():
     return ('', 200)
 
 
-@pr.route('/', methods=['GET', 'POST', 'PUT'])
-@pr.route('/<id>', methods=['GET', 'POST', 'PUT'])
-def home(id=None):
-    data = {
-        'ad_products':  Product.query.all()[::4],
-        'products': Product.query.all() if not id \
-            else db.session.query(Product).filter(
-                Product.product_category.any(ProductCategory.id.in_([id]))),
-        'time': datetime.datetime.now(),
-        'categories': ProductCategory.query.all(),
-    }
-    # if request.method == 'POST':
-        # search = request.form['search']
-        # data['products'] = Product.query.filter(Product.name.contains(search)).all()
-    return render_template('home/home.html', **data)
-
-
 @pr.route('/product/<id>', methods=['GET', 'POST'])
 def product_page(id):
     session.pop('_flashes', None)
@@ -126,7 +109,7 @@ def create_product():
             db.session.add(product)
             db.session.commit()
             flash(f'Product {product} created successfully')
-            return redirect(url_for('home'))
+            return redirect(url_for('main.home'))
 
         except Exception as _ex:
             flash(f'{_ex}')

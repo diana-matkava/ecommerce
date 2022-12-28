@@ -1,6 +1,7 @@
 import os
 from flask import Flask, send_from_directory
 from .admin import CustomerAdminView, ProductAdminView, SellerAdminView
+from .home.views import main
 from .auth.views import bp, login_manager
 from .products.views import pr
 from .checkout.views import checkout, promotion
@@ -57,6 +58,7 @@ def create_app(test_config=None, config_objects='.settings.py'):
 
 
     # Registered BluePrints
+    app.register_blueprint(main)
     app.register_blueprint(bp)
     app.register_blueprint(pr)
     app.register_blueprint(checkout)

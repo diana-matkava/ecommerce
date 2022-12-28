@@ -8,11 +8,11 @@
 {%block content%}
 <div class="container">
     <div class="main-body">
-    
+
           <!-- Breadcrumb -->
           <nav aria-label="breadcrumb" class="main-breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="{{url_for('home')}}">Home</a></li>
+              <li class="breadcrumb-item"><a href="{{url_for('main.home')}}">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">Edit Seller Profile</li>
             </ol>
           </nav>
@@ -25,18 +25,18 @@
           <div class="col-md-4 mb-3">
             <div class="card">
               <div class="card-body">
-                
+
                   <div class="image-upload">
                     <label for="file">
                       {% if user.logo %}
                         <img class="avatar" src="{{url_for('static', filename=user.logo)}}" alt="">
-                      {% else %} 
+                      {% else %}
                         <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="225px" height="225px">
                       {% endif %}
                     </label>
                     <input type="file" class="form-control" id="file" name="logo" value="{{user.logo}}">
                   </div>
-                  
+
                   <div class="mt-3">
                     <p class="text-muted font-size-sm text-center">Edit Logo</p>
                   </div>
@@ -46,15 +46,15 @@
                   <div class="form-group mb-6">
                     <label for="password">Current Password: </label>
                     <input class="form-control" type="password" name="password" placeholder='*******'>
-                </div>   
+                </div>
                 <div class="form-group mb-6">
                     <label for="new_password">New Password: </label>
                     <input class="form-control" type="password" name="new_password">
-                </div>  
+                </div>
                 <div class="form-group mb-6">
                     <label for="repeat_password">Repeat Password: </label>
                     <input class="form-control" type="password" name="repeat_password">
-                </div>  
+                </div>
 
               </div>
             </div>
@@ -70,7 +70,7 @@
                     <input class="form-control w-400" type="text" name="first_name" value={{user.first_name}}>
                   </div>
                 </div>
-                
+
                 <div class="col">
                   <div class="form-group row">
                     <label class="w-150" for="last_name">Last Name: </label>
@@ -197,7 +197,7 @@
         </div>
 
 
-     
+
     </div>
   </form>
 {%endblock content%}

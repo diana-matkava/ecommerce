@@ -34,7 +34,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/login_default/<user>', methods=(['GET']))
 def login_default(user):
-    return redirect(url_for('home'))
+    return redirect(url_for('main.home'))
 
 
 def register_seller(form):
@@ -115,7 +115,7 @@ def register(user):
                 session['role'] = role
                 login_user(user)
                 flash(f'User {user} was created successfully!')
-                return redirect(url_for('home'))
+                return url_for('main.home')
             except Exception as _ex:
                 flash(_ex, 'danger')
         else:
@@ -238,7 +238,7 @@ def edit_seller_profile():
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
-    # return redirect(url_for('home'))
+    # return redirect(url_for('main.home'))
     if request.method == "POST":
         data = ImmutableMultiDict(request.form)
         form_data = data.to_dict(flat=True)
@@ -247,13 +247,13 @@ def login():
             try:
                 login_user(form.user)
                 session['role'] = form.user.role
+                return url_for('main.home')
             except Exception as _ex:
                 print(_ex)
                 flash(f"User with such email or password doesn't exist", 'danger')
         valid_field = set(set(form_data.keys())).difference(form.errors.keys())
         data = form.errors
-        if data:
-            data.update(dict.fromkeys(valid_field, ''))
+        data.update(dict.fromkeys(valid_field, ''))
         return jsonify(data)
     else:
         form = LoginForm()
@@ -263,19 +263,19 @@ def login():
 @bp.route('/logout', methods=('GET', ))
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('main.home'))
 
 
 @bp.route('/delete_customer/<id>', methods=['GET', 'POST', 'DELETE'])
 def delete_customer(id):
     Customer.query.get(id).delete()
-    return redirect(url_for('home'))
+    return redirect(url_for('main.home'))
 
 
 @bp.route('/delete_seller/<id>', methods=['GET', 'POST', 'DELETE'])
 def delete_seller(id):
     Seller.query.get(id).delete()
-    return redirect(url_for('home'))
+    return redirect(url_for('main.home'))
 
 
 @login_required

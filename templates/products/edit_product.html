@@ -8,7 +8,7 @@
       display: none;
     }
   .image-upload {
-      width: fit-content; 
+      width: fit-content;
       margin: auto;
   }
   .image-upload:hover{
@@ -24,17 +24,17 @@
 
 <div class="container">
     <div class="main-body">
-      
+
           <nav aria-label="breadcrumb" class="main-breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="{{url_for('home')}}">Home</a></li>
+              <li class="breadcrumb-item"><a href="{{url_for('main.home')}}">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">Edit Product</li>
             </ol>
           </nav>
           <div class="mt-4 mb-4 text-center">
             <h1>Edit {{product}}</h1>
           </div>
-          
+
     <form action="" method="post" enctype="multipart/form-data">
       {{csrf_token}}
 
@@ -42,24 +42,24 @@
           <div class="col">
             <div class="card">
               <div class="card-body">
-                
+
                 <div class="image-upload">
                   <label for="file">
                     <div class="col">
 
                       <div id="carouselExampleControls"  class="carousel slide " data-ride="carousel" style="margin-bottom: 18px;"
                           data-interval="2000">
-                
+
                           <div class="carousel-inner">
                               {%for image in product.images %}
-                              
+
                               <div class="carousel-item {% if loop.first %}active{% endif %}"  style="max-height: 350px;  object-fit: cover;">
                                   <img class="d-block w-100" src="{{url_for('static', filename=image.path)}}" alt="Second slide">
                               </div>
-                                            
+
                               {%endfor%}
                           </div>
-                
+
                           <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
                               <span class="carousel-control-prev-icon" aria-hidden="true" style="height: 350px;"></span>
                               <span class="sr-only">Previous</span>
@@ -120,7 +120,7 @@
                   </select>
                 </div>
                 <hr>
-              </div> 
+              </div>
 
                 <div class="col-md-6 mb-4 ml-auto mr-auto">
                   <ul class="list-group">
@@ -128,7 +128,7 @@
                       Owner: {{current_user}}
                     </li>
                     <li class="d-flex align-items-center text-muted">
-                      Likes   
+                      Likes
                       <span class="badge badge-danger badge-pill ml-3">{{product.like}}</span>
                     </li>
                     <li class="d-flex  align-items-center text-muted">
@@ -136,7 +136,7 @@
                     </li>
                   </ul>
                 </div>
-              
+
               {% with messages = get_flashed_messages() %}
               {% if messages %}
                   {% for message in messages %}
@@ -150,7 +150,7 @@
               <div class="row">
                 <div class="col-md-6 mb-4 ml-auto mr-auto">
                   <button class="btn btn-info" type="submit">Submit</button>
-                  <a class="btn btn-light" href="{{url_for('home')}}">Back</a>
+                  <a class="btn btn-light" href="{{url_for('main.home')}}">Back</a>
                   <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter">
                     Delete
                   </button>
@@ -185,7 +185,7 @@
         </div>
 
 
-     
+
     </div>
   </form>
 {% endblock %}
