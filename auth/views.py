@@ -34,7 +34,6 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/login_default/<user>', methods=(['GET']))
 def login_default(user):
-
     return redirect(url_for('home'))
 
 
@@ -237,32 +236,25 @@ def edit_seller_profile():
         return redirect(url_for('auth.profile'))
     return render_template('auth/edit_seller_profile.html', **data)
 
-@bp.route('/login', methods=('GET', 'POST'), strict_slashes=False)
+@bp.route('/login', methods=('GET', 'POST'))
 def login():
+    # return redirect(url_for('home'))
     if request.method == "POST":
         data = ImmutableMultiDict(request.form)
         form_data = data.to_dict(flat=True)
         form = LoginForm(**form_data)
         if form.validate_on_submit():
             try:
-                customer = Customer.query.filter_by(email=form.email.data).first()
-                seller = Seller.query.filter_by(email=form.email.data).first()
-                if customer:
-                    if check_password_hash(customer.password, form.pwd.data):
-                        login_user(customer)
-                        session['role'] = customer.role
-                        return redirect(url_for('home'))
-                    else:
-                        flash('Username (or email) or password is invalid', 'danger')
-                elif seller:
-                    if check_password_hash(seller.password, form.pwd.data):
-                        login_user(seller)
-                        session['role'] = seller.role
-                        return redirect(url_for('home'))
-                    else:
-                        flash('Username (or email) or password is invalid', 'danger')
+                login_user(form.user)
+                session['role'] = form.user.role
             except Exception as _ex:
+                print(_ex)
                 flash(f"User with such email or password doesn't exist", 'danger')
+        valid_field = set(set(form_data.keys())).difference(form.errors.keys())
+        data = form.errors
+        if data:
+            data.update(dict.fromkeys(valid_field, ''))
+        return jsonify(data)
     else:
         form = LoginForm()
     return render_template('auth/register.html', form=form, title='Login')

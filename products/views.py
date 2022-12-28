@@ -1,7 +1,5 @@
 import datetime
 import os
-import bs4
-import requests
 from unicodedata import category
 from .models import Product
 from flask import Blueprint, flash, render_template, redirect, session, url_for, request

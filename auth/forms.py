@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
 from wtforms.validators import Email, InputRequired, Length, Regexp, EqualTo, ValidationError
+from wtforms import HiddenField
+from werkzeug.security import check_password_hash
 from .models import Customer, Seller
 
 
@@ -54,10 +56,33 @@ class SellerRegistrationForm(FlaskForm):
         Customer.query.filter_by(email=email.data).first():
             raise ValidationError('Email already taken')
 
+def get_user(form, email):
+        customer = Customer.query.filter_by(email=email.data).first()
+        seller = Seller.query.filter_by(email=email.data).first()
+        users = list(filter(None, [customer, seller]))
+        print(users)
+        if users:
+            if len(users) == 1:
+                form.user = users[0]
+                print(form.user)
+            else:
+                raise ValidationError('Internal Server Error: Connect with service center')
+        else:
+            raise ValidationError('Email was not found')
+
+def validate_password(form, pwd):
+    if form.user.__dict__.get('email', False) \
+        and not check_password_hash(form.user.password, pwd.data):
+        raise ValidationError('Password is incorrect')
+
 
 
 class LoginForm(FlaskForm):
     email = StringField('email', validators=[
-        InputRequired(), Email()
+        InputRequired(), Email(), get_user
         ])
-    pwd = PasswordField(validators=[InputRequired()])
+    pwd = PasswordField(
+        validators=[InputRequired(), validate_password]
+    )
+    user = HiddenField("User")
+

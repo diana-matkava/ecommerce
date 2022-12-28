@@ -160,7 +160,6 @@
     function validateForm() {
         let path = document.URL.split('/').pop()
         URL = path == 'login'? path: `register/${path}`
-        console.log(URL)
         var $elements = $('form :input');
         let formData = {};
         let data = {};
