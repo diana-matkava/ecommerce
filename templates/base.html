@@ -20,7 +20,7 @@
 
 
 <main class="mt-5 pt-4 content_">
-{% if current_user.email %}{{current_user}}
+{% if current_user.email %}
     {%block content%}{%endblock%}
 {% else %}
     {%block login%}{%endblock%}

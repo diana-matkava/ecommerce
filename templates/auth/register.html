@@ -41,7 +41,7 @@
                 {% if form['img'] %}
                     <div class="form-group mx-auto text-center">
                         <label for="img"></label>
-                        <img style="min-height: 200px; object-fit: contain; border-radius: 100px"
+                        <img style="height: 200px; width: 200px; object-fit: fit; border-radius: 100%"
                             id="user-img" src="{{ url_for( 'static', filename='img/app/default-user.jpg')}}"
                             alt="your image" width="200" height="200" onclick="document.getElementById('img').click();" />
                         <input type='file' id='img' hidden onchange=readURL(this); />
@@ -161,11 +161,15 @@
         let path = document.URL.split('/').pop()
         URL = path == 'login'? path: `register/${path}`
         var $elements = $('form :input');
-        let formData = {};
+        let formData = new FormData();
         let data = {};
         for (el of $elements) {
             if (el.value !== '') {
-                formData[el.id] = el.value;
+                if (el.id == 'img') {
+                    formData.append(el.id, el.files[0]);
+                } else {
+                    formData.append(el.id, el.value);
+                }
             }
         }
 
@@ -173,8 +177,10 @@
             type: 'POST',
             url: `/auth/${URL}`,
             data: formData,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
             success: function (data) {
-                console.log(data, typeof(data))
                 if (typeof(data) !== 'string'){
                     for ([id, value] of Object.entries(data)) {
                         field = $(`label[for=${id}]`)[0]

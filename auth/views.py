@@ -67,17 +67,18 @@ def register_customer(form):
         role=0
     )
     avatar = form.img.data
+    print(avatar.__dict__)
     if avatar and allowed_extension(avatar.filename):
         path = os.path.join(
             UPLOAD_FOLDER,
             'img/user_inputs/customer_avatar/',
             secure_filename(avatar.filename)
         )
-        avatar.save(os.path.join(path))
         customer.avatar = os.path.join(
             'img/user_inputs/customer_avatar/',
             secure_filename(avatar.filename)
         )
+        avatar.save(path)
     return customer, 0
 
 
