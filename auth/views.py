@@ -36,6 +36,19 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 def login_default(user):
     return redirect(url_for('main.home'))
 
+def set_user_img(user, img, folder):
+    if img and allowed_extension(img.filename):
+        path = os.path.join(
+            UPLOAD_FOLDER,
+            f'img/user_inputs/{folder}/',
+            secure_filename(img.filename)
+        )
+        img.save(path)
+        user.logo =  os.path.join(
+            f'img/user_inputs/{folder}/',
+            secure_filename(img.filename)
+        )
+
 
 def register_seller(form):
     seller = Seller(
@@ -44,18 +57,7 @@ def register_seller(form):
         password=generate_password_hash(form.pwd.data),
         role=1,
         )
-    logo = request.files['logo']
-    if logo and allowed_extension(logo.filename):
-        path = os.path.join(
-            UPLOAD_FOLDER,
-            'img/user_inputs/seller_logo/',
-            secure_filename(logo.filename)
-        )
-        logo.save(path)
-        seller.logo =  os.path.join(
-            'img/user_inputs/seller_logo/',
-            secure_filename(logo.filename)
-        )
+    set_user_img(seller, form.img.data, 'seller_logo')
     return seller, 1
 
 
@@ -66,19 +68,7 @@ def register_customer(form):
         password=generate_password_hash(form.pwd.data),
         role=0
     )
-    avatar = form.img.data
-    print(avatar.__dict__)
-    if avatar and allowed_extension(avatar.filename):
-        path = os.path.join(
-            UPLOAD_FOLDER,
-            'img/user_inputs/customer_avatar/',
-            secure_filename(avatar.filename)
-        )
-        customer.avatar = os.path.join(
-            'img/user_inputs/customer_avatar/',
-            secure_filename(avatar.filename)
-        )
-        avatar.save(path)
+    set_user_img(customer, form.img.data, 'customer_avatar')
     return customer, 0
 
 
@@ -91,7 +81,6 @@ def create_user(user, form):
 
 @bp.route('/register/<user>', methods=(['GET', 'POST']))
 def register(user):
-
     if not session.get('country', False):
         ip = request.headers.get('X-Forwarded-For', False)
         if ip:
@@ -107,7 +96,6 @@ def register(user):
         data = ImmutableMultiDict(request.form)
         form_data = data.to_dict(flat=True)
         form = register_conf[user](**form_data)
-
         if form.validate_on_submit():
             try:
                 user, role = create_user(user, form)
@@ -115,10 +103,10 @@ def register(user):
                 db.session.commit()
                 session['role'] = role
                 login_user(user)
-                flash(f'User {user} was created successfully!')
                 return url_for('main.home')
             except Exception as _ex:
                 flash(_ex, 'danger')
+                print(_ex)
         else:
             valid_field = set(set(form_data.keys())).difference(form.errors.keys())
             data = form.errors

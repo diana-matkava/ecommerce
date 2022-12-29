@@ -181,6 +181,7 @@
             processData: false,
             contentType: false,
             success: function (data) {
+                console.log(data)
                 if (typeof(data) !== 'string'){
                     for ([id, value] of Object.entries(data)) {
                         field = $(`label[for=${id}]`)[0]
@@ -196,6 +197,11 @@
                     }
                 } else {
                     window.location = data;
+                }
+            },
+            error: function (response) {
+                if (response.status == 200) {
+                    window.location = response.responseText;
                 }
             }
         })
