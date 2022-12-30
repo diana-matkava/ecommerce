@@ -139,7 +139,14 @@ data-interval="2000">
     <div class="card-body text-center" style="max-height: 125px; margin-top: 0px; padding: 0px 5px;">
       <a href="{{url_for('product_page', id=product.id)}}">
         {% if current_user.is_authenticated %}
-        <p style="font-size: {%if product.name|length< 15%}large{%else%}smaller{%endif%}; color: black;">{{product.name|truncate(23, True)}}<span class="grey-text" style="margin-left: 20px; font-size: 18px;"><strong style="font-size: small;">{{product.get_price()}} {{current_user.currency.abr}}</strong></span></p>
+          <p style="font-size: {%if product.name|length< 15%}large{%else%}smaller{%endif%}; color: black;">
+            {{product.name|truncate(23, True)}}
+            <span class="grey-text" style="margin-left: 20px; font-size: 18px;">
+              <strong style="font-size: small;">
+                {{product.get_price()}} USD
+              </strong>
+            </span>
+          </p>
         {%else%}
           {{product.get_price()}}{{product.currency}}
         {%endif%}

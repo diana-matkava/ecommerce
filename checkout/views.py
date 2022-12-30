@@ -25,13 +25,13 @@ def marketing_tools():
         data = {
             'promotions': current_user.promotion
         }
-        
+
     return render_template('promotion/marketing_tools.html', **data)
 
 
 @checkout.route('/create_promotion', methods=['GET', 'POST'])
 def create_promotion():
-    session.pop('_flashes', None)
+
     form = PromotionForm()
     form.products.data = [str(product.id) for product in Product.query.filter_by(owner=current_user.email)]
     today = datetime.datetime.now()
@@ -60,11 +60,11 @@ def create_promotion():
                 instant_discount=True if request.form.get('instant_discount') else False,
                 active=True if request.form.get('active') else None
             )
-            
+
             promotion.products.extend([Product.query.get(int(product)) for product in request.form.getlist('products')])
 
             promotion.save()
-        
+
             coupons = request.form.get('coupons')
             if coupons:
                 for coupon in coupons.splitlines():
@@ -77,7 +77,7 @@ def create_promotion():
                     db.session.add(promotion)
                     db.session.add(coupon)
             else:
-                
+
                 coupon = Coupon(
                     code=str(uuid.uuid4())[:18].replace('-', ''),
                     promotion=promotion
@@ -98,7 +98,7 @@ def create_promotion():
 
         except Exception as _ex:
             flash(_ex)
-        
+
     else:
         flash('Something went wrong')
     return render_template('promotion/create_promotion.html', **data)
@@ -147,4 +147,3 @@ def apply_promotion():
         db.session.commit()
         return ('', 204)
 
-    

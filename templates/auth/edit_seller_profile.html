@@ -65,20 +65,6 @@
             <div class="card-body">
 
                 <div class="col">
-                  <div class="form-group row" >
-                    <label class="w-150" for="first_name">First Name: </label>
-                    <input class="form-control w-400" type="text" name="first_name" value={{user.first_name}}>
-                  </div>
-                </div>
-
-                <div class="col">
-                  <div class="form-group row">
-                    <label class="w-150" for="last_name">Last Name: </label>
-                    <input class="form-control w-400" type="text" name="last_name" value={{user.last_name}}>
-                  </div>
-                </div>
-              <hr>
-                <div class="col">
                   <div class="form-group row">
                     <label class="w-150"  for="company_name">Company Name: </label>
                     <input class="form-control w-400" type="text" name="company_name" value={{user.company_name}}>
@@ -92,63 +78,6 @@
                   <input class="form-control w-400" type="email" name="email" value={{user.email}}>
                 </div>
               </div>
-
-              <hr>
-              <div class="col">
-                <div class="form-group row">
-                  <label class="w-150" for="phone">Phone Number: </label>
-                  <input class="form-control w-400" type="text" name="phone" value="+{{user.phone.country_code}}{{user.phone.national_number}}">
-                </div>
-              </div>
-
-              <hr>
-              <div class="col">
-                <div class="form-group row">
-                  <label class="w-150" for="country">Country: </label>
-                  <select name="country" id="country" class="form-control w-400" >
-                    {% for country in countries %}
-                      {% if country.name == user.country %}
-                      <option value="{{country.alpha_2}}" selected>{{country.name}}</option>
-                      {% else %}
-                      <option value="{{country.alpha_2}}">{{country.name}}</option>
-                      {% endif %}
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              <hr>
-              <div class="col">
-                <div class="form-group row">
-                  <label class="w-150" for="type">Business type: </label>
-                  <select name="type" id="type"  class="form-control w-400" >
-                    {% for type in business_types %}
-                      {% if [type] == user.busines_type %}
-                        <option value="{{type}}" selected>{{type}}</option>
-                      {% else %}
-                        <option value="{{type}}">{{type}}</option>
-                      {%endif%}
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              <hr>
-              <div class="col">
-                <div class="form-group row">
-                  <label class="w-150" for="type">Category: </label>
-                  <select name="category" id="category" class="form-control w-400" multiple>
-                    {% for category in categories %}
-                      {% if category in user.category %}
-                        <option value='{{category}}' selected>{{category}}</option>
-                      {% else %}
-                        <option value='{{category}}'>{{category}}</option>
-                      {%endif%}
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
               <hr>
               {% with messages = get_flashed_messages() %}
               {% if messages %}

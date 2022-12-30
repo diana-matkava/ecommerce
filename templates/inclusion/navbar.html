@@ -82,19 +82,10 @@
                             </li>
                         </div>
                     </div>
-                        {% if current_user.logo %}
-                            <li class="nav-item">
-                                <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename=current_user.logo)}}" alt="" class="logo"></a>
-                            </li>
-                        {% elif current_user.avatar %}
-                            <li class="nav-item">
-                                <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename=current_user.avatar)}}" alt="" class="logo"></a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a href="{{url_for('auth.profile')}}"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="" class="logo" style='width: 32px;'></a>
-                            </li>
-                        {% endif %}
+                    <li class="nav-item">
+                        <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename=current_user.img)}}" alt="" class="logo"></a>
+                    </li>
+
                 {%else%}
                     <li class="nav-item">
                         <a href="{{url_for('auth.register', user='customer')}}" class="nav-link border border-light rounded waves-effect mr-2">Sing Up</a>

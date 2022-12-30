@@ -3,6 +3,7 @@ import json
 import requests
 from countryinfo import CountryInfo
 from .config import register_conf
+from .constants import DEFAULT_CUSTOMER_EMAIL, DEFAULT_USER_IMG, DEFAULT_USER_CUSTOMER
 from flask.json import jsonify
 from flask import Blueprint, flash, render_template, request, session, url_for, redirect
 from flask_login import login_user, login_required, logout_user, LoginManager, current_user
@@ -32,9 +33,11 @@ def load_user(id):
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-@bp.route('/login_default/<user>', methods=(['GET']))
-def login_default(user):
+@bp.route('/login_default', methods=(['GET']))
+def login_default():
+    user = Customer.query.get(email=DEFAULT_CUSTOMER_EMAIL)
     return redirect(url_for('main.home'))
+
 
 def set_user_img(user, img, folder):
     if img and allowed_extension(img.filename):
@@ -44,10 +47,12 @@ def set_user_img(user, img, folder):
             secure_filename(img.filename)
         )
         img.save(path)
-        user.logo =  os.path.join(
+        user.img =  os.path.join(
             f'img/user_inputs/{folder}/',
             secure_filename(img.filename)
         )
+    else:
+        user.img = DEFAULT_USER_IMG
 
 
 def register_seller(form):
@@ -128,7 +133,6 @@ def profile():
 @login_required
 @bp.route('/edit_customer_profile', methods=('GET', 'POST', 'PUT'))
 def edit_customer_profile():
-    session.pop('_flashes', None)
     if request.method == 'POST':
         user = Customer.query.get(current_user.id)
         user.username = request.form.get('username')
@@ -177,7 +181,7 @@ def edit_customer_profile():
 @login_required
 @bp.route('/edit_seller_profile', methods=('GET', 'POST'))
 def edit_seller_profile():
-    session.pop('_flashes', None)
+
     user = current_user
     data = {
         'user': current_user,

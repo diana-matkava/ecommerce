@@ -21,7 +21,7 @@ def az_webhook():
 
 @pr.route('/product/<id>', methods=['GET', 'POST'])
 def product_page(id):
-    session.pop('_flashes', None)
+
     product = Product.query.get(id)
 
     if request.method == 'POST':
@@ -76,7 +76,7 @@ def product_page(id):
 
 @pr.route('/create_product', methods=['GET', 'POST'])
 def create_product():
-    session.pop('_flashes', None)
+
     form = CreateProductForm()
     if form.validate_on_submit():
         try:
@@ -122,7 +122,7 @@ def create_product():
 @login_required
 @pr.route('/edit_product/<id>', methods=['GET', 'POST'])
 def edit_product(id):
-    session.pop('_flashes', None)
+
     product = Product.query.get(id)
     data = {
         'form': CreateProductForm(),

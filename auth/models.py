@@ -54,7 +54,7 @@ class User(UserMixin):
 class Customer(User, db.Model):
     username = Column(String(50), nullable=False)
     description = Column(String(1000), nullable=True)
-    avatar = Column(Integer, ForeignKey('customer_avatar.id'))
+    img = Column(Integer, ForeignKey('customer_avatar.id'))
     cart_id = Column(Integer, nullable=True)
     saved = relationship(
         'Product', secondary=customer_saved_product,
@@ -83,7 +83,7 @@ class Customer(User, db.Model):
 class Seller(User, db.Model):
     company_name = Column(String(125), nullable=True)
     country = Column(String(125), nullable=True)
-    logo = Column(Integer, ForeignKey('company_logo.id'), nullable=True)
+    img = Column(Integer, ForeignKey('company_logo.id'), nullable=True)
     promotion = relationship(
         Promotion, secondary=promotions, lazy='subquery',
         backref=db.backref('seller', lazy=True)
