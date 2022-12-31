@@ -32,10 +32,12 @@ class User(UserMixin):
     __abstract__ = True
     R_CUSTOMER = 0
     R_SELLER = 1
+    STATUS = 'Active'
     id = Column(Integer(), primary_key=True)
     email = Column(String(125), unique=True, nullable=False)
     password = Column(String(125), nullable=False)
     role = Column(Integer, nullable=False, default=R_CUSTOMER)
+    status = Column(String(50), nullable=False, default=STATUS)
 
     @declared_attr
     def display_currency_id(cls):

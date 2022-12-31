@@ -28,11 +28,7 @@
 
                   <div class="image-upload">
                     <label for="file">
-                      {% if user.logo %}
-                        <img class="avatar" src="{{url_for('static', filename=user.logo)}}" alt="">
-                      {% else %}
-                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="225px" height="225px">
-                      {% endif %}
+                        <img class="avatar" src="{{url_for('static', filename=user.img)}}" alt="">
                     </label>
                     <input type="file" class="form-control" id="file" name="logo" value="{{user.logo}}">
                   </div>
@@ -113,7 +109,7 @@
                     Are you really sure that you want to delete your account immediately and irrevocably?
                   </div>
                   <div class="modal-footer">
-                    <a href="{{url_for('auth.delete_seller', id=user.id)}}" class="btn btn-danger">Delete</a>
+                    <a href="{{url_for('auth.delete_user')}}" class="btn btn-danger">Delete</a>
                     <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
                   </div>
                 </div>

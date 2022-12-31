@@ -1,4 +1,22 @@
-<nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
+<style>
+    .default-user-img:hover {
+        opacity: 0.5;
+    }
+    .active-user {
+        padding: 2px;
+        border: 2px solid rgba(41, 152, 190, 0.49);
+    }
+    .inactive-user {
+        padding: 2px;
+        border: 2px solid rgba(53, 54, 53, 0.272);
+    }
+
+    .header-icons:hover {
+        opacity: 0.6;
+    }
+</style>
+
+<nav class="navbar fixed-top navbar-expand-md navbar-light white scrolling-navbar">
     <div class="container">
 
         <!-- Brand -->
@@ -17,90 +35,105 @@
 
             <!-- Left -->
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link waves-effect" href="{{url_for('main.home')}}">Home
-                        <span class="sr-only">(current)</span>
-                    </a>
-                </li>
-                {% if current_user.role %}
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{{url_for('create_product')}}">
-                        <span class="clearfix d-none d-sm-inline">Add Product </span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="{{url_for('checkout.marketing_tools')}}">
-                        <span class="clearfix d-none d-sm-inline">Marketing Tools</span>
-                    </a>
-                </li>
-                {% endif %}
-
-                <li class="nav-item">
-                    <a class="nav-link waves-effect" href="#" >Privacy policy</a>
-                </li>
+                <!-- EMPTY -->
             </ul>
 
             <!-- Right -->
             <ul class="navbar-nav nav-flex-icons">
-
-                <li class="nav-item">
-                    <a
-                        class="nav-link waves-effect"
-                        {% if not current_user.is_authenticated %}
-                            data-toggle="modal" data-target="#exampleModal"
-                        {%endif%}
-                        href="{% if current_user.is_authenticated %}{{url_for('card')}}{% endif %}"
-                    >
-                        {%if current_user.cart_id%}
-                            <span
-                                id="cart_badge" class="badge badge-pill danger-color"
-                                style="display: inline-block; padding: 5px; margin: 0 0 5px -5px;"
-                            ></span>
-                        {%endif%}
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="clearfix d-none d-sm-inline-block"> Cart </span>
-                    </a>
-                </li>
-
-
                 {% if current_user.is_authenticated %}
                     <div class="dropdown">
                         <li class="nav-item">
                             <a href="{{url_for('auth.profile')}}" class="nav-link rounded waves-effect mr-2">{{current_user}}</a>
                         </li>
-                        <div class="dropdown-content">
-                            {% if current_user %}
+                        <div class="dropdown-content" style="font-size: 14px;  width: fit-content">
+                            {% if current_user.role %}
                                 <li class="nav-item">
-                                    <a href="{{url_for('auth.profile')}}" class="nav-link waves-effect mr-2">Profile</a>
+                                    <a href="{{url_for('create_product')}}" class="nav-link waves-effect mr-2">Create Product</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{url_for('checkout.marketing_tools')}}" class="nav-link waves-effect mr-2">Marketing Tools</a>
+                                </li>
+                            {% else %}
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link waves-effect mr-2">Cart</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link waves-effect mr-2">Saved</a>
                                 </li>
                             {% endif %}
                             <li class="nav-item">
-                                <a href="#" class="nav-link waves-effect mr-2">Cart</a>
+                                <a href="{{url_for('auth.profile')}}" class="nav-link waves-effect mr-2">Settings</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{url_for('auth.logout')}}" class="nav-link waves-effect mr-2">Log Out</a>
                             </li>
                         </div>
                     </div>
-                    <li class="nav-item">
-                        <a href="{{url_for('auth.profile')}}"><img src="{{url_for('static', filename=current_user.img)}}" alt="" class="logo"></a>
-                    </li>
-
-                {%else%}
-                    <li class="nav-item">
-                        <a href="{{url_for('auth.register', user='customer')}}" class="nav-link border border-light rounded waves-effect mr-2">Sing Up</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{url_for('auth.login')}}" class="nav-link border border-dark btn-dark rounded waves-effect"><span style="color: #fff">Sing In</span></a>
-                    </li>
-                {%endif%}
-                {% if current_user.is_authenticated %}
+                    {% if current_user.status == 'Default' %}
+                        <li class="nav-item">
+                            <a href="{{url_for('auth.profile')}}">
+                                <img src="{{url_for('static', filename=current_user.img)}}"
+                                alt="" class="logo active-user">
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{url_for('auth.login_default')}}">
+                                <img src="{{url_for('static', filename=session['default_user_img'])}}"
+                                alt="" class="logo default-user-img inactive-user">
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a href="{{url_for('auth.profile')}}">
+                                <img src="{{url_for('static', filename=current_user.img)}}"
+                                alt="" class="logo">
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if current_user.role %}
+                        <li class="nav-item">
+                            <a class="nav-link waves-effect" href="{{url_for('create_product')}}">
+                                <img src="{{url_for('static', filename='img/app/cart-plus-solid.svg')}}"
+                                    alt="" width="19" class="header-icons">
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link waves-effect" href="{{url_for('checkout.marketing_tools')}}">
+                                <img src="{{url_for('static', filename='img/app/chart-bar-regular.svg')}}"
+                                    alt="" width="19" class="header-icons">
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link waves-effect" href="{{url_for('card')}}">
+                                <i class="fas fa-shopping-cart"></i>
+                                {% if current_user.card_id %}
+                                    <span
+                                        id="cart_badge" class="badge badge-pill danger-color"
+                                        style="display: inline-block; padding: 4px; margin: 0 0 10px -7px;"
+                                    ></span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link waves-effect" href="{{url_for('card')}}">
+                                <img src="{{url_for('static', filename='img/app/bookmark-regular.svg')}}"
+                                    alt="" width="13" style="margin-top: -5px" class="header-icons">
+                                {% if current_user.card_id %}
+                                    <span
+                                        id="cart_badge" class="badge badge-pill danger-color"
+                                        style="display: inline-block; padding: 4px; margin: 0 0 10px -7px;"
+                                    ></span>
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endif %}
                 <div class="dropdown">
                     <li class="nav-item">
                         <a
                             href="#" class="nav-link rounded waves-effect mr-2"
                             style="color: rgb(43, 172, 220); font-size: smaller; margin: 3px 0 0 5px; font-weight: 400;"
-                        >TEST</a>
+                        >USD</a>
                     </li>
                     <div class="dropdown-currency">
                         {% set currencies = ['USD', 'EUR', 'UAH', 'RUB', 'CNY', 'GBP'] %}
@@ -111,6 +144,13 @@
                         {% endfor %}
                     </div>
                 </div>
+                {%else%}
+                    <li class="nav-item">
+                        <a href="{{url_for('auth.register', user='customer')}}" class="nav-link border border-light rounded waves-effect mr-2">Sing Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url_for('auth.login')}}" class="nav-link border border-dark btn-dark rounded waves-effect"><span style="color: #fff">Sing In</span></a>
+                    </li>
                 {%endif%}
             </ul>
 

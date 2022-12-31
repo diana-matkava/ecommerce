@@ -3,7 +3,10 @@ import json
 import requests
 from countryinfo import CountryInfo
 from .config import register_conf
-from .constants import DEFAULT_CUSTOMER_EMAIL, DEFAULT_USER_IMG, DEFAULT_USER_CUSTOMER
+from .constants import (
+    DEFAULT_CUSTOMER_EMAIL, DEFAULT_SELLER_EMAIL,
+    DEFAULT_USER_IMG, DEFAULT_SELLER_IMG, DEFAULT_CUSTOMER_IMG
+)
 from flask.json import jsonify
 from flask import Blueprint, flash, render_template, request, session, url_for, redirect
 from flask_login import login_user, login_required, logout_user, LoginManager, current_user
@@ -35,7 +38,16 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/login_default', methods=(['GET']))
 def login_default():
-    user = Customer.query.get(email=DEFAULT_CUSTOMER_EMAIL)
+    print(session)
+    if session.get('role', None) == 0:
+        user = Seller.query.filter_by(email=DEFAULT_SELLER_EMAIL).first()
+        img = DEFAULT_CUSTOMER_IMG
+    else:
+        user = Customer.query.filter_by(email=DEFAULT_CUSTOMER_EMAIL).first()
+        img = DEFAULT_SELLER_IMG
+    session['role'] = user.role
+    session['default_user_img'] = img
+    login_user(user)
     return redirect(url_for('main.home'))
 
 
@@ -256,29 +268,28 @@ def login():
 @bp.route('/logout', methods=('GET', ))
 def logout():
     logout_user()
+    session.clear()
     return redirect(url_for('main.home'))
 
 
-@bp.route('/delete_customer/<id>', methods=['GET', 'POST', 'DELETE'])
-def delete_customer(id):
-    Customer.query.get(id).delete()
+@bp.route('/delete_user', methods=['GET'])
+def delete_user():
+    user = load_user(current_user.id)
+    if user.img != DEFAULT_USER_IMG:
+        path = os.path.join(UPLOAD_FOLDER, user.img)
+        os.remove(path)
+    user.delete()
     return redirect(url_for('main.home'))
 
 
-@bp.route('/delete_seller/<id>', methods=['GET', 'POST', 'DELETE'])
-def delete_seller(id):
-    Seller.query.get(id).delete()
-    return redirect(url_for('main.home'))
-
-
-@login_required
-@bp.route('/change_currency', methods=['POST'])
-def change_currency():
-    currency = request.form.get('currency')
-    current_user.display_currency_id = Currency.query.filter_by(abr=currency)[0].id
-    db.session.add(current_user)
-    db.session.commit()
-    return ('', 204)
+# @login_required
+# @bp.route('/change_currency', methods=['POST'])
+# def change_currency():
+#     currency = request.form.get('currency')
+#     current_user.display_currency_id = Currency.query.filter_by(abr=currency)[0].id
+#     db.session.add(current_user)
+#     db.session.commit()
+#     return ('', 204)
 
 @bp.route('/createsupeuser', methods=['POST'])
 def create_superuser(id):

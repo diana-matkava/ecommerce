@@ -1,5 +1,5 @@
 import datetime
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, session
 from ..extentions import db
 from ..products.models import Product, ProductCategory
 
