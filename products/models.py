@@ -23,7 +23,6 @@ orders = db.Table('orders', db.Model.metadata,
     Column('order_id', Integer, ForeignKey('order.id'), primary_key=True))
 
 
-
 class Currency(db.Model):
     __tablename__ = 'currency'
     id = Column(Integer(), primary_key=True)
