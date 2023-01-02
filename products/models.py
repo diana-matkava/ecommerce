@@ -18,6 +18,17 @@ product_categories = db.Table('product_categories', db.Model.metadata,
     Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
 )
 
+product_custom_fields = db.Table('product_custom_fields', db.Model.metadata,
+    Column('product_custom_field_id', Integer, ForeignKey('product_custom_field.id'), primary_key=True),
+    Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
+)
+
+product_components = db.Table('product_components', db.Model.metadata,
+    Column('product_component_id', Integer, ForeignKey('product_component.id'), primary_key=True),
+    Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
+)
+
+
 orders = db.Table('orders', db.Model.metadata,
     Column('cart_id', Integer, ForeignKey('card.id'), primary_key=True),
     Column('order_id', Integer, ForeignKey('order.id'), primary_key=True))
@@ -33,27 +44,79 @@ class Currency(db.Model):
         return self.abr
 
 
+class ProductCategory(db.Model):
+    __tablename__ = 'product_category'
+
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(225), nullable=False)
+
+    def __repr__(self):
+        return f'{self.name}'
+
+
+class ProductCustomField(db.Model):
+    __tablename__ = 'product_custom_field'
+
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(225), nullable=False)
+    short_name = Column(String(225), nullable=False)
+
+    def __repr__(self):
+        return f'{self.name}'
+
+
+class ProductImage(db.Model):
+    __tablename__ = 'product_image'
+
+    id = Column(Integer(), primary_key=True)
+    path = Column(String(225), nullable=False)
+    product_id = Column(Integer(), ForeignKey('product.id'), nullable=True)
+    product_obj = db.relationship("Product", backref=db.backref("product", uselist=False))
+    sequence = Column(Integer(), nullable=True)
+
+
+class ProductComponent(db.Model):
+    __tablename__ = 'product_component'
+
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(255), nullable=False)
+    product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
+    product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
+    product_custom_field = relationship(
+        'ProductCustomField', secondary=product_custom_fields, lazy='subquery',
+        backref=db.backref('product', lazy=True)
+    )
+
+
+class ProductData(db.Model):
+    id = Column(Integer(), primary_key=True)
+    product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
+    product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
+    product_component = relationship(
+        'ProductComponent', secondary=product_custom_fields, lazy='subquery',
+        backref=db.backref('product', lazy=True)
+    )
+
+
 class Product(db.Model):
     id = Column(Integer(), primary_key=True)
     name = Column(String(225), nullable=False)
     description = Column(String(1500), nullable=True)
-    images = relationship(
-        'Image', secondary=images, lazy='subquery',
-        backref=db.backref('product', lazy=True)
-    )
     price = Column(Integer())
     currency_id = Column(Integer(), ForeignKey('currency.id'), nullable=True)
     currency = relationship(Currency, backref=db.backref('product_currency', uselist=False))
-    quantity = Column(Integer())
+    owner = Column(String(225), nullable=True)
+    created = Column(DateTime(), default=datetime.datetime.now(), nullable=True)
+
+    # images = relationship(
+    #     'Image', secondary=images, lazy='subquery',
+    #     backref=db.backref('product', lazy=True)
+    # )
+
     product_category = relationship(
         'ProductCategory', secondary=product_categories, lazy='subquery',
         backref=db.backref('product', lazy=True)
     )
-
-    owner = Column(String(225), nullable=True)
-    owner_name = Column(String(225), nullable=True)
-    like = Column(Integer(), default=0, nullable=True)
-    created = Column(DateTime(), default=datetime.datetime.now(), nullable=True)
 
     def get_price(self):
         price = self.price
@@ -201,19 +264,3 @@ class Order(db.Model):
 
         return float(round(price, 2)) if price else None
 
-
-class Image(db.Model):
-    __tablename__ = 'image'
-
-    id = Column(Integer(), primary_key=True)
-    path = Column(String(225), nullable=False)
-
-
-class ProductCategory(db.Model):
-    __tablename__ = 'product_category'
-
-    id = Column(Integer(), primary_key=True)
-    name = Column(String(225), nullable=False)
-
-    def __repr__(self):
-        return f'{self.name}'
