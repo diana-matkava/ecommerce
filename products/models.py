@@ -2,11 +2,11 @@ import datetime
 import requests
 import bs4
 from flask_login import current_user
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from flask import session
 from ..extentions import db
 from ..settings import CURRENCY_API_KEY
+from ..auth.models import Seller
 
 product_images = db.Table('product_images', db.Model.metadata,
     Column('image_id', Integer, ForeignKey('image.id'), primary_key=True),
@@ -82,45 +82,58 @@ class ProductComponent(db.Model):
     name = Column(String(255), nullable=False)
     product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
     product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
-    product_custom_field = relationship(
+    product_custom_field = db.relationship(
+        'ProductCustomField', secondary=product_custom_fields, lazy='subquery',
+        backref=db.backref('product', lazy=True)
+    )
+
+
+class ProductComponentData(db.Model):
+    __tablename__ = 'product_component_data'
+
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(255), nullable=False)
+    product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
+    product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
+    product_custom_field = db.relationship(
         'ProductCustomField', secondary=product_custom_fields, lazy='subquery',
         backref=db.backref('product', lazy=True)
     )
 
 
 class ProductData(db.Model):
+    __tablename__ = 'product_data'
+
     id = Column(Integer(), primary_key=True)
     product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
     product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
-    product_category = relationship(
-        'ProductCategory', secondary=product_categories, lazy='subquery',
-        backref=db.backref('product', lazy=True)
-    )
-    product_component = relationship(
+
+    product_component = db.relationship(
         'ProductComponent', secondary=product_custom_fields, lazy='subquery',
         backref=db.backref('product', lazy=True)
     )
-    product_image = relationship(
+    product_image = db.relationship(
         'ProductImage', secondary=product_images, lazy='subquery',
         backref=db.backref('product', lazy=True)
     )
 
 
 class Product(db.Model):
+    __tablename__ = 'product'
+
     id = Column(Integer(), primary_key=True)
     name = Column(String(225), nullable=False)
     description = Column(String(1500), nullable=True)
+    product_category = db.relationship(
+        'ProductCategory', secondary=product_categories, lazy='subquery',
+        backref=db.backref('product', lazy=True)
+    )
     price = Column(Integer())
     currency_id = Column(Integer(), ForeignKey('currency.id'), nullable=True)
-    currency = relationship(Currency, backref=db.backref('product_currency', uselist=False))
-    owner = Column(String(225), nullable=True)
+    currency = db.relationship(Currency, backref=db.backref('product_currency', uselist=False))
+    owner_id = Column(Integer(), ForeignKey('seller.id'), nullable=True)
+    owner_obj = db.relationship()
     created = Column(DateTime(), default=datetime.datetime.now(), nullable=True)
-
-    # images = relationship(
-    #     'Image', secondary=images, lazy='subquery',
-    #     backref=db.backref('product', lazy=True)
-    # )
-
 
 
     def get_price(self):
@@ -151,7 +164,7 @@ class Card(db.Model):
     __tablename__ = 'card'
 
     id = Column(Integer(), primary_key=True)
-    product_order = relationship('Order', secondary=orders, lazy='subquery',
+    product_order = db.relationship('Order', secondary=orders, lazy='subquery',
                 backref=db.backref('card', lazy=True))
     customer = Column(String(225), nullable=False)
     promo = Column(Integer())
