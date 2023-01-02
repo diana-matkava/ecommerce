@@ -8,7 +8,7 @@ from flask import session
 from ..extentions import db
 from ..settings import CURRENCY_API_KEY
 
-images = db.Table('product_images', db.Model.metadata,
+product_images = db.Table('product_images', db.Model.metadata,
     Column('image_id', Integer, ForeignKey('image.id'), primary_key=True),
     Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
 )
@@ -92,8 +92,16 @@ class ProductData(db.Model):
     id = Column(Integer(), primary_key=True)
     product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
     product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
+    product_category = relationship(
+        'ProductCategory', secondary=product_categories, lazy='subquery',
+        backref=db.backref('product', lazy=True)
+    )
     product_component = relationship(
         'ProductComponent', secondary=product_custom_fields, lazy='subquery',
+        backref=db.backref('product', lazy=True)
+    )
+    product_image = relationship(
+        'ProductImage', secondary=product_images, lazy='subquery',
         backref=db.backref('product', lazy=True)
     )
 
@@ -113,10 +121,7 @@ class Product(db.Model):
     #     backref=db.backref('product', lazy=True)
     # )
 
-    product_category = relationship(
-        'ProductCategory', secondary=product_categories, lazy='subquery',
-        backref=db.backref('product', lazy=True)
-    )
+
 
     def get_price(self):
         price = self.price
