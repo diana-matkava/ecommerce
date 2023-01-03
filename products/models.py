@@ -28,6 +28,10 @@ product_components = db.Table('product_components', db.Model.metadata,
     Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
 )
 
+product_components_data = db.Table('product_components_data', db.Model.metadata,
+    Column('product_component_data_id', Integer, ForeignKey('product_component_data.id'), primary_key=True),
+    Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
+)
 
 orders = db.Table('orders', db.Model.metadata,
     Column('cart_id', Integer, ForeignKey('card.id'), primary_key=True),
@@ -42,6 +46,16 @@ class Currency(db.Model):
 
     def __repr__(self):
         return self.abr
+
+
+class ProductImage(db.Model):
+    __tablename__ = 'product_image'
+
+    id = Column(Integer(), primary_key=True)
+    path = Column(String(225), nullable=False)
+    product_id = Column(Integer(), ForeignKey('product.id'), nullable=True)
+    product_obj = db.relationship("Product", backref=db.backref("product", uselist=False))
+    sequence = Column(Integer(), nullable=True)
 
 
 class ProductCategory(db.Model):
@@ -65,40 +79,33 @@ class ProductCustomField(db.Model):
         return f'{self.name}'
 
 
-class ProductImage(db.Model):
-    __tablename__ = 'product_image'
-
-    id = Column(Integer(), primary_key=True)
-    path = Column(String(225), nullable=False)
-    product_id = Column(Integer(), ForeignKey('product.id'), nullable=True)
-    product_obj = db.relationship("Product", backref=db.backref("product", uselist=False))
-    sequence = Column(Integer(), nullable=True)
-
-
 class ProductComponent(db.Model):
     __tablename__ = 'product_component'
 
     id = Column(Integer(), primary_key=True)
     name = Column(String(255), nullable=False)
-    product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
-    product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
-    product_custom_field = db.relationship(
-        'ProductCustomField', secondary=product_custom_fields, lazy='subquery',
-        backref=db.backref('product', lazy=True)
-    )
+
+    def __repr__(self):
+        return f'{self.name}'
 
 
 class ProductComponentData(db.Model):
     __tablename__ = 'product_component_data'
 
     id = Column(Integer(), primary_key=True)
-    name = Column(String(255), nullable=False)
     product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
     product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
-    product_custom_field = db.relationship(
-        'ProductCustomField', secondary=product_custom_fields, lazy='subquery',
-        backref=db.backref('product', lazy=True)
+    product_component_id = Column(Integer(), ForeignKey('product_component.id'), nullable=False)
+    product_component_obj = db.relationship('ProductComponent', backref=db.backref('product_component', uselist=False))
+    product_custom_field_id = Column(Integer(), ForeignKey('product_custom_field.id'), nullable=False)
+    product_custom_field_obj = db.relationship('ProductCustomField', backref=db.backref('product_custom_field', uselist=False))
+    product_image = db.relationship(
+        'ProductImage', secondary=product_images, lazy='subquery',
+        backref=db.backref('product_image', lazy=True)
     )
+    item_sequence = Column(Integer(), nullable=False)
+    quantity = Column(Integer(), nullable=False)
+
 
 
 class ProductData(db.Model):
@@ -107,13 +114,8 @@ class ProductData(db.Model):
     id = Column(Integer(), primary_key=True)
     product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
     product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
-
-    product_component = db.relationship(
-        'ProductComponent', secondary=product_custom_fields, lazy='subquery',
-        backref=db.backref('product', lazy=True)
-    )
-    product_image = db.relationship(
-        'ProductImage', secondary=product_images, lazy='subquery',
+    product_component_data = db.relationship(
+        'ProductComponentData', secondary=product_custom_fields, lazy='subquery',
         backref=db.backref('product', lazy=True)
     )
 
@@ -135,6 +137,8 @@ class Product(db.Model):
     owner_obj = db.relationship()
     created = Column(DateTime(), default=datetime.datetime.now(), nullable=True)
 
+    def __repr__(self):
+        return f"{self.name}"
 
     def get_price(self):
         price = self.price
