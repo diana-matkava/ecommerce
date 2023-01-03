@@ -1,8 +1,7 @@
 from flask_login import UserMixin
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
 from ..extentions import db
-from ..checkout.models import Promotion, Coupon
+
 
 
 promotions = db.Table('promotions', db.Model.metadata,
@@ -47,10 +46,10 @@ class Customer(User, db.Model):
     description = Column(String(1000), nullable=True)
     img = Column(Integer, ForeignKey('customer_avatar.id'))
     cart_id = Column(Integer, nullable=True)
-    coupons = relationship(
-        Coupon, secondary=active_codes_for_custmr,
-        lazy='subquery', backref=db.backref('customer', lazy=True)
-    )
+    # coupons = relationship(
+    #     Coupon, secondary=active_codes_for_custmr,
+    #     lazy='subquery', backref=db.backref('customer', lazy=True)
+    # )
 
     def __repr__(self):
         return f'{self.username}'
@@ -71,14 +70,14 @@ class Seller(User, db.Model):
     company_name = Column(String(125), nullable=True)
     country = Column(String(125), nullable=True)
     img = Column(Integer, ForeignKey('company_logo.id'), nullable=True)
-    promotion = relationship(
-        Promotion, secondary=promotions, lazy='subquery',
-        backref=db.backref('seller', lazy=True)
-    )
-    coupons = relationship(
-        Coupon, secondary=active_codes_for_sel, lazy='subquery',
-        backref=db.backref('seller', lazy=True)
-    )
+    # promotion = relationship(
+    #     Promotion, secondary=promotions, lazy='subquery',
+    #     backref=db.backref('seller', lazy=True)
+    # )
+    # coupons = relationship(
+    #     Coupon, secondary=active_codes_for_sel, lazy='subquery',
+    #     backref=db.backref('seller', lazy=True)
+    # )
 
     def __repr__(self):
         return f'{self.company_name}'

@@ -1,13 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import validators, SelectMultipleField, StringField, IntegerField
-from wtforms.validators import InputRequired, Length, ValidationError, Regexp
+from wtforms import SelectMultipleField, StringField, IntegerField
+from wtforms.validators import InputRequired, Length
 from wtforms.widgets import TextArea
-from ..products.models import Product, Image, ProductCategory
+from ..products.models import ProductCategory
 
 
 class CreateProductForm(FlaskForm):
     name = StringField('Product title', validators=[
-        InputRequired(), 
+        InputRequired(),
         Length(2, 225, message='Please provide a valid product name')
     ])
     description = StringField('Product description', widget=TextArea())

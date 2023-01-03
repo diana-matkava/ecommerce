@@ -5,12 +5,11 @@ from flask_login import current_user
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from flask import session
 from ..extentions import db
-from ..settings import CURRENCY_API_KEY
 from ..auth.models import Seller
 
 product_images = db.Table('product_images', db.Model.metadata,
-    Column('image_id', Integer, ForeignKey('image.id'), primary_key=True),
-    Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
+    Column('product_image_id', Integer, ForeignKey('product_image.id'), primary_key=True),
+    Column('product_component_data_id', Integer, ForeignKey('product_component_data.id'), primary_key=True)
 )
 
 product_categories = db.Table('product_categories', db.Model.metadata,
@@ -30,7 +29,7 @@ product_components = db.Table('product_components', db.Model.metadata,
 
 product_components_data = db.Table('product_components_data', db.Model.metadata,
     Column('product_component_data_id', Integer, ForeignKey('product_component_data.id'), primary_key=True),
-    Column('product_id', Integer, ForeignKey('product.id'), primary_key=True)
+    Column('product_data_id', Integer, ForeignKey('product_data.id'), primary_key=True)
 )
 
 orders = db.Table('orders', db.Model.metadata,
@@ -51,7 +50,7 @@ class Currency(db.Model):
 class ProductImage(db.Model):
     __tablename__ = 'product_image'
 
-    id = Column(Integer(), primary_key=True)
+    id = Column(Integer, primary_key=True)
     path = Column(String(225), nullable=False)
     product_id = Column(Integer(), ForeignKey('product.id'), nullable=True)
     product_obj = db.relationship("Product", backref=db.backref("product", uselist=False))
@@ -94,14 +93,13 @@ class ProductComponentData(db.Model):
 
     id = Column(Integer(), primary_key=True)
     product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
-    product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
+    product_obj = db.relationship('Product', backref=db.backref('component_product', uselist=False))
     product_component_id = Column(Integer(), ForeignKey('product_component.id'), nullable=False)
     product_component_obj = db.relationship('ProductComponent', backref=db.backref('product_component', uselist=False))
     product_custom_field_id = Column(Integer(), ForeignKey('product_custom_field.id'), nullable=False)
     product_custom_field_obj = db.relationship('ProductCustomField', backref=db.backref('product_custom_field', uselist=False))
     product_image = db.relationship(
-        'ProductImage', secondary=product_images, lazy='subquery',
-        backref=db.backref('product_image', lazy=True)
+        'ProductImage', secondary=product_images, backref='product_image'
     )
     item_sequence = Column(Integer(), nullable=False)
     quantity = Column(Integer(), nullable=False)
@@ -113,9 +111,9 @@ class ProductData(db.Model):
 
     id = Column(Integer(), primary_key=True)
     product_id = Column(Integer(), ForeignKey('product.id'), nullable=False)
-    product_obj = db.relationship('Product', backref=db.backref('product', uselist=False))
+    product_obj = db.relationship('Product', backref=db.backref('data_product', uselist=False))
     product_component_data = db.relationship(
-        'ProductComponentData', secondary=product_custom_fields, lazy='subquery',
+        'ProductComponentData', secondary=product_components_data, lazy='subquery',
         backref=db.backref('product', lazy=True)
     )
 
@@ -132,27 +130,27 @@ class Product(db.Model):
     )
     price = Column(Integer())
     currency_id = Column(Integer(), ForeignKey('currency.id'), nullable=True)
-    currency = db.relationship(Currency, backref=db.backref('product_currency', uselist=False))
+    currency_obj = db.relationship(Currency, backref=db.backref('product_currency', uselist=False))
     owner_id = Column(Integer(), ForeignKey('seller.id'), nullable=True)
-    owner_obj = db.relationship()
+    owner_obj = db.relationship(Seller, backref=db.backref('seller', uselist=False))
     created = Column(DateTime(), default=datetime.datetime.now(), nullable=True)
 
     def __repr__(self):
         return f"{self.name}"
 
-    def get_price(self):
-        price = self.price
-        if current_user.is_authenticated and current_user.display_currency_id != self.currency_id:
-            cur_pair = ' '.join(['RATE', self.currency.abr, current_user.currency.abr])
-            if cur_pair not in session:
-                url = requests.get(f'https://www.xe.com/currencyconverter/convert/?Amount=1&From={self.currency.abr}&To={current_user.currency.abr}')
-                soup = bs4.BeautifulSoup( url.text, "html.parser" )
-                rate = float(soup.find( "p" , class_='result__BigRate-sc-1bsijpp-1 iGrAod' ).text.split(' ')[0])
-                session[cur_pair] = rate
-            else:
-                rate = session[cur_pair]
-            price = self.price * rate
-        return float(round(price, 2))
+    # def get_price(self):
+    #     price = self.price
+    #     if current_user.is_authenticated and current_user.display_currency_id != self.currency_id:
+    #         cur_pair = ' '.join(['RATE', self.currency.abr, current_user.currency.abr])
+    #         if cur_pair not in session:
+    #             url = requests.get(f'https://www.xe.com/currencyconverter/convert/?Amount=1&From={self.currency.abr}&To={current_user.currency.abr}')
+    #             soup = bs4.BeautifulSoup( url.text, "html.parser" )
+    #             rate = float(soup.find( "p" , class_='result__BigRate-sc-1bsijpp-1 iGrAod' ).text.split(' ')[0])
+    #             session[cur_pair] = rate
+    #         else:
+    #             rate = session[cur_pair]
+    #         price = self.price * rate
+    #     return float(round(price, 2))
 
 
     def delete(self):
@@ -241,7 +239,7 @@ class Order(db.Model):
     __tablename__ = 'order'
     id = Column(Integer(), primary_key=True)
     product = Column(Integer(), ForeignKey('product.id'), nullable=True)
-    product_obj = db.relationship("Product", backref=db.backref("product", uselist=False))
+    product_obj = db.relationship("Product", backref=db.backref("order_product", uselist=False))
     quantity = Column(Integer, nullable=False)
 
     def save(self):
