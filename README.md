@@ -1,3 +1,6 @@
+Learning Flask and JS on E-commerce project.
+
+
 #### E-commerce project on Flask
 
 ## Create and activate virtual environment:
